@@ -524,6 +524,100 @@ class AppL10nAr extends AppL10n {
   String get nobodyTold => 'لم يُرسَل شيء إلى لوحة الإسطبل، ولم يُبلَّغ أحد.';
 
   @override
+  String get people => 'الأشخاص';
+
+  @override
+  String get peopleNavSub => 'الأعضاء والأدوار والدعوات والموافقات.';
+
+  @override
+  String get peopleIntro => 'مشرفان يبقيان الإسطبل يعمل حين يغيب أحدكما.';
+
+  @override
+  String get roleInThisStable => 'الدور في هذا الإسطبل';
+
+  @override
+  String get removeFromStable => 'إزالة من الإسطبل';
+
+  @override
+  String get inviteSomeone => 'ادعُ شخصًا';
+
+  @override
+  String get whatEachRole => 'ماذا يمكن لكل دور';
+
+  @override
+  String get roles => 'الأدوار';
+
+  @override
+  String get rolesIntro =>
+      'المشرف والمدير فوق البقية. المشرفون وحدهم يغيّرون هذا.';
+
+  @override
+  String get fullControl => 'تحكّم كامل';
+
+  @override
+  String get youChoose => 'أنت تختار';
+
+  @override
+  String get inviteToStable => 'دعوة إلى الإسطبل';
+
+  @override
+  String get roleTravels => 'الدور يرافق الدعوة. يمكنك تغييره لاحقًا.';
+
+  @override
+  String get shareAs => 'المشاركة عبر';
+
+  @override
+  String get inviteLink => 'رابط الدعوة';
+
+  @override
+  String get copy => 'نسخ';
+
+  @override
+  String get scanAtStable => 'امسح في الإسطبل';
+
+  @override
+  String get sixCharCode => 'رمز من ستة أحرف';
+
+  @override
+  String get waitingOnThem => 'بانتظارهم';
+
+  @override
+  String get pending => 'قيد الانتظار';
+
+  @override
+  String get needsYou => 'يحتاجك';
+
+  @override
+  String get nothingJoins => 'لا شيء ينضم للإسطبل حتى توافق.';
+
+  @override
+  String get approve => 'موافقة';
+
+  @override
+  String get decline => 'رفض';
+
+  @override
+  String get approved => 'مقبول';
+
+  @override
+  String get declined => 'مرفوض';
+
+  @override
+  String get myStables => 'إسطبلاتي';
+
+  @override
+  String get rolePerStable => 'دورك لكل إسطبل، لا لكل حساب.';
+
+  @override
+  String get createAnotherStable => 'أنشئ إسطبلًا آخر';
+
+  @override
+  String get joinWithCode => 'انضمّ برمز أو رابط';
+
+  @override
+  String get adminNoRights => 'كونك مشرفًا في إسطبل لا يمنحك صلاحيات في آخر.';
+
+  @override
   String get back => 'رجوع';
 
   @override

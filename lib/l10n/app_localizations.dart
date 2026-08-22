@@ -1089,6 +1089,192 @@ abstract class AppL10n {
   /// **'Nothing was sent to the yard board, and nobody has been told.'**
   String get nobodyTold;
 
+  /// No description provided for @people.
+  ///
+  /// In en, this message translates to:
+  /// **'People'**
+  String get people;
+
+  /// No description provided for @peopleNavSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Members, roles, invites and approvals.'**
+  String get peopleNavSub;
+
+  /// No description provided for @peopleIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Two admins keep the stable running when one of you is away.'**
+  String get peopleIntro;
+
+  /// No description provided for @roleInThisStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Role in this stable'**
+  String get roleInThisStable;
+
+  /// No description provided for @removeFromStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from stable'**
+  String get removeFromStable;
+
+  /// No description provided for @inviteSomeone.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite someone'**
+  String get inviteSomeone;
+
+  /// No description provided for @whatEachRole.
+  ///
+  /// In en, this message translates to:
+  /// **'What each role can do'**
+  String get whatEachRole;
+
+  /// No description provided for @roles.
+  ///
+  /// In en, this message translates to:
+  /// **'Roles'**
+  String get roles;
+
+  /// No description provided for @rolesIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin and manager sit above the rest. Only admins can change these.'**
+  String get rolesIntro;
+
+  /// No description provided for @fullControl.
+  ///
+  /// In en, this message translates to:
+  /// **'Full control'**
+  String get fullControl;
+
+  /// No description provided for @youChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'You choose'**
+  String get youChoose;
+
+  /// No description provided for @inviteToStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite to the stable'**
+  String get inviteToStable;
+
+  /// No description provided for @roleTravels.
+  ///
+  /// In en, this message translates to:
+  /// **'The role travels with the invite. You can change it later.'**
+  String get roleTravels;
+
+  /// No description provided for @shareAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Share as'**
+  String get shareAs;
+
+  /// No description provided for @inviteLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite link'**
+  String get inviteLink;
+
+  /// No description provided for @copy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copy;
+
+  /// No description provided for @scanAtStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan at the stable'**
+  String get scanAtStable;
+
+  /// No description provided for @sixCharCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Six-character code'**
+  String get sixCharCode;
+
+  /// No description provided for @waitingOnThem.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting on them'**
+  String get waitingOnThem;
+
+  /// No description provided for @pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get pending;
+
+  /// No description provided for @needsYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs you'**
+  String get needsYou;
+
+  /// No description provided for @nothingJoins.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing joins the stable until you say yes.'**
+  String get nothingJoins;
+
+  /// No description provided for @approve.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get approve;
+
+  /// No description provided for @decline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get decline;
+
+  /// No description provided for @approved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get approved;
+
+  /// No description provided for @declined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get declined;
+
+  /// No description provided for @myStables.
+  ///
+  /// In en, this message translates to:
+  /// **'My stables'**
+  String get myStables;
+
+  /// No description provided for @rolePerStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Your role is per stable, not per account.'**
+  String get rolePerStable;
+
+  /// No description provided for @createAnotherStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Create another stable'**
+  String get createAnotherStable;
+
+  /// No description provided for @joinWithCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Join one with a code or link'**
+  String get joinWithCode;
+
+  /// No description provided for @adminNoRights.
+  ///
+  /// In en, this message translates to:
+  /// **'Being admin of one stable does not give you rights in another.'**
+  String get adminNoRights;
+
   /// No description provided for @back.
   ///
   /// In en, this message translates to:

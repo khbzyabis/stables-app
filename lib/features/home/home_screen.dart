@@ -15,6 +15,9 @@ import '../horses/add_horse_screen.dart';
 import '../horses/horse_profile_screen.dart';
 import '../market/market_screen.dart';
 import '../market/payments_screen.dart';
+import '../people/approvals_screen.dart';
+import '../people/my_stables_screen.dart';
+import '../people/people_screen.dart';
 import '../schedule/schedule_screen.dart';
 import '../transport/request_transport_screen.dart';
 import '../tasks/groom_day_screen.dart';
@@ -325,6 +328,18 @@ class _StableTab extends StatelessWidget {
               Navigator.of(context).pushNamed(RequestTransportScreen.route),
         ),
         const Hairline(),
+        _NavRow(
+          title: l10n.people,
+          subtitle: l10n.peopleNavSub,
+          onTap: () => Navigator.of(context).pushNamed(PeopleScreen.route),
+        ),
+        const Hairline(),
+        _NavRow(
+          title: l10n.needsYou,
+          subtitle: l10n.nothingJoins,
+          onTap: () => Navigator.of(context).pushNamed(ApprovalsScreen.route),
+        ),
+        const Hairline(),
         const SizedBox(height: 26),
         AppTag(l10n.comingSoon.toUpperCase(), tone: TagTone.neutral),
         const SizedBox(height: 12),
@@ -389,6 +404,12 @@ class _YouTab extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.zero,
       children: [
+        const Hairline(),
+        _NavRow(
+          title: l10n.myStables,
+          subtitle: l10n.rolePerStable,
+          onTap: () => Navigator.of(context).pushNamed(MyStablesScreen.route),
+        ),
         const Hairline(),
         _NavRow(
           title: l10n.payments,

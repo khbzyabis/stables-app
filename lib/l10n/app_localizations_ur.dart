@@ -531,6 +531,103 @@ class AppL10nUr extends AppL10n {
       'Nothing was sent to the yard board, and nobody has been told.';
 
   @override
+  String get people => 'People';
+
+  @override
+  String get peopleNavSub => 'Members, roles, invites and approvals.';
+
+  @override
+  String get peopleIntro =>
+      'Two admins keep the stable running when one of you is away.';
+
+  @override
+  String get roleInThisStable => 'Role in this stable';
+
+  @override
+  String get removeFromStable => 'Remove from stable';
+
+  @override
+  String get inviteSomeone => 'Invite someone';
+
+  @override
+  String get whatEachRole => 'What each role can do';
+
+  @override
+  String get roles => 'Roles';
+
+  @override
+  String get rolesIntro =>
+      'Admin and manager sit above the rest. Only admins can change these.';
+
+  @override
+  String get fullControl => 'Full control';
+
+  @override
+  String get youChoose => 'You choose';
+
+  @override
+  String get inviteToStable => 'Invite to the stable';
+
+  @override
+  String get roleTravels =>
+      'The role travels with the invite. You can change it later.';
+
+  @override
+  String get shareAs => 'Share as';
+
+  @override
+  String get inviteLink => 'Invite link';
+
+  @override
+  String get copy => 'Copy';
+
+  @override
+  String get scanAtStable => 'Scan at the stable';
+
+  @override
+  String get sixCharCode => 'Six-character code';
+
+  @override
+  String get waitingOnThem => 'Waiting on them';
+
+  @override
+  String get pending => 'Pending';
+
+  @override
+  String get needsYou => 'Needs you';
+
+  @override
+  String get nothingJoins => 'Nothing joins the stable until you say yes.';
+
+  @override
+  String get approve => 'Approve';
+
+  @override
+  String get decline => 'Decline';
+
+  @override
+  String get approved => 'Approved';
+
+  @override
+  String get declined => 'Declined';
+
+  @override
+  String get myStables => 'My stables';
+
+  @override
+  String get rolePerStable => 'Your role is per stable, not per account.';
+
+  @override
+  String get createAnotherStable => 'Create another stable';
+
+  @override
+  String get joinWithCode => 'Join one with a code or link';
+
+  @override
+  String get adminNoRights =>
+      'Being admin of one stable does not give you rights in another.';
+
+  @override
   String get back => 'واپس';
 
   @override
