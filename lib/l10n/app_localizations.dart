@@ -669,6 +669,102 @@ abstract class AppL10n {
   /// **'Set tasks and see who has done what.'**
   String get tasksSub;
 
+  /// No description provided for @market.
+  ///
+  /// In en, this message translates to:
+  /// **'Market'**
+  String get market;
+
+  /// No description provided for @marketSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Feed, tack, hoofcare, rugs and services — approved sellers.'**
+  String get marketSub;
+
+  /// No description provided for @deliversTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivers to {stable}'**
+  String deliversTo(String stable);
+
+  /// No description provided for @everyApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Every seller here has been approved by My Stables.'**
+  String get everyApproved;
+
+  /// No description provided for @basket.
+  ///
+  /// In en, this message translates to:
+  /// **'Basket'**
+  String get basket;
+
+  /// No description provided for @addToBasketSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to basket · {size}'**
+  String addToBasketSize(String size);
+
+  /// No description provided for @inYourBasket.
+  ///
+  /// In en, this message translates to:
+  /// **'In your basket'**
+  String get inYourBasket;
+
+  /// No description provided for @askTheSeller.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask the seller'**
+  String get askTheSeller;
+
+  /// No description provided for @basketWithCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Basket · {count}'**
+  String basketWithCount(int count);
+
+  /// No description provided for @askForPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask for a price'**
+  String get askForPrice;
+
+  /// No description provided for @payWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay with'**
+  String get payWith;
+
+  /// No description provided for @payAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay {amount}'**
+  String payAmount(String amount);
+
+  /// No description provided for @totalItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Items'**
+  String get totalItems;
+
+  /// No description provided for @totalDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery · two sellers, two vans'**
+  String get totalDelivery;
+
+  /// No description provided for @toPay.
+  ///
+  /// In en, this message translates to:
+  /// **'To pay'**
+  String get toPay;
+
+  /// No description provided for @basketTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'You pay My Stables, not the sellers. If something is wrong, we hold the money until it is sorted.'**
+  String get basketTerms;
+
   /// No description provided for @back.
   ///
   /// In en, this message translates to:

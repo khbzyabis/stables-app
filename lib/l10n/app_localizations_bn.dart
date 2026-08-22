@@ -302,6 +302,65 @@ class AppL10nBn extends AppL10n {
   String get tasksSub => 'Set tasks and see who has done what.';
 
   @override
+  String get market => 'Market';
+
+  @override
+  String get marketSub =>
+      'Feed, tack, hoofcare, rugs and services — approved sellers.';
+
+  @override
+  String deliversTo(String stable) {
+    return 'Delivers to $stable';
+  }
+
+  @override
+  String get everyApproved =>
+      'Every seller here has been approved by My Stables.';
+
+  @override
+  String get basket => 'Basket';
+
+  @override
+  String addToBasketSize(String size) {
+    return 'Add to basket · $size';
+  }
+
+  @override
+  String get inYourBasket => 'In your basket';
+
+  @override
+  String get askTheSeller => 'Ask the seller';
+
+  @override
+  String basketWithCount(int count) {
+    return 'Basket · $count';
+  }
+
+  @override
+  String get askForPrice => 'Ask for a price';
+
+  @override
+  String get payWith => 'Pay with';
+
+  @override
+  String payAmount(String amount) {
+    return 'Pay $amount';
+  }
+
+  @override
+  String get totalItems => 'Items';
+
+  @override
+  String get totalDelivery => 'Delivery · two sellers, two vans';
+
+  @override
+  String get toPay => 'To pay';
+
+  @override
+  String get basketTerms =>
+      'You pay My Stables, not the sellers. If something is wrong, we hold the money until it is sorted.';
+
+  @override
   String get back => 'পিছনে';
 
   @override

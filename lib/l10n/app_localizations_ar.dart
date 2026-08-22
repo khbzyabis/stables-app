@@ -298,6 +298,64 @@ class AppL10nAr extends AppL10n {
   String get tasksSub => 'أسنِد المهام وتابع مَن أنجز ماذا.';
 
   @override
+  String get market => 'المتجر';
+
+  @override
+  String get marketSub =>
+      'علف، سروج، عناية بالحوافر، أغطية وخدمات — بائعون معتمدون.';
+
+  @override
+  String deliversTo(String stable) {
+    return 'التوصيل إلى $stable';
+  }
+
+  @override
+  String get everyApproved => 'كل بائع هنا معتمد من My Stables.';
+
+  @override
+  String get basket => 'السلة';
+
+  @override
+  String addToBasketSize(String size) {
+    return 'أضِف إلى السلة · $size';
+  }
+
+  @override
+  String get inYourBasket => 'في سلتك';
+
+  @override
+  String get askTheSeller => 'اسأل البائع';
+
+  @override
+  String basketWithCount(int count) {
+    return 'السلة · $count';
+  }
+
+  @override
+  String get askForPrice => 'اطلب سعرًا';
+
+  @override
+  String get payWith => 'الدفع عبر';
+
+  @override
+  String payAmount(String amount) {
+    return 'ادفع $amount';
+  }
+
+  @override
+  String get totalItems => 'العناصر';
+
+  @override
+  String get totalDelivery => 'التوصيل · بائعان، شاحنتان';
+
+  @override
+  String get toPay => 'المطلوب دفعه';
+
+  @override
+  String get basketTerms =>
+      'أنت تدفع لـ My Stables، لا للبائعين. إن حدث خطأ، نحتفظ بالمال حتى تُحلّ المسألة.';
+
+  @override
   String get back => 'رجوع';
 
   @override

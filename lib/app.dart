@@ -17,6 +17,9 @@ import 'features/horses/horse_profile_screen.dart';
 import 'features/schedule/add_activity_screen.dart';
 import 'features/schedule/month_screen.dart';
 import 'features/schedule/schedule_screen.dart';
+import 'features/market/basket_screen.dart';
+import 'features/market/item_screen.dart';
+import 'features/market/market_screen.dart';
 import 'features/tasks/assign_task_screen.dart';
 import 'features/tasks/groom_day_screen.dart';
 import 'features/tasks/task_progress_screen.dart';
@@ -100,6 +103,9 @@ class _MyStablesAppState extends State<MyStablesApp> {
                 GroomDayScreen.route: (_) => const GroomDayScreen(),
                 AssignTaskScreen.route: (_) => const AssignTaskScreen(),
                 TaskProgressScreen.route: (_) => const TaskProgressScreen(),
+                MarketScreen.route: (_) => const MarketScreen(),
+                ItemScreen.route: (_) => const ItemScreen(),
+                BasketScreen.route: (_) => const BasketScreen(),
               },
             );
           },
