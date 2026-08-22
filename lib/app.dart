@@ -22,6 +22,24 @@ class _MyStablesAppState extends State<MyStablesApp> {
   final _localeController = LocaleController();
 
   @override
+  void initState() {
+    super.initState();
+    // On first launch, honour the device language if it is one we support.
+    // A person can still change it in-app; that choice then wins.
+    final deviceLocales = WidgetsBinding.instance.platformDispatcher.locales;
+    for (final device in deviceLocales) {
+      final match = kSupportedLocales.firstWhere(
+        (l) => l.languageCode == device.languageCode,
+        orElse: () => const Locale('und'),
+      );
+      if (match.languageCode != 'und') {
+        _localeController.setLocale(match);
+        break;
+      }
+    }
+  }
+
+  @override
   void dispose() {
     _localeController.dispose();
     super.dispose();

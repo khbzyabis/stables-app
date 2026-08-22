@@ -15,14 +15,19 @@ This is the **foundation pass**. What exists:
 
 - **Design tokens & theme** (`lib/theme/`) — the "Organic" system's colour ramps,
   spacing scale, radii, shadows, and typography (Gabarito headings + Figtree
-  body, via `google_fonts`), ported from `design_reference/designs/_ds/.../styles.css`.
+  body), ported from `design_reference/designs/_ds/.../styles.css`. Fonts are
+  bundled as variable-font assets (`assets/fonts/`), including Noto Sans
+  Arabic / Devanagari / Bengali as script fallbacks so every language renders
+  without a runtime fetch.
 - **Shared components** (`lib/widgets/`) — hairline lists (the system's core
   layout rule: rows separated by 1px hairlines, not cards), pill buttons
   (primary / secondary / ghost), tags, labelled inputs, the onboarding step
   progress bar, and the standard mobile screen scaffold.
 - **i18n + RTL** (`lib/l10n/`, `lib/app_state.dart`) — all six languages
   (English, Arabic, Hindi, Urdu, Bengali, Nepali) wired through `gen-l10n`, with
-  Arabic and Urdu mirroring the interface right-to-left automatically. English
+  Arabic and Urdu mirroring the interface right-to-left automatically. The app
+  picks up the device language on first launch and lets the user switch in-app.
+  English
   and Arabic are fully translated; Hindi, Urdu, Bengali and Nepali have the
   high-visibility strings translated and fall back to English for the rest
   (a known gap to fill).
@@ -48,8 +53,8 @@ flutter run -d chrome   # in the browser
 ```
 
 Localizations are generated from the ARB files by `gen-l10n` (configured in
-`l10n.yaml`); `flutter run`/`build` run it automatically. Fonts are fetched at
-runtime via `google_fonts`.
+`l10n.yaml`); `flutter run`/`build` run it automatically. Fonts are bundled
+assets — no network is needed to render text.
 
 ## Project layout
 
