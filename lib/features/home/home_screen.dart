@@ -15,6 +15,7 @@ import '../horses/add_horse_screen.dart';
 import '../horses/horse_profile_screen.dart';
 import '../market/market_screen.dart';
 import '../schedule/schedule_screen.dart';
+import '../transport/request_transport_screen.dart';
 import '../tasks/groom_day_screen.dart';
 import '../tasks/task_progress_screen.dart';
 
@@ -314,6 +315,13 @@ class _StableTab extends StatelessWidget {
           title: l10n.market,
           subtitle: l10n.marketSub,
           onTap: () => Navigator.of(context).pushNamed(MarketScreen.route),
+        ),
+        const Hairline(),
+        _NavRow(
+          title: l10n.transport,
+          subtitle: l10n.transportSub,
+          onTap: () =>
+              Navigator.of(context).pushNamed(RequestTransportScreen.route),
         ),
         const Hairline(),
         const SizedBox(height: 26),

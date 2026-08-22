@@ -409,6 +409,55 @@ class AppL10nAr extends AppL10n {
   String get askedFarriers => 'سُئل ثلاثة بيطّارين يوم الاثنين.';
 
   @override
+  String get transport => 'النقل';
+
+  @override
+  String get transportSub => 'انقل حصانًا إلى عرض أو عيادة أو إسطبل جديد.';
+
+  @override
+  String get pickUpDeliver => 'الاستلام والتوصيل';
+
+  @override
+  String get transportIntro =>
+      'اسأل بضع شركات. يردّون بسعر وبما هم مؤمَّنون عليه.';
+
+  @override
+  String get fieldFrom => 'من';
+
+  @override
+  String get fieldTo => 'إلى';
+
+  @override
+  String get fieldDay => 'اليوم';
+
+  @override
+  String get thereBy => 'الوصول قبل';
+
+  @override
+  String get whatToKnow => 'ما يجب أن يعرفوه';
+
+  @override
+  String get callDriver => 'اتصل بالسائق';
+
+  @override
+  String get messageLabel => 'رسالة';
+
+  @override
+  String get sentWithBooking => 'أُرسِل مع الحجز';
+
+  @override
+  String get onYardSchedule => 'على جدول الإسطبل · يراه الجميع';
+
+  @override
+  String get addReturnJourney => 'أضِف رحلة العودة';
+
+  @override
+  String get cancelFree => 'إلغاء · مجاني حتى ظهر الخميس';
+
+  @override
+  String get askQuestion => 'اطرح سؤالًا';
+
+  @override
   String get back => 'رجوع';
 
   @override

@@ -867,6 +867,102 @@ abstract class AppL10n {
   /// **'Asked three farriers on Monday.'**
   String get askedFarriers;
 
+  /// No description provided for @transport.
+  ///
+  /// In en, this message translates to:
+  /// **'Transport'**
+  String get transport;
+
+  /// No description provided for @transportSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Move a horse to a show, a clinic or a new yard.'**
+  String get transportSub;
+
+  /// No description provided for @pickUpDeliver.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick up and deliver'**
+  String get pickUpDeliver;
+
+  /// No description provided for @transportIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask a few companies. They answer with a price and what they are insured for.'**
+  String get transportIntro;
+
+  /// No description provided for @fieldFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get fieldFrom;
+
+  /// No description provided for @fieldTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get fieldTo;
+
+  /// No description provided for @fieldDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get fieldDay;
+
+  /// No description provided for @thereBy.
+  ///
+  /// In en, this message translates to:
+  /// **'There by'**
+  String get thereBy;
+
+  /// No description provided for @whatToKnow.
+  ///
+  /// In en, this message translates to:
+  /// **'What they need to know'**
+  String get whatToKnow;
+
+  /// No description provided for @callDriver.
+  ///
+  /// In en, this message translates to:
+  /// **'Call the driver'**
+  String get callDriver;
+
+  /// No description provided for @messageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get messageLabel;
+
+  /// No description provided for @sentWithBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent with the booking'**
+  String get sentWithBooking;
+
+  /// No description provided for @onYardSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'On the yard schedule · everyone can see it'**
+  String get onYardSchedule;
+
+  /// No description provided for @addReturnJourney.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the return journey'**
+  String get addReturnJourney;
+
+  /// No description provided for @cancelFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel · free until Thursday noon'**
+  String get cancelFree;
+
+  /// No description provided for @askQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask a question'**
+  String get askQuestion;
+
   /// No description provided for @back.
   ///
   /// In en, this message translates to:

@@ -26,6 +26,9 @@ import 'features/market/quote_request_screen.dart';
 import 'features/tasks/assign_task_screen.dart';
 import 'features/tasks/groom_day_screen.dart';
 import 'features/tasks/task_progress_screen.dart';
+import 'features/transport/booked_journey_screen.dart';
+import 'features/transport/request_transport_screen.dart';
+import 'features/transport/transport_quotes_screen.dart';
 import 'l10n/app_localizations.dart';
 import 'theme/app_theme.dart';
 
@@ -112,6 +115,9 @@ class _MyStablesAppState extends State<MyStablesApp> {
                 OrderScreen.route: (_) => const OrderScreen(),
                 QuoteRequestScreen.route: (_) => const QuoteRequestScreen(),
                 CompareQuotesScreen.route: (_) => const CompareQuotesScreen(),
+                RequestTransportScreen.route: (_) => const RequestTransportScreen(),
+                TransportQuotesScreen.route: (_) => const TransportQuotesScreen(),
+                BookedJourneyScreen.route: (_) => const BookedJourneyScreen(),
               },
             );
           },

@@ -415,6 +415,55 @@ class AppL10nBn extends AppL10n {
   String get askedFarriers => 'Asked three farriers on Monday.';
 
   @override
+  String get transport => 'Transport';
+
+  @override
+  String get transportSub => 'Move a horse to a show, a clinic or a new yard.';
+
+  @override
+  String get pickUpDeliver => 'Pick up and deliver';
+
+  @override
+  String get transportIntro =>
+      'Ask a few companies. They answer with a price and what they are insured for.';
+
+  @override
+  String get fieldFrom => 'From';
+
+  @override
+  String get fieldTo => 'To';
+
+  @override
+  String get fieldDay => 'Day';
+
+  @override
+  String get thereBy => 'There by';
+
+  @override
+  String get whatToKnow => 'What they need to know';
+
+  @override
+  String get callDriver => 'Call the driver';
+
+  @override
+  String get messageLabel => 'Message';
+
+  @override
+  String get sentWithBooking => 'Sent with the booking';
+
+  @override
+  String get onYardSchedule => 'On the yard schedule · everyone can see it';
+
+  @override
+  String get addReturnJourney => 'Add the return journey';
+
+  @override
+  String get cancelFree => 'Cancel · free until Thursday noon';
+
+  @override
+  String get askQuestion => 'Ask a question';
+
+  @override
   String get back => 'পিছনে';
 
   @override
