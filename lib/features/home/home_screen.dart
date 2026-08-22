@@ -14,6 +14,7 @@ import '../../widgets/photo_placeholder.dart';
 import '../horses/add_horse_screen.dart';
 import '../horses/horse_profile_screen.dart';
 import '../market/market_screen.dart';
+import '../market/payments_screen.dart';
 import '../schedule/schedule_screen.dart';
 import '../transport/request_transport_screen.dart';
 import '../tasks/groom_day_screen.dart';
@@ -388,6 +389,14 @@ class _YouTab extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.zero,
       children: [
+        const Hairline(),
+        _NavRow(
+          title: l10n.payments,
+          subtitle: l10n.paymentsSub,
+          onTap: () => Navigator.of(context).pushNamed(PaymentsScreen.route),
+        ),
+        const Hairline(),
+        const SizedBox(height: 30),
         Text(l10n.language.toUpperCase(), style: AppText.eyebrow()),
         const SizedBox(height: 12),
         HairlineList(

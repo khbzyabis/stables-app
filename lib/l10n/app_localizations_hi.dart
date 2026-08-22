@@ -464,6 +464,73 @@ class AppL10nHi extends AppL10n {
   String get askQuestion => 'Ask a question';
 
   @override
+  String get payments => 'Payments';
+
+  @override
+  String get paymentsSub => 'Everything you\'ve paid for.';
+
+  @override
+  String get thisMonth => 'This month';
+
+  @override
+  String get notSettledYet => 'Not settled yet';
+
+  @override
+  String get filterShop => 'Shop';
+
+  @override
+  String get filterServices => 'Services';
+
+  @override
+  String get filterTransport => 'Transport';
+
+  @override
+  String get statePaid => 'Paid';
+
+  @override
+  String get stateNotCharged => 'Not yet charged';
+
+  @override
+  String get stateRefunded => 'Refunded';
+
+  @override
+  String get receipt => 'Receipt';
+
+  @override
+  String get sendReceiptPdf => 'Send this receipt as a PDF';
+
+  @override
+  String get seeOrderDelivery => 'See the order and its delivery';
+
+  @override
+  String get somethingWrongPayment => 'Something is wrong with this payment';
+
+  @override
+  String get receiptSellersNote =>
+      'One payment, but each seller is separate behind it: their own delivery, their own charge, their own return window. My Stables holds the money and pays each of them in turn.';
+
+  @override
+  String get cardDeclined => 'The card was declined';
+
+  @override
+  String get cardDeclinedBody =>
+      'Your bank refused it, so nothing was taken. Your basket is exactly as you left it.';
+
+  @override
+  String get tryAnotherCard => 'Try another card';
+
+  @override
+  String get backToBasket => 'Back to the basket';
+
+  @override
+  String get declinedHeld =>
+      'Both sellers still have the items held for two hours. After that the snaffle goes back on sale — there are six of them.';
+
+  @override
+  String get nobodyTold =>
+      'Nothing was sent to the yard board, and nobody has been told.';
+
+  @override
   String get back => 'पीछे';
 
   @override

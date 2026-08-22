@@ -19,10 +19,13 @@ import 'features/schedule/month_screen.dart';
 import 'features/schedule/schedule_screen.dart';
 import 'features/market/basket_screen.dart';
 import 'features/market/compare_quotes_screen.dart';
+import 'features/market/declined_screen.dart';
 import 'features/market/item_screen.dart';
 import 'features/market/market_screen.dart';
 import 'features/market/order_screen.dart';
+import 'features/market/payments_screen.dart';
 import 'features/market/quote_request_screen.dart';
+import 'features/market/receipt_screen.dart';
 import 'features/tasks/assign_task_screen.dart';
 import 'features/tasks/groom_day_screen.dart';
 import 'features/tasks/task_progress_screen.dart';
@@ -118,6 +121,9 @@ class _MyStablesAppState extends State<MyStablesApp> {
                 RequestTransportScreen.route: (_) => const RequestTransportScreen(),
                 TransportQuotesScreen.route: (_) => const TransportQuotesScreen(),
                 BookedJourneyScreen.route: (_) => const BookedJourneyScreen(),
+                PaymentsScreen.route: (_) => const PaymentsScreen(),
+                ReceiptScreen.route: (_) => const ReceiptScreen(),
+                DeclinedScreen.route: (_) => const DeclinedScreen(),
               },
             );
           },

@@ -963,6 +963,132 @@ abstract class AppL10n {
   /// **'Ask a question'**
   String get askQuestion;
 
+  /// No description provided for @payments.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
+  String get payments;
+
+  /// No description provided for @paymentsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything you\'ve paid for.'**
+  String get paymentsSub;
+
+  /// No description provided for @thisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get thisMonth;
+
+  /// No description provided for @notSettledYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not settled yet'**
+  String get notSettledYet;
+
+  /// No description provided for @filterShop.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop'**
+  String get filterShop;
+
+  /// No description provided for @filterServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get filterServices;
+
+  /// No description provided for @filterTransport.
+  ///
+  /// In en, this message translates to:
+  /// **'Transport'**
+  String get filterTransport;
+
+  /// No description provided for @statePaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get statePaid;
+
+  /// No description provided for @stateNotCharged.
+  ///
+  /// In en, this message translates to:
+  /// **'Not yet charged'**
+  String get stateNotCharged;
+
+  /// No description provided for @stateRefunded.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded'**
+  String get stateRefunded;
+
+  /// No description provided for @receipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt'**
+  String get receipt;
+
+  /// No description provided for @sendReceiptPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Send this receipt as a PDF'**
+  String get sendReceiptPdf;
+
+  /// No description provided for @seeOrderDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'See the order and its delivery'**
+  String get seeOrderDelivery;
+
+  /// No description provided for @somethingWrongPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Something is wrong with this payment'**
+  String get somethingWrongPayment;
+
+  /// No description provided for @receiptSellersNote.
+  ///
+  /// In en, this message translates to:
+  /// **'One payment, but each seller is separate behind it: their own delivery, their own charge, their own return window. My Stables holds the money and pays each of them in turn.'**
+  String get receiptSellersNote;
+
+  /// No description provided for @cardDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'The card was declined'**
+  String get cardDeclined;
+
+  /// No description provided for @cardDeclinedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your bank refused it, so nothing was taken. Your basket is exactly as you left it.'**
+  String get cardDeclinedBody;
+
+  /// No description provided for @tryAnotherCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another card'**
+  String get tryAnotherCard;
+
+  /// No description provided for @backToBasket.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to the basket'**
+  String get backToBasket;
+
+  /// No description provided for @declinedHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'Both sellers still have the items held for two hours. After that the snaffle goes back on sale — there are six of them.'**
+  String get declinedHeld;
+
+  /// No description provided for @nobodyTold.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing was sent to the yard board, and nobody has been told.'**
+  String get nobodyTold;
+
   /// No description provided for @back.
   ///
   /// In en, this message translates to:

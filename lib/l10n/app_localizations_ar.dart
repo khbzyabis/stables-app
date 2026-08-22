@@ -458,6 +458,72 @@ class AppL10nAr extends AppL10n {
   String get askQuestion => 'اطرح سؤالًا';
 
   @override
+  String get payments => 'المدفوعات';
+
+  @override
+  String get paymentsSub => 'كل ما دفعت مقابله.';
+
+  @override
+  String get thisMonth => 'هذا الشهر';
+
+  @override
+  String get notSettledYet => 'لم تُسوَّ بعد';
+
+  @override
+  String get filterShop => 'المتجر';
+
+  @override
+  String get filterServices => 'الخدمات';
+
+  @override
+  String get filterTransport => 'النقل';
+
+  @override
+  String get statePaid => 'مدفوع';
+
+  @override
+  String get stateNotCharged => 'لم يُخصم بعد';
+
+  @override
+  String get stateRefunded => 'مُسترَد';
+
+  @override
+  String get receipt => 'الإيصال';
+
+  @override
+  String get sendReceiptPdf => 'أرسِل هذا الإيصال كـ PDF';
+
+  @override
+  String get seeOrderDelivery => 'عرض الطلب وتوصيله';
+
+  @override
+  String get somethingWrongPayment => 'هناك خطأ في هذه الدفعة';
+
+  @override
+  String get receiptSellersNote =>
+      'دفعة واحدة، لكن كل بائع منفصل خلفها: توصيله الخاص، خصمه الخاص، ونافذة إرجاعه الخاصة. تحتفظ My Stables بالمال وتدفع لكلٍّ منهم بدوره.';
+
+  @override
+  String get cardDeclined => 'رُفضت البطاقة';
+
+  @override
+  String get cardDeclinedBody =>
+      'رفضها بنكك، فلم يُؤخذ شيء. سلتك كما تركتها تمامًا.';
+
+  @override
+  String get tryAnotherCard => 'جرّب بطاقة أخرى';
+
+  @override
+  String get backToBasket => 'العودة إلى السلة';
+
+  @override
+  String get declinedHeld =>
+      'لا يزال البائعان يحتفظان بالعناصر لمدة ساعتين. بعدها يعود اللجام للبيع — منه ستة.';
+
+  @override
+  String get nobodyTold => 'لم يُرسَل شيء إلى لوحة الإسطبل، ولم يُبلَّغ أحد.';
+
+  @override
   String get back => 'رجوع';
 
   @override
