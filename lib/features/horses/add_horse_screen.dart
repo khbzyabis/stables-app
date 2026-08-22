@@ -46,31 +46,43 @@ class _AddHorseScreenState extends State<AddHorseScreen> {
     super.dispose();
   }
 
+  bool _saving = false;
+
   TextEditingController _controllerFor(String key) =>
       _detailControllers.putIfAbsent(key, TextEditingController.new);
 
-  void _save() {
+  Future<void> _save() async {
     final store = StableScope.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
     final name = _name.text.trim();
-    if (name.isEmpty) return;
+    if (name.isEmpty || _saving) return;
     String? v(String k) {
       final t = _detailControllers[k]?.text.trim();
       return (t == null || t.isEmpty) ? null : t;
     }
 
-    store.addHorse(Horse(
-      id: store.nextId(),
-      name: name,
-      status: HorseStatus.well,
-      addedToday: true,
-      age: v('age'),
-      breed: v('breed'),
-      sex: v('sex'),
-      height: v('height'),
-      box: v('box'),
-      notes: v('notes'),
-    ));
-    Navigator.of(context).pop();
+    setState(() => _saving = true);
+    try {
+      await store.addHorse(Horse(
+        id: store.nextId(),
+        name: name,
+        status: HorseStatus.well,
+        addedToday: true,
+        age: v('age'),
+        breed: v('breed'),
+        sex: v('sex'),
+        height: v('height'),
+        box: v('box'),
+        notes: v('notes'),
+      ));
+      navigator.pop();
+    } catch (e) {
+      if (mounted) setState(() => _saving = false);
+      messenger.showSnackBar(
+        SnackBar(content: Text("Couldn't save — $e")),
+      );
+    }
   }
 
   @override
@@ -111,7 +123,10 @@ class _AddHorseScreenState extends State<AddHorseScreen> {
             const Hairline(),
           ],
           const SizedBox(height: 40),
-          AppButton(label: l10n.saveHorse, onPressed: _save),
+          AppButton(
+            label: l10n.saveHorse,
+            onPressed: _saving ? null : _save,
+          ),
           const SizedBox(height: 16),
           Text(l10n.fillLater,
               textAlign: TextAlign.center,

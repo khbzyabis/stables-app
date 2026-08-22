@@ -123,6 +123,22 @@ class _HorsesTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppL10n.of(context);
+
+    if (store.status == LoadStatus.loading) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.only(top: 60),
+          child: CircularProgressIndicator(
+            color: AppColors.accent,
+            strokeWidth: 2.4,
+          ),
+        ),
+      );
+    }
+    if (store.status == LoadStatus.error) {
+      return _ErrorState(message: store.error, onRetry: store.load);
+    }
+
     return ListView(
       padding: EdgeInsets.zero,
       children: [
@@ -347,6 +363,35 @@ class _TextAction extends StatelessWidget {
       onTap: onTap,
       child: Text(label,
           style: AppText.body(16, color: AppColors.accent700)),
+    );
+  }
+}
+
+class _ErrorState extends StatelessWidget {
+  const _ErrorState({required this.message, required this.onRetry});
+  final String? message;
+  final Future<void> Function() onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 40),
+        Text("Couldn't reach the stable",
+            style: AppText.heading(23, height: 1.1)),
+        const SizedBox(height: 8),
+        Text(
+          message ?? 'Check your connection and try again.',
+          style: AppText.body(15, color: AppColors.ink(0.6)),
+        ),
+        const SizedBox(height: 20),
+        GestureDetector(
+          onTap: () => onRetry(),
+          child: Text('Try again',
+              style: AppText.heading(17, color: AppColors.accent700)),
+        ),
+      ],
     );
   }
 }

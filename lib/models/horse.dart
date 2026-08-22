@@ -37,4 +37,35 @@ class Horse {
 
   bool get hasDetails =>
       [age, breed, sex, height, box, notes].any((v) => v != null && v.isNotEmpty);
+
+  /// Parse a horse from the API's JSON representation.
+  factory Horse.fromJson(Map<String, dynamic> json) {
+    return Horse(
+      id: json['id'] as String,
+      name: json['name'] as String? ?? '',
+      statusLine: json['statusLine'] as String? ?? '',
+      status: json['status'] == 'watch' ? HorseStatus.watch : HorseStatus.well,
+      age: json['age'] as String?,
+      breed: json['breed'] as String?,
+      sex: json['sex'] as String?,
+      height: json['height'] as String?,
+      box: json['box'] as String?,
+      notes: json['notes'] as String?,
+    );
+  }
+
+  /// The payload sent when creating a horse (name required; rest optional).
+  Map<String, dynamic> toCreateJson() {
+    return {
+      'name': name,
+      'status': status == HorseStatus.watch ? 'watch' : 'well',
+      if (statusLine.isNotEmpty) 'statusLine': statusLine,
+      if (age != null && age!.isNotEmpty) 'age': age,
+      if (breed != null && breed!.isNotEmpty) 'breed': breed,
+      if (sex != null && sex!.isNotEmpty) 'sex': sex,
+      if (height != null && height!.isNotEmpty) 'height': height,
+      if (box != null && box!.isNotEmpty) 'box': box,
+      if (notes != null && notes!.isNotEmpty) 'notes': notes,
+    };
+  }
 }

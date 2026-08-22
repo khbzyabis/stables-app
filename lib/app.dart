@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'api/api_client.dart';
+import 'api/api_config.dart';
+import 'api/horses_api.dart';
 import 'app_state.dart';
 import 'data/stable_store.dart';
 import 'features/auth/create_stable_screen.dart';
@@ -23,7 +26,11 @@ class MyStablesApp extends StatefulWidget {
 
 class _MyStablesAppState extends State<MyStablesApp> {
   final _localeController = LocaleController();
-  final _stableStore = StableStore();
+  // Talk to the real API when one is configured (dart-define API_BASE_URL);
+  // otherwise run offline with local sample data.
+  final _stableStore = StableStore(
+    api: ApiConfig.isConfigured ? HorsesApi(ApiClient()) : null,
+  );
 
   @override
   void initState() {
