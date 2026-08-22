@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/organic-07b13dc3-fcc8-4e70-b2c2-fd7f5889f38a/styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600&family=Gabarito:wght@500;600;700&display=swap">
+<style>
+body{margin:0;background:#e7dcc8;font-family:var(--font-body,system-ui)}
+a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-600)}
+</style>
+</helmet>
+
+<div style="display:flex;width:1440px;height:920px;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);overflow:hidden">
+
+  <div style="width:248px;flex:none;background:var(--color-neutral-900);color:var(--color-neutral-100);display:flex;flex-direction:column;padding:26px 0 18px">
+    <div style="padding:0 22px 22px">
+      <div style="font-family:Gabarito,var(--font-body);font-weight:600;font-size:17px;line-height:1.2">Al Suwaidi</div>
+      <div style="font-size:12px;opacity:.55;margin-top:4px;line-height:1.4">Farriery and supplies</div>
+      <div style="display:flex;gap:6px;margin-top:12px">
+        <span style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:var(--color-accent-2-700);color:var(--color-accent-2-100)">Approved</span>
+        <span style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:color-mix(in srgb, var(--color-neutral-100) 14%, transparent);color:var(--color-neutral-200)">Shop + service</span>
+      </div>
+    </div>
+
+    <div style="flex:1;overflow:auto;padding:0 12px">
+      <sc-for list="{{ navGroups }}" as="g" hint-placeholder-count="4">
+        <div style="margin-bottom:16px">
+          <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.4;padding:0 10px 7px">{{ g.label }}</div>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+              <button onClick="{{ it.pick }}" style="{{ it.style }}">
+                <span style="flex:1;text-align:left">{{ it.label }}</span>
+                <span style="{{ it.badgeStyle }}">{{ it.badge }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="padding:14px 22px 0;border-top:1px solid color-mix(in srgb, var(--color-neutral-100) 14%, transparent)">
+      <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.4;margin-bottom:8px">Next payout</div>
+      <div style="font-size:15px;font-family:Gabarito,var(--font-body);font-weight:600">{{ nextPayout }}</div>
+      <div style="font-size:12px;opacity:.5;margin-top:3px">{{ nextPayoutDate }}</div>
+    </div>
+  </div>
+
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <div style="flex:none;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;padding:26px 40px 18px;border-bottom:1px solid var(--color-divider)">
+      <div>
+        <h1 style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:30px;line-height:1;margin:0 0 7px">{{ pageTitle }}</h1>
+        <div style="font-size:14px;opacity:.6">{{ pageSub }}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:20px;flex:none">
+        <div style="text-align:right">
+          <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;margin-bottom:4px">Held</div>
+          <div style="font-family:Gabarito,var(--font-body);font-weight:600;font-size:19px">{{ heldTotal }}</div>
+        </div>
+        <div style="width:1px;height:38px;background:var(--color-divider)"></div>
+        <div style="text-align:right">
+          <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;margin-bottom:4px">Payable</div>
+          <div style="font-family:Gabarito,var(--font-body);font-weight:600;font-size:19px;color:var(--color-accent-2-700)">{{ payableTotal }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex:1;overflow:auto;padding:28px 40px 44px">
+
+      <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--color-divider);border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
+            <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
+              <div style="background:var(--color-bg);padding:19px 20px 21px">
+                <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.5;margin-bottom:11px">{{ k.label }}</div>
+                <div style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:30px;line-height:1">{{ k.value }}</div>
+                <div style="font-size:13px;margin-top:8px;opacity:.65">{{ k.note }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:52px;margin-top:36px">
+            <div>
+              <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:8px">Waiting on you</div>
+              <div style="display:flex;flex-direction:column">
+                <sc-for list="{{ todo }}" as="t" hint-placeholder-count="5">
+                  <div>
+                    <div style="height:1px;background:var(--color-divider)"></div>
+                    <div style="display:flex;gap:14px;align-items:baseline;padding:15px 0">
+                      <div style="flex:1;min-width:0">
+                        <div style="font-size:16px;line-height:1.35">{{ t.text }}</div>
+                        <div style="font-size:13px;opacity:.5;margin-top:4px">{{ t.meta }}</div>
+                      </div>
+                      <span class="{{ t.tagClass }}" style="font-size:11px;padding:4px 10px;flex:none">{{ t.tag }}</span>
+                    </div>
+                  </div>
+                </sc-for>
+                <div style="height:1px;background:var(--color-divider)"></div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:18px">How money reaches you</div>
+              <div style="display:flex;flex-direction:column;gap:0">
+                <sc-for list="{{ moneySteps }}" as="m" hint-placeholder-count="4">
+                  <div style="display:flex;gap:16px">
+                    <div style="display:flex;flex-direction:column;align-items:center;flex:none;width:26px">
+                      <div style="{{ m.dotStyle }}"></div>
+                      <div style="{{ m.lineStyle }}"></div>
+                    </div>
+                    <div style="padding-bottom:20px;min-width:0">
+                      <div style="font-size:16px;line-height:1.3">{{ m.title }}</div>
+                      <div style="font-size:14px;opacity:.6;margin-top:5px;line-height:1.5">{{ m.detail }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isOrders }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:flex;gap:8px;margin-bottom:22px">
+            <sc-for list="{{ orderFilters }}" as="f" hint-placeholder-count="5">
+              <button onClick="{{ f.pick }}" style="{{ f.style }}">{{ f.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:.75fr 1.15fr 1.5fr .75fr 1fr .95fr;gap:0 20px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;padding-bottom:12px">
+            <div>Order</div><div>Stable</div><div>Items</div><div>Total</div><div>Payable</div><div style="text-align:right">State</div>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ orderRows }}" as="o" hint-placeholder-count="7">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="display:grid;grid-template-columns:.75fr 1.15fr 1.5fr .75fr 1fr .95fr;gap:0 20px;align-items:center;padding:15px 0">
+                  <div style="font-size:15px">{{ o.id }}</div>
+                  <div style="font-size:15px">{{ o.stable }}</div>
+                  <div style="font-size:14px;opacity:.75;line-height:1.4">{{ o.items }}</div>
+                  <div style="font-size:15px">{{ o.total }}</div>
+                  <div style="font-size:14px;opacity:.7">{{ o.payable }}</div>
+                  <div style="text-align:right"><span class="{{ o.tagClass }}" style="font-size:11px;padding:4px 10px">{{ o.state }}</span></div>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+          <div style="font-size:14px;opacity:.55;margin-top:18px;max-width:74ch;line-height:1.55">A sale is not payable the day it arrives. It sits until the return window closes, so the money is still with My Stables if the buyer disputes it.</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isReturns }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <p style="font-size:16px;line-height:1.6;margin:0 0 24px;max-width:72ch;opacity:.75;text-wrap:pretty">You respond, but you do not decide. If you and the buyer disagree, My Stables arbitrates and the money moves according to that decision. Services cannot be returned.</p>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ returns }}" as="r" hint-placeholder-count="4">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="padding:18px 0">
+                  <div style="display:flex;gap:20px;align-items:baseline">
+                    <div style="width:78px;flex:none;font-size:14px;opacity:.5">{{ r.id }}</div>
+                    <div style="flex:1;min-width:0">
+                      <div style="font-size:17px;line-height:1.35">{{ r.item }}</div>
+                      <div style="font-size:14px;opacity:.6;margin-top:5px;line-height:1.5">{{ r.reason }}</div>
+                    </div>
+                    <div style="width:110px;flex:none;font-size:15px">{{ r.amount }}</div>
+                    <span class="{{ r.tagClass }}" style="font-size:11px;padding:4px 10px;flex:none">{{ r.state }}</span>
+                    <div style="width:150px;flex:none;text-align:right">
+                      <button onClick="{{ r.act }}" style="{{ r.actionStyle }}">{{ r.action }}</button>
+                    </div>
+                  </div>
+                  <sc-if value="{{ r.arbitrated }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin:14px 0 0 98px;padding-left:16px;border-left:2px solid var(--color-accent-2-300)">
+                      <div style="font-size:13px;opacity:.5;margin-bottom:5px">My Stables decided · 19 Aug</div>
+                      <div style="font-size:15px;line-height:1.55">{{ r.decision }}</div>
+                    </div>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ adding }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:56px;max-width:1120px">
+          <div>
+            <div class="field" style="margin-bottom:22px">
+              <label style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:9px">What is it</label>
+              <input class="input" placeholder="Brushing boots, pair" style="min-height:52px;font-size:16px;background:var(--color-neutral-100);border-color:transparent">
+            </div>
+
+            <div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:11px">Group</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px">
+              <sc-for list="{{ newGroupChips }}" as="g" hint-placeholder-count="6">
+                <button onClick="{{ g.pick }}" style="{{ g.style }}">{{ g.label }}</button>
+              </sc-for>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:26px">
+              <div class="field">
+                <label style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:9px">Price</label>
+                <input class="input" placeholder="AED 170" style="min-height:52px;font-size:16px;background:var(--color-neutral-100);border-color:transparent">
+              </div>
+              <div class="field">
+                <label style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:9px">How many</label>
+                <input class="input" placeholder="24" style="min-height:52px;font-size:16px;background:var(--color-neutral-100);border-color:transparent">
+              </div>
+            </div>
+
+            <div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:11px">Condition</div>
+            <div style="display:flex;gap:8px;margin-bottom:26px">
+              <sc-for list="{{ kindChips }}" as="k" hint-placeholder-count="3">
+                <button onClick="{{ k.pick }}" style="{{ k.style }}">{{ k.label }}</button>
+              </sc-for>
+            </div>
+
+            <div style="padding:16px 18px;border-radius:22px;background:var(--color-neutral-100);margin-bottom:26px">
+              <div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;margin-bottom:12px">What you get for it</div>
+              <div style="display:flex;flex-direction:column;gap:2px">
+                <sc-for list="{{ feeBreakdown }}" as="b" hint-placeholder-count="3">
+                  <div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0">
+                    <div style="{{ b.labelStyle }}">{{ b.label }}</div>
+                    <div style="{{ b.valueStyle }}">{{ b.value }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:14px">
+                <sc-for list="{{ priceChips }}" as="p" hint-placeholder-count="4">
+                  <button onClick="{{ p.pick }}" style="{{ p.style }}">{{ p.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+
+            <div class="field" style="margin-bottom:26px">
+              <label style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:9px">Description</label>
+              <textarea class="input" rows="4" placeholder="Sizes, materials, what it suits. Riders buy on detail — say the actual measurements." style="font-size:16px;line-height:1.55;background:var(--color-neutral-100);border-color:transparent;resize:none;border-radius:22px;padding:14px 16px;min-height:112px;display:block"></textarea>
+            </div>
+
+            <div style="display:flex;gap:10px;align-items:center">
+              <button onClick="{{ sendForReview }}" class="btn btn-primary" style="min-height:50px;font-size:16px;font-family:Gabarito,var(--font-body);font-weight:600;padding:0 24px">{{ sendLabel }}</button>
+              <button onClick="{{ cancelAdd }}" class="btn btn-secondary" style="min-height:50px;font-size:16px;padding:0 22px">Cancel</button>
+            </div>
+            <sc-if value="{{ newSent }}" hint-placeholder-val="{{ false }}">
+              <p style="font-size:15px;line-height:1.6;margin:18px 0 0;color:var(--color-accent-700);max-width:56ch">Sent. It sits in Listings as Awaiting review, switched off, until My Stables approves it.</p>
+            </sc-if>
+          </div>
+
+          <div>
+            <div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:11px">Photos</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+              <div style="aspect-ratio:1;border-radius:20px;border:1px dashed var(--color-divider);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--color-accent-700);cursor:pointer">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+                <span style="font-size:14px">Main photo</span>
+              </div>
+              <div style="aspect-ratio:1;border-radius:20px;border:1px dashed var(--color-divider);display:flex;align-items:center;justify-content:center;font-size:14px;opacity:.45">Another</div>
+              <div style="aspect-ratio:1;border-radius:20px;border:1px dashed var(--color-divider);display:flex;align-items:center;justify-content:center;font-size:14px;opacity:.45">Another</div>
+              <div style="aspect-ratio:1;border-radius:20px;border:1px dashed var(--color-divider);display:flex;align-items:center;justify-content:center;font-size:14px;opacity:.45">Another</div>
+            </div>
+            <p style="font-size:14px;line-height:1.55;margin:0 0 30px;opacity:.6;max-width:44ch">One clean photo against a plain background sells better than four dark ones. Show wear honestly if it is used.</p>
+
+            <div style="padding-left:16px;border-left:2px solid var(--color-accent-2-300);max-width:46ch">
+              <div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:8px">Before it goes live</div>
+              <p style="font-size:15px;line-height:1.6;margin:0 0 10px">{{ reviewNote }}</p>
+              <p style="font-size:15px;line-height:1.6;margin:0;opacity:.75">You cannot list medicines — that needs a veterinary licence against your account.</p>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isListings }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:grid;grid-template-columns:1.6fr .8fr .7fr .8fr 1fr .7fr;gap:0 20px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;padding-bottom:12px">
+            <div>Item</div><div>Price</div><div>Stock</div><div>Sold, 30 days</div><div>Review</div><div style="text-align:right">Live</div>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ listings }}" as="l" hint-placeholder-count="6">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="{{ l.rowStyle }}">
+                  <div style="display:flex;align-items:center;gap:13px;min-width:0">
+                    <div style="width:42px;height:42px;border-radius:12px;flex:none;background:var(--color-neutral-300);display:flex;align-items:center;justify-content:center;font-size:9px;letter-spacing:.04em;text-transform:uppercase;color:var(--color-neutral-700)">Photo</div>
+                    <div style="min-width:0">
+                      <div style="font-size:16px;line-height:1.3">{{ l.name }}</div>
+                      <div style="font-size:13px;opacity:.5;margin-top:3px">{{ l.group }}</div>
+                    </div>
+                  </div>
+                  <div style="font-size:15px">{{ l.price }}</div>
+                  <div style="font-size:15px">{{ l.stock }}</div>
+                  <div style="font-size:15px;opacity:.75">{{ l.sold }}</div>
+                  <div><span class="{{ l.tagClass }}" style="font-size:11px;padding:4px 10px">{{ l.review }}</span></div>
+                  <div style="display:flex;justify-content:flex-end">
+                    <button onClick="{{ l.toggle }}" style="{{ l.switchStyle }}"><span style="{{ l.knobStyle }}"></span></button>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+          <div style="display:flex;gap:26px;align-items:baseline;margin-top:20px;flex-wrap:wrap">
+            <button onClick="{{ startAdd }}" class="btn btn-primary" style="min-height:46px;font-size:15px;font-family:Gabarito,var(--font-body);font-weight:600;padding:0 22px">Add an item</button>
+            <div style="font-size:14px;opacity:.55;max-width:60ch;line-height:1.55">Anything you list is checked by My Stables before riders see it. Medicines and feed supplements are checked by hand.</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isRequests }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <p style="font-size:16px;line-height:1.6;margin:0 0 24px;max-width:72ch;opacity:.75;text-wrap:pretty">A stable can ask several farriers at once, so speed matters. Answer with a range, not a figure — you have not seen the horse yet.</p>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ requests }}" as="q" hint-placeholder-count="4">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="padding:19px 0">
+                  <div style="display:flex;gap:20px;align-items:flex-start">
+                    <div style="flex:1;min-width:0">
+                      <div style="font-size:17px;line-height:1.35">{{ q.what }}</div>
+                      <div style="font-size:14px;opacity:.6;margin-top:5px;line-height:1.5">{{ q.meta }}</div>
+                    </div>
+                    <div style="width:130px;flex:none;font-size:14px;opacity:.7">{{ q.needed }}</div>
+                    <div style="width:120px;flex:none;font-size:14px;opacity:.55">{{ q.competing }}</div>
+                    <span class="{{ q.tagClass }}" style="font-size:11px;padding:4px 10px;flex:none">{{ q.state }}</span>
+                    <div style="width:118px;flex:none;text-align:right">
+                      <button onClick="{{ q.act }}" style="{{ q.actionStyle }}">{{ q.action }}</button>
+                    </div>
+                  </div>
+                  <sc-if value="{{ q.quoted }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;gap:20px;align-items:center;margin-top:14px;padding:14px 16px;border-radius:20px;background:var(--color-neutral-100)">
+                      <div style="flex:1">
+                        <div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;margin-bottom:6px">Your quote</div>
+                        <div style="font-family:Gabarito,var(--font-body);font-weight:600;font-size:19px">{{ q.range }}</div>
+                      </div>
+                      <div style="flex:1;font-size:14px;line-height:1.5;opacity:.7">{{ q.expiry }}</div>
+                      <div style="flex:1;font-size:14px;line-height:1.5;opacity:.7">Accepting it books your calendar there and then.</div>
+                    </div>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isJobs }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:flex;gap:8px;margin-bottom:22px">
+            <sc-for list="{{ jobFilters }}" as="f" hint-placeholder-count="3">
+              <button onClick="{{ f.pick }}" style="{{ f.style }}">{{ f.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ jobs }}" as="j" hint-placeholder-count="6">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="display:flex;gap:20px;align-items:baseline;padding:16px 0">
+                  <div style="width:130px;flex:none">
+                    <div style="font-size:15px">{{ j.day }}</div>
+                    <div style="font-size:13px;opacity:.5;margin-top:3px">{{ j.time }}</div>
+                  </div>
+                  <div style="width:170px;flex:none;font-size:15px">{{ j.stable }}</div>
+                  <div style="flex:1;min-width:0">
+                    <div style="font-size:16px;line-height:1.35">{{ j.what }}</div>
+                    <div style="font-size:13px;opacity:.5;margin-top:4px">{{ j.horses }}</div>
+                  </div>
+                  <div style="width:100px;flex:none;font-size:15px">{{ j.fee }}</div>
+                  <span class="{{ j.tagClass }}" style="font-size:11px;padding:4px 10px;flex:none">{{ j.state }}</span>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+          <div style="font-size:14px;opacity:.55;margin-top:18px;max-width:70ch;line-height:1.55">Notes you write on a job reach the stable, not the horse's health record. Only the stable can write there.</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isPayouts }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--color-divider);border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);margin-bottom:34px">
+            <sc-for list="{{ payoutKpis }}" as="k" hint-placeholder-count="4">
+              <div style="background:var(--color-bg);padding:19px 20px 21px">
+                <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.5;margin-bottom:11px">{{ k.label }}</div>
+                <div style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:28px;line-height:1">{{ k.value }}</div>
+                <div style="font-size:13px;margin-top:8px;opacity:.65">{{ k.note }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr .9fr .9fr .9fr 1fr;gap:0 20px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;padding-bottom:12px">
+            <div>Period</div><div>Paid on</div><div>Sales</div><div>Refunds</div><div>Fee</div><div style="text-align:right">Paid to you</div>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ payouts }}" as="p" hint-placeholder-count="5">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="{{ p.rowStyle }}">
+                  <div style="font-size:15px">{{ p.period }}</div>
+                  <div style="font-size:15px;opacity:.75">{{ p.paidOn }}</div>
+                  <div style="font-size:15px">{{ p.sales }}</div>
+                  <div style="font-size:15px;opacity:.75">{{ p.refunds }}</div>
+                  <div style="font-size:15px;opacity:.75">{{ p.fee }}</div>
+                  <div style="text-align:right;font-family:Gabarito,var(--font-body);font-weight:600;font-size:16px">{{ p.net }}</div>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+          <div style="font-size:14px;opacity:.55;margin-top:18px;max-width:74ch;line-height:1.55">Twice a month, on the 1st and the 15th, to the account ending 4417. My Stables takes 8% of goods and 5% of service visits, never anything from delivery. A rate change is told to you before the period it applies to, and nothing already sold is recalculated.</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isEarnings }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:20px">Earned per half-month</div>
+          <div style="display:flex;align-items:flex-end;gap:16px;height:210px;margin-bottom:34px">
+            <sc-for list="{{ earningsChart }}" as="c" hint-placeholder-count="8">
+              <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:9px;height:100%">
+                <div style="font-size:13px;opacity:.55">{{ c.value }}</div>
+                <div style="{{ c.barStyle }}"></div>
+                <div style="font-size:12px;opacity:.5">{{ c.label }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:52px">
+            <div>
+              <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:8px">Where it came from</div>
+              <div style="display:flex;flex-direction:column">
+                <sc-for list="{{ earningsSplit }}" as="e" hint-placeholder-count="4">
+                  <div>
+                    <div style="height:1px;background:var(--color-divider)"></div>
+                    <div style="display:flex;gap:16px;align-items:center;padding:14px 0">
+                      <div style="flex:1;font-size:16px">{{ e.label }}</div>
+                      <div style="width:210px;flex:none;height:8px;border-radius:999px;background:var(--color-neutral-200);overflow:hidden">
+                        <div style="{{ e.barStyle }}"></div>
+                      </div>
+                      <div style="width:90px;flex:none;text-align:right;font-size:15px">{{ e.value }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+                <div style="height:1px;background:var(--color-divider)"></div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:8px">Best customers</div>
+              <div style="display:flex;flex-direction:column">
+                <sc-for list="{{ topBuyers }}" as="b" hint-placeholder-count="4">
+                  <div>
+                    <div style="height:1px;background:var(--color-divider)"></div>
+                    <div style="display:flex;gap:16px;align-items:baseline;padding:14px 0">
+                      <div style="flex:1;min-width:0">
+                        <div style="font-size:16px">{{ b.name }}</div>
+                        <div style="font-size:13px;opacity:.5;margin-top:3px">{{ b.meta }}</div>
+                      </div>
+                      <div style="font-size:15px;flex:none">{{ b.value }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+                <div style="height:1px;background:var(--color-divider)"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isAccount }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:56px">
+          <div>
+            <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:8px">What you were approved for</div>
+            <div style="display:flex;flex-direction:column;margin-bottom:32px">
+              <sc-for list="{{ approvals }}" as="a" hint-placeholder-count="5">
+                <div>
+                  <div style="height:1px;background:var(--color-divider)"></div>
+                  <div style="display:flex;gap:16px;align-items:baseline;padding:15px 0">
+                    <div style="flex:1;min-width:0">
+                      <div style="font-size:16px;line-height:1.35">{{ a.label }}</div>
+                      <div style="font-size:13px;opacity:.5;margin-top:4px">{{ a.meta }}</div>
+                    </div>
+                    <span class="{{ a.tagClass }}" style="font-size:11px;padding:4px 10px;flex:none">{{ a.state }}</span>
+                  </div>
+                </div>
+              </sc-for>
+              <div style="height:1px;background:var(--color-divider)"></div>
+            </div>
+            <div style="max-width:60ch">
+              <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:10px">If you are suspended</div>
+              <p style="font-size:15px;line-height:1.6;margin:0;opacity:.75;text-wrap:pretty">Your listings come down and no new orders arrive. Jobs already booked stand, and money already held is still paid out on the normal cycle. You are told the reason and who to reply to.</p>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:8px">Who can act for you</div>
+            <div style="display:flex;flex-direction:column;margin-bottom:32px">
+              <sc-for list="{{ staff }}" as="p" hint-placeholder-count="3">
+                <div>
+                  <div style="height:1px;background:var(--color-divider)"></div>
+                  <div style="display:flex;gap:14px;align-items:center;padding:15px 0">
+                    <div style="width:34px;height:34px;border-radius:50%;flex:none;background:var(--color-accent-2-300);color:var(--color-accent-2-900);display:flex;align-items:center;justify-content:center;font-family:Gabarito,var(--font-body);font-weight:600;font-size:14px">{{ p.initial }}</div>
+                    <div style="flex:1;min-width:0">
+                      <div style="font-size:16px">{{ p.name }}</div>
+                      <div style="font-size:13px;opacity:.5;margin-top:3px">{{ p.can }}</div>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+              <div style="height:1px;background:var(--color-divider)"></div>
+            </div>
+            <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:10px">Also a rider</div>
+            <p style="font-size:15px;line-height:1.6;margin:0;opacity:.75;max-width:56ch;text-wrap:pretty">Hamad keeps two horses at Serc as a rider. That account and this one are the same login — the app switches between being a customer and being a seller, and neither can see the other's records.</p>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:920}}">
+class Component extends DCLogic {
+  sectionDefs = [
+    { id: 'overview', label: 'Overview', group: 'Today', title: 'Overview', sub: 'Al Suwaidi · farriery and supplies · approved 12 Jun' },
+    { id: 'orders', label: 'Orders', group: 'Shop', title: 'Orders', sub: 'Things people bought and what you owe them', badge: '3' },
+    { id: 'returns', label: 'Returns', group: 'Shop', title: 'Returns and disputes', sub: 'My Stables arbitrates · services cannot be returned', badge: '2' },
+    { id: 'listings', label: 'Listings', group: 'Shop', title: 'Listings', sub: 'Everything you sell, and whether riders can see it' },
+    { id: 'requests', label: 'Requests', group: 'Services', title: 'Requests', sub: 'Answer with a range, before someone else does', badge: '2' },
+    { id: 'jobs', label: 'Jobs', group: 'Services', title: 'Jobs', sub: 'Accepted work, in the order you will do it' },
+    { id: 'payouts', label: 'Payouts', group: 'Money', title: 'Payouts', sub: 'Twice a month, on the 1st and the 15th' },
+    { id: 'earnings', label: 'Earnings', group: 'Money', title: 'Earnings', sub: 'What you have earned, and from whom' },
+    { id: 'account', label: 'Account', group: 'Account', title: 'Account and approval', sub: 'What My Stables has approved you to do' },
+  ];
+
+  orderDefs = [
+    { id: '#4021', stable: 'Serc', items: 'Brushing boots ×2, hoof oil', total: 'AED 340', payable: '2 Sep · window open', state: 'Delivered', tag: 'tag tag-accent-2', bucket: 'Delivered' },
+    { id: '#4019', stable: 'Al Marmoom', items: 'Feed balancer 20 kg ×3', total: 'AED 585', payable: '29 Aug · window open', state: 'Delivered', tag: 'tag tag-accent-2', bucket: 'Delivered' },
+    { id: '#4018', stable: 'Sharjah Riding Club', items: 'Loose ring snaffle', total: 'AED 210', payable: 'Held · return raised', state: 'Disputed', tag: 'tag tag-accent', bucket: 'Disputed' },
+    { id: '#4016', stable: 'Emirates Park', items: 'Rubber reins ×4', total: 'AED 460', payable: 'To pack', state: 'New', tag: 'tag tag-accent', bucket: 'New' },
+    { id: '#4015', stable: 'Wadi Hoof', items: 'Grackle noseband', total: 'AED 275', payable: 'To pack', state: 'New', tag: 'tag tag-accent', bucket: 'New' },
+    { id: '#4009', stable: 'Serc', items: 'Hoof pick ×6, poultice', total: 'AED 190', payable: 'Paid 15 Aug', state: 'Settled', tag: 'tag tag-neutral', bucket: 'Settled' },
+    { id: '#4004', stable: 'Desert Rose Yard', items: 'Feed balancer 20 kg', total: 'AED 195', payable: 'Paid 15 Aug', state: 'Settled', tag: 'tag tag-neutral', bucket: 'Settled' },
+  ];
+
+  returnDefs = [
+    { id: '#4018', item: 'Loose ring snaffle · Sharjah Riding Club', reason: 'Buyer says the mouthpiece is 125 mm, the listing said 115 mm.', amount: 'AED 210', state: 'With My Stables', tag: 'tag tag-accent', action: 'Reply', arbitrated: false },
+    { id: '#3998', item: 'Feed balancer 20 kg · Al Marmoom', reason: 'Bag split in transit. Photo attached.', amount: 'AED 195', state: 'Refunded', tag: 'tag tag-neutral', action: 'View', arbitrated: true, decision: 'Refunded in full and taken off your next payout. Carrier damage — we have raised it with the courier, not with you.' },
+    { id: '#3981', item: 'Brushing boots ×2 · Serc', reason: 'Wrong size ordered by the buyer.', amount: 'AED 240', state: 'You approved', tag: 'tag tag-accent-2', action: 'View', arbitrated: false },
+    { id: '#3975', item: 'Farrier visit · Emirates Park', reason: 'Buyer asked to return a completed visit.', amount: 'AED 0', state: 'Not returnable', tag: 'tag tag-neutral', action: 'View', arbitrated: true, decision: 'Services are not returnable. We explained that to the buyer and closed it. Nothing was taken from you.' },
+  ];
+
+  listingDefs = [
+    { id: 'l1', name: 'Brushing boots, pair', group: 'Boots and bandages', price: 'AED 170', stock: '24', sold: '11', review: 'Approved', tag: 'tag tag-accent-2', on: true },
+    { id: 'l2', name: 'Feed balancer, 20 kg', group: 'Feed', price: 'AED 195', stock: '8', sold: '19', review: 'Approved', tag: 'tag tag-accent-2', on: true },
+    { id: 'l3', name: 'Loose ring snaffle, 115 mm', group: 'Bits', price: 'AED 210', stock: '6', sold: '4', review: 'Held · size query', tag: 'tag tag-accent', on: false },
+    { id: 'l4', name: 'Hoof oil and brush', group: 'Hoofcare', price: 'AED 85', stock: '40', sold: '22', review: 'Approved', tag: 'tag tag-accent-2', on: true },
+    { id: 'l5', name: 'Electrolyte sachets, box of 20', group: 'Supplements', price: 'AED 130', stock: '15', sold: '7', review: 'Checked by hand', tag: 'tag tag-neutral', on: true },
+    { id: 'l6', name: 'Grackle noseband', group: 'Nosebands', price: 'AED 275', stock: '3', sold: '2', review: 'Approved', tag: 'tag tag-accent-2', on: true },
+  ];
+
+  requestDefs = [
+    { id: 'r1', what: 'Front shoes, one horse', meta: 'Serc · Comme Ci · box rest ended, needs checking first', needed: 'This Thursday', competing: '2 others asked', state: 'New', tag: 'tag tag-accent', action: 'Quote', quoted: false, range: '', expiry: '' },
+    { id: 'r2', what: 'Full set, four horses', meta: 'Al Marmoom Equestrian · yard visit', needed: 'Week of 1 Sep', competing: '3 others asked', state: 'Quoted', tag: 'tag tag-accent-2', action: 'Withdraw', quoted: true, range: 'AED 900 – 1,200', expiry: 'Expires in 3 days, then it disappears from their list.' },
+    { id: 'r3', what: 'Lame behind, opinion wanted', meta: 'Wadi Hoof · they have already called the vet', needed: 'As soon as you can', competing: 'Only you', state: 'New', tag: 'tag tag-accent', action: 'Quote', quoted: false, range: '', expiry: '' },
+    { id: 'r4', what: 'Remedial shoeing, one horse', meta: 'Sharjah Riding Club · long toe, low heel', needed: 'Mid September', competing: '1 other asked', state: 'Expired', tag: 'tag tag-neutral', action: 'Requote', quoted: false, range: '', expiry: '' },
+  ];
+
+  jobDefs = [
+    { day: 'Today', time: '15:30', stable: 'Serc', what: 'Front shoes', horses: 'Comme Ci', fee: 'AED 320', state: 'On the way', tag: 'tag tag-accent', bucket: 'Upcoming' },
+    { day: 'Tomorrow', time: '08:00', stable: 'Emirates Park', what: 'Full set ×2', horses: 'Two horses', fee: 'AED 640', state: 'Booked', tag: 'tag tag-accent-2', bucket: 'Upcoming' },
+    { day: 'Thu 27 Aug', time: '07:30', stable: 'Al Marmoom', what: 'Yard visit', horses: 'Four horses', fee: 'AED 1,100', state: 'Booked', tag: 'tag tag-accent-2', bucket: 'Upcoming' },
+    { day: 'Mon 31 Aug', time: '16:00', stable: 'Wadi Hoof', what: 'Trim ×3', horses: 'Three horses', fee: 'AED 390', state: 'Booked', tag: 'tag tag-accent-2', bucket: 'Upcoming' },
+    { day: 'Tue 18 Aug', time: '09:00', stable: 'Serc', what: 'Trim', horses: 'Kiki, Abby', fee: 'AED 260', state: 'Done', tag: 'tag tag-neutral', bucket: 'Done' },
+    { day: 'Fri 14 Aug', time: '14:00', stable: 'Sharjah Riding Club', what: 'Front shoes', horses: 'One horse', fee: 'AED 320', state: 'Done', tag: 'tag tag-neutral', bucket: 'Done' },
+  ];
+
+  payoutDefs = [
+    { period: '1–15 Aug', paidOn: '15 Aug 2026', sales: 'AED 2,340', refunds: '−AED 195', fee: '−AED 187', net: 'AED 1,958', done: true },
+    { period: '16–31 Jul', paidOn: '1 Aug 2026', sales: 'AED 1,880', refunds: 'AED 0', fee: '−AED 150', net: 'AED 1,730', done: true },
+    { period: '1–15 Jul', paidOn: '15 Jul 2026', sales: 'AED 2,010', refunds: '−AED 240', fee: '−AED 161', net: 'AED 1,609', done: true },
+    { period: '16–30 Jun', paidOn: '1 Jul 2026', sales: 'AED 1,420', refunds: 'AED 0', fee: '−AED 114', net: 'AED 1,306', done: true },
+    { period: '16–31 Aug', paidOn: 'Due 1 Sep', sales: 'AED 1,265', refunds: 'AED 0', fee: '−AED 95', net: 'AED 1,170', done: false },
+  ];
+
+  state = {
+    section: 'overview', orderFilter: 'All', jobFilter: 'Upcoming',
+    listingOn: { l1: true, l2: true, l4: true, l5: true, l6: true },
+    adding: false, newGroup: 'Feed', newKind: 'New', newSent: false, listPrice: 210,
+  };
+
+  chip(active) {
+    return 'border:1px solid var(--color-divider);border-radius:999px;padding:8px 16px;font-family:var(--font-body);font-size:14px;cursor:pointer;'
+      + (active ? 'background:var(--color-accent);border-color:var(--color-accent);color:var(--color-bg)' : 'background:transparent;color:var(--color-text)');
+  }
+
+  linkBtn(strong) {
+    return 'background:transparent;border:0;padding:0;font-family:var(--font-body);font-size:14px;cursor:pointer;color:'
+      + (strong ? 'var(--color-accent-700)' : 'color-mix(in srgb, var(--color-text) 55%, transparent)');
+  }
+
+  renderVals() {
+    const s = this.state;
+    const current = this.sectionDefs.find(d => d.id === s.section) || this.sectionDefs[0];
+
+    const groups = [];
+    this.sectionDefs.forEach(d => {
+      let g = groups.find(x => x.label === d.group);
+      if (!g) { g = { label: d.group, items: [] }; groups.push(g); }
+      const on = s.section === d.id;
+      g.items.push({
+        label: d.label,
+        pick: () => this.setState({ section: d.id }),
+        style: 'display:flex;align-items:center;gap:8px;width:100%;border:0;border-radius:12px;padding:9px 10px;font-family:var(--font-body);font-size:14.5px;cursor:pointer;text-align:left;'
+          + (on ? 'background:color-mix(in srgb, var(--color-accent) 24%, transparent);color:var(--color-accent-200)'
+                : 'background:transparent;color:color-mix(in srgb, var(--color-neutral-100) 72%, transparent)'),
+        badge: d.badge || '',
+        badgeStyle: d.badge
+          ? 'font-size:11px;padding:2px 7px;border-radius:999px;background:var(--color-accent);color:var(--color-bg);flex:none'
+          : 'display:none',
+      });
+    });
+
+    const orderFilters = ['All', 'New', 'Delivered', 'Disputed', 'Settled'].map(f => ({
+      label: f, pick: () => this.setState({ orderFilter: f }), style: this.chip(s.orderFilter === f),
+    }));
+    const orderRows = this.orderDefs.filter(o => s.orderFilter === 'All' || o.bucket === s.orderFilter)
+      .map(o => ({ id: o.id, stable: o.stable, items: o.items, total: o.total, payable: o.payable, state: o.state, tagClass: o.tag }));
+
+    const returns = this.returnDefs.map(r => ({
+      id: r.id, item: r.item, reason: r.reason, amount: r.amount, state: r.state, tagClass: r.tag,
+      action: r.action, actionStyle: this.linkBtn(r.action === 'Reply'),
+      act: () => this.setState({ section: 'returns' }),
+      arbitrated: r.arbitrated, decision: r.decision || '',
+    }));
+
+    const listings = this.listingDefs.map(l => {
+      const on = !!s.listingOn[l.id];
+      return {
+        name: l.name, group: l.group, price: l.price, stock: l.stock, sold: l.sold, review: l.review, tagClass: l.tag,
+        rowStyle: 'display:grid;grid-template-columns:1.6fr .8fr .7fr .8fr 1fr .7fr;gap:0 20px;align-items:center;padding:14px 0'
+          + (on ? '' : ';opacity:.55'),
+        switchStyle: 'width:50px;height:29px;border-radius:999px;border:0;flex:none;cursor:pointer;display:flex;align-items:center;padding:3px;justify-content:'
+          + (on ? 'flex-end' : 'flex-start') + ';background:' + (on ? 'var(--color-accent-2)' : 'var(--color-neutral-300)'),
+        knobStyle: 'width:23px;height:23px;border-radius:50%;background:var(--color-bg);display:block',
+        toggle: () => this.setState({ listingOn: Object.assign({}, s.listingOn, { [l.id]: !on }) }),
+      };
+    });
+
+    const requests = this.requestDefs.map(r => ({
+      what: r.what, meta: r.meta, needed: r.needed, competing: r.competing, state: r.state, tagClass: r.tag,
+      action: r.action, actionStyle: this.linkBtn(r.action === 'Quote' || r.action === 'Requote'),
+      act: () => this.setState({ section: 'requests' }),
+      quoted: r.quoted, range: r.range, expiry: r.expiry,
+    }));
+
+    const jobFilters = ['Upcoming', 'Done', 'All'].map(f => ({
+      label: f, pick: () => this.setState({ jobFilter: f }), style: this.chip(s.jobFilter === f),
+    }));
+    const jobs = this.jobDefs.filter(j => s.jobFilter === 'All' || j.bucket === s.jobFilter)
+      .map(j => ({ day: j.day, time: j.time, stable: j.stable, what: j.what, horses: j.horses, fee: j.fee, state: j.state, tagClass: j.tag }));
+
+    const payouts = this.payoutDefs.map(p => ({
+      period: p.period, paidOn: p.paidOn, sales: p.sales, refunds: p.refunds, fee: p.fee, net: p.net,
+      rowStyle: 'display:grid;grid-template-columns:1fr 1fr .9fr .9fr .9fr 1fr;gap:0 20px;align-items:center;padding:15px 0'
+        + (p.done ? '' : ';opacity:.65'),
+    }));
+
+    const chartData = [
+      { label: '1 Jul', v: 2010 }, { label: '16 Jul', v: 1880 }, { label: '1 Aug', v: 2340 }, { label: '16 Aug', v: 1265 },
+      { label: '1 Jun', v: 1180 }, { label: '16 Jun', v: 1420 },
+    ];
+    const ordered = [chartData[4], chartData[5], chartData[0], chartData[1], chartData[2], chartData[3]];
+    const maxV = 2340;
+    const earningsChart = ordered.map((c, i) => ({
+      label: c.label, value: 'AED ' + c.v.toLocaleString(),
+      barStyle: 'width:100%;border-radius:14px 14px 4px 4px;height:' + Math.round((c.v / maxV) * 100) + '%;background:'
+        + (i === ordered.length - 1 ? 'var(--color-accent)' : 'var(--color-accent-2-400)'),
+    }));
+
+    const split = [
+      { label: 'Farriery visits', v: 4370 },
+      { label: 'Feed and supplements', v: 2115 },
+      { label: 'Tack and boots', v: 1640 },
+      { label: 'Hoofcare items', v: 690 },
+    ];
+    const splitMax = 4370;
+    const earningsSplit = split.map(e => ({
+      label: e.label, value: 'AED ' + e.v.toLocaleString(),
+      barStyle: 'height:100%;border-radius:999px;background:var(--color-accent-2-500);width:' + Math.round((e.v / splitMax) * 100) + '%',
+    }));
+
+    const groupNames = ['Feed', 'Tack', 'Boots', 'Hoofcare', 'Supplements', 'Bits'];
+    const newGroupChips = groupNames.map(g => ({
+      label: g, pick: () => this.setState({ newGroup: g }), style: this.chip(s.newGroup === g),
+    }));
+    const kindChips = ['New', 'Used', 'Made to order'].map(k => ({
+      label: k, pick: () => this.setState({ newKind: k }), style: this.chip(s.newKind === k),
+    }));
+
+    const goodsRate = 8;
+    const price = s.listPrice;
+    const cut = Math.round(price * goodsRate) / 100;
+    const feeBreakdown = [
+      { label: 'You list it at', value: 'AED ' + price.toFixed(2) },
+      { label: 'My Stables takes ' + goodsRate + '%', value: '−AED ' + cut.toFixed(2) },
+      { label: 'You receive', value: 'AED ' + (price - cut).toFixed(2), strong: true },
+      { label: 'Delivery', value: price >= 300 ? 'Free to the buyer' : 'AED 25, buyer pays', quiet: true },
+    ].map(r => ({
+      label: r.label, value: r.value,
+      labelStyle: 'font-size:' + (r.strong ? '16px' : '15px') + (r.strong ? ';font-family:Gabarito,var(--font-body);font-weight:600' : r.quiet ? ';opacity:.55' : ';opacity:.7'),
+      valueStyle: 'font-family:Gabarito,var(--font-body);font-size:' + (r.strong ? '19px' : '15px')
+        + (r.strong ? ';font-weight:600' : ';font-weight:500' + (r.quiet ? ';opacity:.55' : ';opacity:.85')),
+    }));
+    const priceChips = [95, 170, 210, 340].map(p => ({
+      label: 'AED ' + p,
+      pick: () => this.setState({ listPrice: p }),
+      style: this.chip(price === p) + ';padding:7px 13px;font-size:13px',
+    }));
+
+    return {
+      feeBreakdown, priceChips,
+      navGroups: groups,
+      pageTitle: s.adding ? 'Add an item' : current.title,
+      pageSub: s.adding ? 'Riders see it once My Stables has checked it' : current.sub,
+      adding: s.adding, notAdding: !s.adding,
+      startAdd: () => this.setState({ adding: true, newSent: false }),
+      cancelAdd: () => this.setState({ adding: false, newSent: false }),
+      sendForReview: () => this.setState({ newSent: true }),
+      newSent: s.newSent,
+      sendLabel: s.newSent ? 'Sent for review' : 'Send for review',
+      newGroupChips, kindChips,
+      reviewNote: s.newGroup === 'Supplements'
+        ? 'Supplements and medicines are read by a person, not a machine. Expect two working days, and have the ingredient list to hand.'
+        : 'Most items are approved within a few hours. You will be told either way.',
+      heldTotal: 'AED 1,135', payableTotal: 'AED 1,170',
+      nextPayout: 'AED 1,170', nextPayoutDate: '1 September · after the 8% fee',
+      isOverview: s.section === 'overview',
+      isOrders: s.section === 'orders',
+      isReturns: s.section === 'returns',
+      isListings: s.section === 'listings' && !s.adding,
+      isRequests: s.section === 'requests',
+      isJobs: s.section === 'jobs',
+      isPayouts: s.section === 'payouts',
+      isEarnings: s.section === 'earnings',
+      isAccount: s.section === 'account',
+      kpis: [
+        { label: 'Orders to pack', value: '2', note: 'Oldest waiting since yesterday' },
+        { label: 'Requests unanswered', value: '2', note: 'Others were asked too' },
+        { label: 'Jobs this week', value: '4', note: 'AED 2,450 booked' },
+        { label: 'Held', value: 'AED 1,135', note: 'Return windows still open' },
+        { label: 'Payable 1 Sep', value: 'AED 1,170', note: 'After the 8% fee · nothing else can reduce it' },
+      ],
+      todo: [
+        { text: 'Two orders still to pack', meta: 'Emirates Park and Wadi Hoof', tag: 'Orders', tagClass: 'tag tag-accent' },
+        { text: 'Snaffle dispute waiting on your reply', meta: 'Sharjah says the mouthpiece is the wrong size', tag: 'Dispute', tagClass: 'tag tag-accent' },
+        { text: 'Two quote requests open', meta: 'Serc and Wadi Hoof · others were asked as well', tag: 'Quotes', tagClass: 'tag tag-accent-2' },
+        { text: 'Snaffle listing is hidden', meta: 'Held by My Stables until the size is confirmed', tag: 'Listing', tagClass: 'tag tag-neutral' },
+        { text: 'Farrier visit at Serc today, 15:30', meta: 'Comme Ci · front shoes', tag: 'Job', tagClass: 'tag tag-accent-2' },
+      ],
+      moneySteps: [
+        { title: 'Buyer pays My Stables', detail: 'Never you directly. The stable sees one receipt whatever they bought.', done: true },
+        { title: 'You deliver, or do the job', detail: 'Mark it done. Services settle the day they are finished.', done: true },
+        { title: 'The return window runs', detail: 'Goods sit here for 14 days. If a dispute is raised, the money stays put until it is decided.', done: false },
+        { title: 'Paid out on the 1st or the 15th', detail: 'Whatever cleared the window by then, less our 8%, in one transfer to the account ending 4417.', done: false },
+      ].map((m, i, arr) => ({
+        title: m.title, detail: m.detail,
+        dotStyle: 'width:14px;height:14px;border-radius:50%;flex:none;margin-top:4px;background:'
+          + (m.done ? 'var(--color-accent-2)' : 'var(--color-bg)') + ';border:2px solid '
+          + (m.done ? 'var(--color-accent-2)' : 'var(--color-accent)'),
+        lineStyle: i === arr.length - 1 ? 'display:none' : 'flex:1;width:2px;background:var(--color-divider);margin:4px 0',
+      })),
+      orderFilters, orderRows, returns, listings, requests, jobFilters, jobs, payouts,
+      payoutKpis: [
+        { label: 'Next payout', value: 'AED 1,170', note: '1 September · after fees' },
+        { label: 'Held, not yet payable', value: 'AED 1,135', note: 'Return windows open' },
+        { label: 'Paid this year', value: 'AED 12,480', note: 'Eight transfers' },
+        { label: 'Fees taken this year', value: 'AED 707', note: '8% of goods, 5% of visits' },
+      ],
+      earningsChart, earningsSplit,
+      topBuyers: [
+        { name: 'Al Marmoom Equestrian', meta: '31 horses · feed and yard visits', value: 'AED 3,240' },
+        { name: 'Serc', meta: '14 horses · shoeing and tack', value: 'AED 2,110' },
+        { name: 'Emirates Park Stables', meta: '18 horses · shoeing', value: 'AED 1,860' },
+        { name: 'Sharjah Riding Club', meta: '22 horses · bits and boots', value: 'AED 1,405' },
+      ],
+      approvals: [
+        { label: 'Sell goods', state: 'Approved', tagClass: 'tag tag-accent-2', meta: 'Tack, feed, hoofcare · approved 12 Jun' },
+        { label: 'Offer services', state: 'Approved', tagClass: 'tag tag-accent-2', meta: 'Farriery only · other trades need a new check' },
+        { label: 'Trade licence', state: 'Verified', tagClass: 'tag tag-accent-2', meta: 'Dubai DED · expires 4 Apr 2027' },
+        { label: 'Public liability insurance', state: 'Expiring', tagClass: 'tag tag-accent', meta: 'Expires 30 Sep · upload the new one to keep trading' },
+        { label: 'Sell medicines', state: 'Not approved', tagClass: 'tag tag-neutral', meta: 'Needs a veterinary licence on file' },
+      ],
+      staff: [
+        { name: 'Hamad Al Suwaidi', initial: 'H', can: 'Everything, including payouts' },
+        { name: 'Nadia Al Suwaidi', initial: 'N', can: 'Orders, listings and returns · not payouts' },
+        { name: 'Imran', initial: 'I', can: 'Jobs only · sees no money' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

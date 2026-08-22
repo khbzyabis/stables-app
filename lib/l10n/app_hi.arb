@@ -1,0 +1,46 @@
+{
+  "@@locale": "hi",
+  "appName": "माय स्टेबल्स",
+  "splashTagline": "हर घोड़ा, हर नोट, एक ही जगह।",
+
+  "welcomeBack": "वापसी पर स्वागत है",
+  "signInSubtitle": "अपने अस्तबल में साइन इन करें।",
+  "email": "ईमेल",
+  "password": "पासवर्ड",
+  "show": "दिखाएँ",
+  "hide": "छिपाएँ",
+  "forgotPassword": "पासवर्ड भूल गए?",
+  "signIn": "साइन इन",
+  "orDivider": "या",
+  "continueWithApple": "Apple के साथ जारी रखें",
+  "continueWithGoogle": "Google के साथ जारी रखें",
+  "newHere": "यहाँ नए हैं? ",
+  "createAnAccount": "खाता बनाएँ",
+  "haveInviteCode": "मेरे पास आमंत्रण कोड है",
+
+  "back": "पीछे",
+  "yourDetails": "आपका विवरण",
+  "step1of3": "चरण 1 / 3 — आपके बारे में।",
+  "fullName": "पूरा नाम",
+  "phone": "फ़ोन",
+  "passwordHint": "8 अक्षर या उससे अधिक",
+  "sendMeCode": "मुझे कोड भेजें",
+
+  "checkYourPhone": "अपना फ़ोन देखें",
+  "verify": "सत्यापित करें",
+
+  "yourStable": "आपका अस्तबल",
+  "createStable": "अस्तबल बनाएँ",
+  "roleAdmin": "एडमिन",
+  "joinStable": "अस्तबल से जुड़ें",
+  "createStableCta": "अस्तबल बनाएँ",
+  "joinStableCta": "अस्तबल से जुड़ें",
+
+  "language": "भाषा",
+  "langEnglish": "English",
+  "langArabic": "العربية",
+  "langHindi": "हिन्दी",
+  "langUrdu": "اردو",
+  "langBengali": "বাংলা",
+  "langNepali": "नेपाली"
+}

@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/organic-07b13dc3-fcc8-4e70-b2c2-fd7f5889f38a/styles.css">
+<script src="_ds/organic-07b13dc3-fcc8-4e70-b2c2-fd7f5889f38a/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600&family=Gabarito:wght@500;600;700&display=swap">
+<style>
+body{margin:0;background:#e7dcc8;font-family:var(--font-body,system-ui)}
+a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-600)}
+</style>
+</helmet>
+
+<div style="display:flex;width:1440px;height:920px;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);overflow:hidden">
+
+  <div style="width:252px;flex:none;background:var(--color-neutral-900);color:var(--color-neutral-100);display:flex;flex-direction:column;padding:26px 0 20px">
+    <div style="padding:0 22px 24px;display:flex;align-items:center;gap:11px">
+      <div style="width:30px;height:30px;border-radius:50%;border:3px solid var(--color-accent-400);border-bottom-color:transparent;flex:none"></div>
+      <div>
+        <div style="font-family:Gabarito,var(--font-body);font-weight:600;font-size:17px;line-height:1.1">My Stables</div>
+        <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;margin-top:3px">Console</div>
+      </div>
+    </div>
+
+    <div style="flex:1;overflow:auto;padding:0 12px">
+      <sc-for list="{{ navGroups }}" as="g" hint-placeholder-count="5">
+        <div style="margin-bottom:18px">
+          <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.4;padding:0 10px 8px">{{ g.label }}</div>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+              <button onClick="{{ it.pick }}" style="{{ it.style }}">
+                <span style="flex:1;text-align:left">{{ it.label }}</span>
+                <span style="{{ it.badgeStyle }}">{{ it.badge }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="padding:16px 22px 0;border-top:1px solid color-mix(in srgb, var(--color-neutral-100) 14%, transparent)">
+      <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.4;margin-bottom:9px">Signed in as</div>
+      <div style="font-size:14px;margin-bottom:3px">Ahmad · {{ roleLabel }}</div>
+      <div style="font-size:12px;opacity:.5">{{ roleReach }}</div>
+    </div>
+  </div>
+
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <div style="flex:none;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:26px 40px 20px;border-bottom:1px solid var(--color-divider)">
+      <div>
+        <h1 style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:30px;line-height:1;margin:0 0 7px">{{ pageTitle }}</h1>
+        <div style="font-size:14px;opacity:.6">{{ pageSub }}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex:none">
+        <span style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;opacity:.5">View as</span>
+        <sc-for list="{{ roleChips }}" as="r" hint-placeholder-count="6">
+          <button onClick="{{ r.pick }}" style="{{ r.style }}">{{ r.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="flex:1;overflow:auto;padding:30px 40px 44px">
+
+      <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--color-divider);border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
+            <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
+              <div style="background:var(--color-bg);padding:20px 22px 22px">
+                <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.5;margin-bottom:12px">{{ k.label }}</div>
+                <div style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:34px;line-height:1">{{ k.value }}</div>
+                <div style="font-size:13px;margin-top:8px;color:var(--color-accent-700)">{{ k.delta }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:52px;margin-top:38px">
+            <div>
+              <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:20px">Stables joined, by month</div>
+              <div style="display:flex;align-items:flex-end;gap:14px;height:190px">
+                <sc-for list="{{ chart }}" as="c" hint-placeholder-count="8">
+                  <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:9px;height:100%">
+                    <div style="font-size:13px;opacity:.55">{{ c.value }}</div>
+                    <div style="{{ c.barStyle }}"></div>
+                    <div style="font-size:12px;opacity:.5">{{ c.label }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:8px">Needs a person</div>
+              <div style="display:flex;flex-direction:column">
+                <sc-for list="{{ attention }}" as="a" hint-placeholder-count="4">
+                  <div>
+                    <div style="height:1px;background:var(--color-divider)"></div>
+                    <div style="display:flex;gap:14px;align-items:baseline;padding:15px 0">
+                      <div style="flex:1;min-width:0">
+                        <div style="font-size:16px;line-height:1.35">{{ a.text }}</div>
+                        <div style="font-size:13px;opacity:.5;margin-top:4px">{{ a.meta }}</div>
+                      </div>
+                      <span class="{{ a.tagClass }}" style="font-size:11px;padding:4px 10px;flex:none">{{ a.tag }}</span>
+                    </div>
+                  </div>
+                </sc-for>
+                <div style="height:1px;background:var(--color-divider)"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isStables }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:24px">
+            <sc-for list="{{ stableFilters }}" as="f" hint-placeholder-count="4">
+              <button onClick="{{ f.pick }}" style="{{ f.style }}">{{ f.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5fr 1fr .6fr .6fr .8fr .9fr .9fr;gap:0 20px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;padding-bottom:12px">
+            <div>Stable</div><div>Where</div><div>Horses</div><div>People</div><div>Plan</div><div>Status</div><div style="text-align:right">Action</div>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ stableRows }}" as="s" hint-placeholder-count="8">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="{{ s.rowStyle }}">
+                  <div style="min-width:0">
+                    <button onClick="{{ s.open }}" style="{{ s.nameStyle }}">{{ s.name }}</button>
+                    <div style="font-size:12px;opacity:.5;margin-top:3px">Joined {{ s.joined }}</div>
+                  </div>
+                  <div style="font-size:15px;opacity:.75">{{ s.where }}</div>
+                  <div style="font-size:15px">{{ s.horses }}</div>
+                  <div style="font-size:15px">{{ s.people }}</div>
+                  <div><span class="tag tag-neutral" style="font-size:11px;padding:4px 10px">{{ s.plan }}</span></div>
+                  <div><span class="{{ s.statusClass }}" style="font-size:11px;padding:4px 10px">{{ s.status }}</span></div>
+                  <div style="text-align:right">
+                    <button onClick="{{ s.toggle }}" style="{{ s.actionStyle }}">{{ s.action }}</button>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+          <div style="font-size:14px;opacity:.55;margin-top:20px">{{ stableFootnote }}</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isInspect }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px">
+            <sc-for list="{{ inspectTabChips }}" as="t" hint-placeholder-count="7">
+              <button onClick="{{ t.pick }}" style="{{ t.style }}">{{ t.label }}</button>
+            </sc-for>
+          </div>
+          <div style="{{ inspectHeaderStyle }}">
+            <sc-for list="{{ inspectCols }}" as="c" hint-placeholder-count="5">
+              <div>{{ c }}</div>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ inspectRows }}" as="r" hint-placeholder-count="6">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="{{ r.rowStyle }}">
+                  <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="5">
+                    <div style="{{ c.style }}">{{ c.value }}</div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+          <div style="display:flex;gap:26px;align-items:baseline;margin-top:20px;flex-wrap:wrap">
+            <div style="font-size:14px;opacity:.55">{{ inspectCount }}</div>
+            <div style="font-size:14px;opacity:.55;max-width:62ch;line-height:1.5">{{ inspectNote }}</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isUsers }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:grid;grid-template-columns:1.3fr 1.4fr 1.5fr .8fr .8fr .9fr;gap:0 20px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;padding-bottom:12px">
+            <div>Person</div><div>Email</div><div>Stables and roles</div><div>Last seen</div><div>Status</div><div style="text-align:right">Action</div>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ userRows }}" as="u" hint-placeholder-count="8">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="{{ u.rowStyle }}">
+                  <div style="display:flex;align-items:center;gap:11px;min-width:0">
+                    <div style="{{ u.avatarStyle }}">{{ u.initial }}</div>
+                    <div style="font-size:16px;min-width:0">{{ u.name }}</div>
+                  </div>
+                  <div style="font-size:14px;opacity:.7;min-width:0">{{ u.email }}</div>
+                  <div style="font-size:14px;opacity:.75;line-height:1.4">{{ u.roles }}</div>
+                  <div style="font-size:14px;opacity:.6">{{ u.seen }}</div>
+                  <div><span class="{{ u.statusClass }}" style="font-size:11px;padding:4px 10px">{{ u.status }}</span></div>
+                  <div style="text-align:right">
+                    <button onClick="{{ u.toggle }}" style="{{ u.actionStyle }}">{{ u.action }}</button>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+          <div style="font-size:14px;opacity:.55;margin-top:20px">Blocking signs a person out of every stable at once. Their horses and notes stay with the stable.</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isRoles }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <p style="font-size:16px;line-height:1.6;margin:0 0 22px;max-width:70ch;opacity:.75;text-wrap:pretty">Six fixed console roles. Tick a cell to grant a section — the sidebar and the "view as" switcher above follow this matrix exactly, so you can check what Finance sees by switching to it.</p>
+          <div style="max-width:70ch;margin-bottom:28px;padding-left:16px;border-left:2px solid var(--color-accent-2-300)">
+            <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:8px">Two kinds of account</div>
+            <p style="font-size:15px;line-height:1.6;margin:0 0 8px;text-wrap:pretty">This matrix covers <strong style="font-weight:600">console roles</strong> — your team. Separately, an app account is a <strong style="font-weight:600">person in stables</strong>: Toni is a trainer at Serc and at Emirates Park, with a role per stable.</p>
+            <p style="font-size:15px;line-height:1.6;margin:0;opacity:.75;text-wrap:pretty">A marketplace adds a third kind — a <strong style="font-weight:600">provider on the platform</strong>, who belongs to no stable and serves many. One person may be both. Build the account model with that dimension present even while the marketplace flag is off; adding it after a few hundred users is a migration.</p>
+          </div>
+          <div style="display:grid;grid-template-columns:1.6fr repeat(6,1fr);gap:0 14px;align-items:end;font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.55;padding-bottom:12px">
+            <div>Section</div>
+            <sc-for list="{{ matrixRoles }}" as="r" hint-placeholder-count="6">
+              <div style="text-align:center">{{ r }}</div>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ matrixRows }}" as="m" hint-placeholder-count="12">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="display:grid;grid-template-columns:1.6fr repeat(6,1fr);gap:0 14px;align-items:center;padding:11px 0">
+                  <div style="font-size:15px">{{ m.label }}</div>
+                  <sc-for list="{{ m.cells }}" as="c" hint-placeholder-count="6">
+                    <div style="display:flex;justify-content:center">
+                      <button onClick="{{ c.toggle }}" style="{{ c.style }}">{{ c.mark }}</button>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+          <div style="font-size:14px;opacity:.55;margin-top:20px">Owner cannot be reduced — someone has to be able to grant access back.</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isSubs }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--color-divider);border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
+            <sc-for list="{{ plans }}" as="p" hint-placeholder-count="4">
+              <div style="{{ p.cardStyle }}">
+                <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px">
+                  <span class="{{ p.tagClass }}" style="font-size:11px;padding:4px 10px">{{ p.state }}</span>
+                </div>
+                <div style="font-family:Gabarito,var(--font-body);font-weight:600;font-size:22px;line-height:1.1;margin-bottom:8px">{{ p.name }}</div>
+                <div style="font-family:Gabarito,var(--font-body);font-weight:600;font-size:26px;line-height:1;margin-bottom:12px">{{ p.price }}</div>
+                <div style="font-size:14px;line-height:1.5;opacity:.7">{{ p.detail }}</div>
+                <div style="font-size:13px;margin-top:16px;color:var(--color-accent-700)">{{ p.count }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:34px;max-width:64ch">
+            <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:12px">Where this stands</div>
+            <p style="font-size:16px;line-height:1.65;margin:0 0 14px;text-wrap:pretty">Every stable is on Free while you grow. The three paid tiers are drafted but not published, so nothing bills and no card is ever asked for.</p>
+            <p style="font-size:16px;line-height:1.65;margin:0;opacity:.75;text-wrap:pretty">When you do publish one, the decision you have not made yet is who pays: the stable admin for the whole yard, or each rider for their own horses. The app is built either way — riders already belong to several stables with a different role in each.</p>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isPayments }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="max-width:60ch;margin-bottom:34px">
+            <p style="font-size:17px;line-height:1.6;margin:0 0 12px;text-wrap:pretty">Nothing has been charged. This is what the ledger will look like once a paid plan is published.</p>
+            <p style="font-size:15px;line-height:1.6;margin:0;opacity:.6">Rows below are the shape of the data, not real transactions.</p>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1.4fr 1fr .9fr .9fr .9fr;gap:0 20px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;padding-bottom:12px">
+            <div>Invoice</div><div>Stable</div><div>Period</div><div>Amount</div><div>Method</div><div>Status</div>
+          </div>
+          <div style="display:flex;flex-direction:column;opacity:.5">
+            <sc-for list="{{ invoiceRows }}" as="i" hint-placeholder-count="5">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="display:grid;grid-template-columns:1fr 1.4fr 1fr .9fr .9fr .9fr;gap:0 20px;align-items:center;padding:15px 0">
+                  <div style="font-size:15px">{{ i.id }}</div>
+                  <div style="font-size:15px">{{ i.stable }}</div>
+                  <div style="font-size:14px;opacity:.75">{{ i.period }}</div>
+                  <div style="font-size:15px">{{ i.amount }}</div>
+                  <div style="font-size:14px;opacity:.75">{{ i.method }}</div>
+                  <div><span class="tag tag-neutral" style="font-size:11px;padding:4px 10px">{{ i.status }}</span></div>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isRevenue }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--color-divider);border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
+            <sc-for list="{{ revenueKpis }}" as="k" hint-placeholder-count="4">
+              <div style="background:var(--color-bg);padding:20px 22px 22px">
+                <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.5;margin-bottom:12px">{{ k.label }}</div>
+                <div style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:32px;line-height:1">{{ k.value }}</div>
+                <div style="font-size:13px;margin-top:8px;opacity:.6">{{ k.note }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:36px;max-width:64ch">
+            <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:12px">What is worth reporting now</div>
+            <p style="font-size:16px;line-height:1.65;margin:0 0 14px;text-wrap:pretty">With nothing billed, revenue reporting is a placeholder. What actually tells you whether the product is working is on the left: stables still active after a month, horses per stable, and how many grooms tick tasks on any given day.</p>
+            <p style="font-size:16px;line-height:1.65;margin:0;opacity:.75;text-wrap:pretty">I have left the four revenue tiles in place so the section exists and the Finance role has something to own, but I would not build charts against zero.</p>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isOps }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:24px">
+            <sc-for list="{{ ticketFilters }}" as="f" hint-placeholder-count="3">
+              <button onClick="{{ f.pick }}" style="{{ f.style }}">{{ f.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ tickets }}" as="t" hint-placeholder-count="6">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="display:flex;gap:20px;align-items:flex-start;padding:18px 0">
+                  <div style="width:74px;flex:none;font-size:13px;opacity:.5;padding-top:3px">{{ t.id }}</div>
+                  <div style="flex:1;min-width:0">
+                    <div style="font-size:17px;line-height:1.35">{{ t.title }}</div>
+                    <div style="font-size:14px;opacity:.55;margin-top:5px">{{ t.meta }}</div>
+                  </div>
+                  <span class="{{ t.tagClass }}" style="font-size:11px;padding:4px 10px;flex:none">{{ t.priority }}</span>
+                  <div style="width:120px;flex:none;font-size:14px;opacity:.7">{{ t.owner }}</div>
+                  <div style="width:70px;flex:none;font-size:14px;opacity:.5;text-align:right">{{ t.age }}</div>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isApplications }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:48px">
+          <div>
+            <div style="display:grid;grid-template-columns:1.4fr .9fr .9fr .8fr 1fr .9fr;gap:0 20px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;padding-bottom:12px">
+              <div>Applicant</div><div>Kind</div><div>Where</div><div>Applied</div><div>Checks</div><div>State</div>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <sc-for list="{{ appRows }}" as="a" hint-placeholder-count="5">
+                <div>
+                  <div style="height:1px;background:var(--color-divider)"></div>
+                  <button onClick="{{ a.open }}" style="{{ a.rowStyle }}">
+                    <div style="font-size:16px;min-width:0">{{ a.name }}</div>
+                    <div style="font-size:14px;opacity:.75">{{ a.kind }}</div>
+                    <div style="font-size:14px;opacity:.75">{{ a.where }}</div>
+                    <div style="font-size:14px;opacity:.6">{{ a.applied }}</div>
+                    <div style="font-size:14px;opacity:.7">{{ a.flagCount }}</div>
+                    <div><span class="{{ a.tagClass }}" style="font-size:11px;padding:4px 10px">{{ a.state }}</span></div>
+                  </button>
+                </div>
+              </sc-for>
+              <div style="height:1px;background:var(--color-divider)"></div>
+            </div>
+            <div style="font-size:14px;opacity:.55;margin-top:18px">{{ appQueueNote }}</div>
+          </div>
+
+          <div style="border-left:1px solid var(--color-divider);padding-left:40px">
+            <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:10px">{{ appApplied }}</div>
+            <h2 style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:26px;line-height:1.1;margin:0 0 6px">{{ appName }}</h2>
+            <div style="font-size:15px;opacity:.6;margin-bottom:24px">{{ appKind }}</div>
+
+            <div style="display:flex;flex-direction:column">
+              <div style="height:1px;background:var(--color-divider)"></div>
+              <div style="display:flex;gap:16px;align-items:baseline;padding:13px 0">
+                <div style="width:120px;flex:none;font-size:14px;opacity:.55">Person</div>
+                <div style="flex:1;font-size:15px">{{ appPerson }}</div>
+              </div>
+              <div style="height:1px;background:var(--color-divider)"></div>
+              <div style="display:flex;gap:16px;align-items:baseline;padding:13px 0">
+                <div style="width:120px;flex:none;font-size:14px;opacity:.55">Wants to sell</div>
+                <div style="flex:1;font-size:15px;line-height:1.45">{{ appWants }}</div>
+              </div>
+              <div style="height:1px;background:var(--color-divider)"></div>
+              <div style="display:flex;gap:16px;align-items:baseline;padding:13px 0">
+                <div style="width:120px;flex:none;font-size:14px;opacity:.55">Licence</div>
+                <div style="flex:1;font-size:15px;line-height:1.45">{{ appLicence }}</div>
+              </div>
+              <div style="height:1px;background:var(--color-divider)"></div>
+              <div style="display:flex;gap:16px;align-items:baseline;padding:13px 0">
+                <div style="width:120px;flex:none;font-size:14px;opacity:.55">Insurance</div>
+                <div style="flex:1;font-size:15px;line-height:1.45">{{ appInsurance }}</div>
+              </div>
+              <div style="height:1px;background:var(--color-divider)"></div>
+            </div>
+
+            <sc-if value="{{ appHasFlags }}" hint-placeholder-val="{{ true }}">
+              <div style="margin-top:24px;padding-left:16px;border-left:2px solid var(--color-accent-300)">
+                <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-700);margin-bottom:9px">Read these first</div>
+                <sc-for list="{{ appFlags }}" as="f" hint-placeholder-count="2">
+                  <div style="font-size:15px;line-height:1.5;margin-bottom:6px">{{ f.text }}</div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ appClean }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:24px;font-size:15px;line-height:1.55;opacity:.7;max-width:44ch">Nothing flagged. Licence and insurance both verified automatically.</div>
+            </sc-if>
+
+            <sc-if value="{{ appUndecided }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;gap:10px;margin-top:28px">
+                <button onClick="{{ approveApp }}" class="btn btn-primary" style="min-height:48px;font-size:16px;font-family:Gabarito,var(--font-body);font-weight:600;padding:0 24px">Approve</button>
+                <button onClick="{{ refuseApp }}" class="btn btn-secondary" style="min-height:48px;font-size:16px;padding:0 22px">Refuse</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ appDecidedLabel }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:28px">
+                <span class="tag tag-neutral" style="font-size:11px;padding:5px 11px">{{ appDecidedLabel }}</span>
+                <p style="font-size:15px;line-height:1.6;margin:12px 0 0;max-width:44ch;opacity:.75">{{ appDecidedNote }}</p>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isSellers }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:grid;grid-template-columns:1.3fr 1fr .7fr 1fr .8fr .7fr .8fr .9fr;gap:0 18px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;padding-bottom:12px">
+            <div>Seller</div><div>Kind</div><div>Since</div><div>Sold</div><div>Jobs</div><div>Rating</div><div>Disputes</div><div style="text-align:right">Action</div>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ sellerRows }}" as="r" hint-placeholder-count="6">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="{{ r.rowStyle }}">
+                  <div style="min-width:0">
+                    <div style="font-size:16px;line-height:1.3">{{ r.name }}</div>
+                    <div style="font-size:12px;opacity:.5;margin-top:3px">{{ r.state }}</div>
+                  </div>
+                  <div style="font-size:14px;opacity:.75">{{ r.kind }}</div>
+                  <div style="font-size:14px;opacity:.6">{{ r.since }}</div>
+                  <div style="font-size:15px">{{ r.sales }}</div>
+                  <div style="font-size:14px;opacity:.75">{{ r.jobs }}</div>
+                  <div style="font-size:15px">{{ r.rating }}</div>
+                  <div style="font-size:15px">{{ r.disputes }}</div>
+                  <div style="text-align:right">
+                    <button onClick="{{ r.toggle }}" style="{{ r.actionStyle }}">{{ r.action }}</button>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+          <div style="font-size:14px;opacity:.55;margin-top:18px;max-width:78ch;line-height:1.55">Suspending takes their listings down and stops new orders. Jobs already booked stand, and money already held is still paid out on the normal cycle — withholding it would need a dispute against each order.</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isDisputes }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:48px">
+          <div>
+            <div style="display:flex;gap:8px;margin-bottom:20px">
+              <sc-for list="{{ disputeFilters }}" as="f" hint-placeholder-count="3">
+                <button onClick="{{ f.pick }}" style="{{ f.style }}">{{ f.label }}</button>
+              </sc-for>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <sc-for list="{{ disputeRows }}" as="d" hint-placeholder-count="4">
+                <div>
+                  <div style="height:1px;background:var(--color-divider)"></div>
+                  <button onClick="{{ d.open }}" style="{{ d.rowStyle }}">
+                    <div style="width:62px;flex:none;font-size:13px;opacity:.5;padding-top:3px">{{ d.ref }}</div>
+                    <div style="flex:1;min-width:0">
+                      <div style="font-size:16px;line-height:1.35">{{ d.title }}</div>
+                      <div style="font-size:13px;opacity:.55;margin-top:5px">{{ d.buyer }} v {{ d.seller }} · {{ d.age }}</div>
+                    </div>
+                    <div style="width:88px;flex:none;font-size:15px;text-align:right">{{ d.amount }}</div>
+                    <span class="{{ d.tagClass }}" style="font-size:11px;padding:4px 10px;flex:none">{{ d.state }}</span>
+                  </button>
+                </div>
+              </sc-for>
+              <div style="height:1px;background:var(--color-divider)"></div>
+            </div>
+          </div>
+
+          <div style="border-left:1px solid var(--color-divider);padding-left:40px">
+            <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:10px">{{ dRef }} · {{ dAmount }} held</div>
+            <h2 style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:23px;line-height:1.2;margin:0 0 20px">{{ dTitle }}</h2>
+
+            <div style="margin-bottom:20px;padding-left:16px;border-left:2px solid var(--color-accent-2-300)">
+              <div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;margin-bottom:6px">{{ dBuyer }} · buyer</div>
+              <p style="font-size:15px;line-height:1.6;margin:0">{{ dBuyerSays }}</p>
+            </div>
+            <div style="margin-bottom:26px;padding-left:16px;border-left:2px solid var(--color-accent-300)">
+              <div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;margin-bottom:6px">{{ dSeller }} · seller</div>
+              <p style="font-size:15px;line-height:1.6;margin:0">{{ dSellerSays }}</p>
+            </div>
+
+            <sc-if value="{{ dUndecided }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:12px">Decide</div>
+                <div style="display:flex;flex-wrap:wrap;gap:10px">
+                  <button onClick="{{ refundBuyer }}" class="btn btn-primary" style="min-height:46px;font-size:15px;font-family:Gabarito,var(--font-body);font-weight:600;padding:0 20px">Refund the buyer</button>
+                  <button onClick="{{ paySeller }}" class="btn btn-secondary" style="min-height:46px;font-size:15px;padding:0 20px">Pay the seller</button>
+                  <button onClick="{{ splitDispute }}" class="btn btn-secondary" style="min-height:46px;font-size:15px;padding:0 20px">Split it</button>
+                </div>
+                <p style="font-size:14px;line-height:1.55;margin:16px 0 0;opacity:.6;max-width:44ch">Whichever you choose, both sides are told, and it is written to the audit log against your name.</p>
+              </div>
+            </sc-if>
+            <sc-if value="{{ dVerdict }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <span class="tag tag-neutral" style="font-size:11px;padding:5px 11px">{{ dVerdict }}</span>
+                <p style="font-size:15px;line-height:1.6;margin:12px 0 0;max-width:44ch;opacity:.75">{{ dVerdictNote }}</p>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isDue }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--color-divider);border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);margin-bottom:32px">
+            <sc-for list="{{ dueKpis }}" as="k" hint-placeholder-count="4">
+              <div style="background:var(--color-bg);padding:19px 20px 21px">
+                <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.5;margin-bottom:11px">{{ k.label }}</div>
+                <div style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:28px;line-height:1">{{ k.value }}</div>
+                <div style="font-size:13px;margin-top:8px;opacity:.65">{{ k.note }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:1.3fr 1.1fr .9fr .9fr .9fr 1fr;gap:0 20px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;padding-bottom:12px">
+            <div>Seller</div><div>Kind</div><div>Held</div><div>Payable</div><div>Refunds</div><div style="text-align:right">Pays out</div>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ dueRows }}" as="d" hint-placeholder-count="6">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="{{ d.rowStyle }}">
+                  <div style="min-width:0">
+                    <div style="font-size:16px;line-height:1.3">{{ d.name }}</div>
+                    <div style="font-size:12px;opacity:.55;margin-top:3px">{{ d.note }}</div>
+                  </div>
+                  <div style="font-size:14px;opacity:.75">{{ d.kind }}</div>
+                  <div style="font-size:15px;opacity:.75">{{ d.held }}</div>
+                  <div style="font-size:15px">{{ d.payable }}</div>
+                  <div style="font-size:15px;opacity:.75">{{ d.refunds }}</div>
+                  <div style="{{ d.netStyle }}">{{ d.net }}</div>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+          <div style="display:flex;gap:24px;align-items:center;margin-top:22px;flex-wrap:wrap">
+            <button class="btn btn-primary" style="min-height:48px;font-size:16px;font-family:Gabarito,var(--font-body);font-weight:600;padding:0 24px">Release the 1 September run</button>
+            <div style="font-size:14px;opacity:.55;max-width:56ch;line-height:1.55">One transfer per seller. Anything still disputed stays with you and rolls to the 15th.</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isFees }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:grid;grid-template-columns:1.2fr 1.4fr .5fr 1.4fr;gap:0 20px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;padding-bottom:12px">
+            <div>What is sold</div><div>Covers</div><div>Our cut</div><div>Why</div>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ feeRows }}" as="f" hint-placeholder-count="4">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="{{ f.rowStyle }}">
+                  <div style="font-size:16px">{{ f.label }}</div>
+                  <div style="font-size:14px;opacity:.7;line-height:1.4">{{ f.detail }}</div>
+                  <div style="display:flex;align-items:center;gap:9px">
+                    <button onClick="{{ f.down }}" style="{{ f.stepStyle }}">−</button>
+                    <div style="font-family:Gabarito,var(--font-body);font-weight:600;font-size:18px;width:44px;text-align:center">{{ f.rate }}</div>
+                    <button onClick="{{ f.up }}" style="{{ f.stepStyle }}">+</button>
+                  </div>
+                  <div style="font-size:14px;opacity:.7;line-height:1.4">{{ f.note }}</div>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:52px;margin-top:38px">
+            <div>
+              <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:14px">{{ feeExampleTitle }}</div>
+              <div style="display:flex;flex-direction:column">
+                <sc-for list="{{ feeExample }}" as="e" hint-placeholder-count="4">
+                  <div>
+                    <div style="height:1px;background:var(--color-divider)"></div>
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;padding:13px 0">
+                      <div style="{{ e.labelStyle }}">{{ e.label }}</div>
+                      <div style="{{ e.valueStyle }}">{{ e.value }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+                <div style="height:1px;background:var(--color-divider)"></div>
+              </div>
+              <p style="font-size:14px;line-height:1.6;margin:16px 0 0;opacity:.6;max-width:48ch">This is the same table the seller sees while they are typing the price, so nobody discovers the cut after a sale.</p>
+            </div>
+            <div>
+              <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:8px">Delivery</div>
+              <div style="display:flex;flex-direction:column">
+                <sc-for list="{{ deliveryRules }}" as="d" hint-placeholder-count="4">
+                  <div>
+                    <div style="height:1px;background:var(--color-divider)"></div>
+                    <div style="display:flex;gap:16px;align-items:baseline;padding:14px 0">
+                      <div style="flex:1;min-width:0">
+                        <div style="font-size:16px;line-height:1.3">{{ d.label }}</div>
+                        <div style="font-size:13px;opacity:.5;margin-top:4px">{{ d.meta }}</div>
+                      </div>
+                      <div style="font-family:Gabarito,var(--font-body);font-weight:600;font-size:16px;flex:none">{{ d.value }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+                <div style="height:1px;background:var(--color-divider)"></div>
+              </div>
+              <p style="font-size:15px;line-height:1.6;margin:22px 0 0;opacity:.75;max-width:48ch;text-wrap:pretty">{{ feeNote }}</p>
+              <p style="font-size:15px;line-height:1.6;margin:12px 0 0;opacity:.75;max-width:48ch;text-wrap:pretty">Deliveries are never combined across sellers. A basket from two shops is two deliveries and two charges, each visible on the receipt, so nobody has to explain a split.</p>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isMarketing }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:8px">Campaigns</div>
+          <div style="display:flex;flex-direction:column;margin-bottom:40px">
+            <sc-for list="{{ campaigns }}" as="c" hint-placeholder-count="4">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="display:flex;gap:20px;align-items:center;padding:17px 0">
+                  <div style="flex:1;min-width:0">
+                    <div style="font-size:17px;line-height:1.3">{{ c.name }}</div>
+                    <div style="font-size:14px;opacity:.55;margin-top:5px">{{ c.meta }}</div>
+                  </div>
+                  <div style="width:130px;flex:none;font-size:15px">{{ c.reach }}</div>
+                  <div style="width:130px;flex:none;font-size:15px">{{ c.signups }}</div>
+                  <span class="{{ c.tagClass }}" style="font-size:11px;padding:4px 10px;flex:none">{{ c.state }}</span>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+
+          <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:8px">Referral codes</div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ referrals }}" as="r" hint-placeholder-count="3">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="display:flex;gap:20px;align-items:center;padding:15px 0">
+                  <div style="width:150px;flex:none;font-family:Gabarito,var(--font-body);font-weight:600;font-size:17px;letter-spacing:.04em">{{ r.code }}</div>
+                  <div style="flex:1;min-width:0;font-size:15px;opacity:.75">{{ r.owner }}</div>
+                  <div style="width:150px;flex:none;font-size:15px">{{ r.used }}</div>
+                  <div style="width:110px;flex:none;font-size:14px;opacity:.55;text-align:right">{{ r.made }}</div>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isAnnounce }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:56px">
+          <div>
+            <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:18px">New announcement</div>
+            <div class="field" style="margin-bottom:20px">
+              <label style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:8px">Headline</label>
+              <input class="input" placeholder="Arena booking is here" style="min-height:50px;font-size:16px;background:var(--color-neutral-100);border-color:transparent">
+            </div>
+            <div class="field" style="margin-bottom:22px">
+              <label style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:8px">Message</label>
+              <textarea class="input" rows="4" placeholder="Two or three sentences. It appears above the noticeboard." style="font-size:16px;line-height:1.5;background:var(--color-neutral-100);border-color:transparent;resize:none;border-radius:22px;padding:14px 16px;min-height:110px;display:block"></textarea>
+            </div>
+            <div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:11px">Who sees it</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px">
+              <sc-for list="{{ audienceChips }}" as="a" hint-placeholder-count="5">
+                <button onClick="{{ a.pick }}" style="{{ a.style }}">{{ a.label }}</button>
+              </sc-for>
+            </div>
+            <div style="font-size:15px;opacity:.6;margin-bottom:24px">{{ audienceReach }}</div>
+            <div style="display:flex;gap:10px">
+              <button class="btn btn-primary" style="min-height:48px;font-size:16px;font-family:Gabarito,var(--font-body);font-weight:600;padding:0 24px">Send</button>
+              <button class="btn btn-secondary" style="min-height:48px;font-size:16px;padding:0 22px">Save draft</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:8px">Sent</div>
+            <div style="display:flex;flex-direction:column">
+              <sc-for list="{{ sentAnnouncements }}" as="a" hint-placeholder-count="4">
+                <div>
+                  <div style="height:1px;background:var(--color-divider)"></div>
+                  <div style="padding:17px 0">
+                    <div style="font-size:17px;line-height:1.35">{{ a.title }}</div>
+                    <div style="font-size:14px;opacity:.55;margin-top:5px">{{ a.meta }}</div>
+                  </div>
+                </div>
+              </sc-for>
+              <div style="height:1px;background:var(--color-divider)"></div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isPlacements }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:8px">The board · what everyone with Shows sees</div>
+          <div style="display:grid;grid-template-columns:2fr .7fr 1.1fr 1fr .8fr;gap:0 20px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;padding-bottom:12px">
+            <div>Post</div><div>Kind</div><div>Who sees it</div><div>State</div><div>Read</div>
+          </div>
+          <div style="display:flex;flex-direction:column;margin-bottom:16px">
+            <sc-for list="{{ boardPosts }}" as="p" hint-placeholder-count="5">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="{{ p.rowStyle }}">
+                  <div style="font-size:16px;line-height:1.35">{{ p.title }}</div>
+                  <div style="font-size:14px;opacity:.7">{{ p.kind }}</div>
+                  <div style="font-size:14px;opacity:.7">{{ p.audience }}</div>
+                  <div><span class="{{ p.tagClass }}" style="font-size:11px;padding:4px 10px">{{ p.state }}</span></div>
+                  <div style="font-size:14px;opacity:.7">{{ p.read }}</div>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+          <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;margin-bottom:40px">
+            <button class="btn btn-primary" style="min-height:46px;font-size:15px;font-family:Gabarito,var(--font-body);font-weight:600;padding:0 22px">Write a notice</button>
+            <div style="font-size:14px;opacity:.55;max-width:62ch;line-height:1.55">Only My Stables posts on this board, and only people whose stable has Shows turned on can see it. Riders cannot reply.</div>
+          </div>
+
+          <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:8px">Advert slots · {{ slotsOnCount }}</div>
+          <div style="display:grid;grid-template-columns:1.3fr 1.6fr 1.2fr 1fr .5fr;gap:0 20px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;padding-bottom:12px">
+            <div>Slot</div><div>Where it appears</div><div>Currently</div><div>Runs</div><div style="text-align:right">On</div>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ slotRows }}" as="sl" hint-placeholder-count="5">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="{{ sl.rowStyle }}">
+                  <div style="font-size:16px;line-height:1.3">{{ sl.name }}</div>
+                  <div style="font-size:14px;opacity:.7;line-height:1.4">{{ sl.where }}</div>
+                  <div style="font-size:15px">{{ sl.filled }}</div>
+                  <div style="font-size:14px;opacity:.7">{{ sl.until }}</div>
+                  <button onClick="{{ sl.toggle }}" style="{{ sl.switchStyle }}"><span style="{{ sl.knobStyle }}"></span></button>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+          <div style="font-size:14px;opacity:.55;margin-top:18px;max-width:76ch;line-height:1.6">Every advert is labelled Advert, and never sits between a horse and its records. The slot after paying stays off — a receipt is not a place to sell something.</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isLeaving }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:48px">
+          <div>
+            <div style="display:grid;grid-template-columns:1.1fr 1.2fr 1.4fr .8fr .9fr .9fr;gap:0 18px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;padding-bottom:12px">
+              <div>Who</div><div>Asked for</div><div>Where they are</div><div>Asked</div><div>Left to act</div><div>State</div>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <sc-for list="{{ leavingRows }}" as="l" hint-placeholder-count="5">
+                <div>
+                  <div style="height:1px;background:var(--color-divider)"></div>
+                  <button onClick="{{ l.open }}" style="{{ l.rowStyle }}">
+                    <div style="font-size:16px;min-width:0">{{ l.who }}</div>
+                    <div style="font-size:14px;opacity:.75">{{ l.what }}</div>
+                    <div style="font-size:14px;opacity:.7;line-height:1.4">{{ l.where }}</div>
+                    <div style="font-size:14px;opacity:.6">{{ l.asked }}</div>
+                    <div style="font-size:14px;opacity:.7">{{ l.deadline }}</div>
+                    <div><span class="{{ l.tagClass }}" style="font-size:11px;padding:4px 10px">{{ l.state }}</span></div>
+                  </button>
+                </div>
+              </sc-for>
+              <div style="height:1px;background:var(--color-divider)"></div>
+            </div>
+            <div style="font-size:14px;opacity:.55;margin-top:18px">{{ leavingNote }}</div>
+          </div>
+
+          <div style="border-left:1px solid var(--color-divider);padding-left:40px">
+            <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:10px">{{ lvAsked }}</div>
+            <h2 style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:26px;line-height:1.1;margin:0 0 6px">{{ lvWho }}</h2>
+            <div style="font-size:15px;opacity:.6;margin-bottom:24px;line-height:1.45">{{ lvWhat }}</div>
+
+            <div style="padding-left:16px;border-left:2px solid var(--color-accent-300);margin-bottom:22px">
+              <div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-700);margin-bottom:8px">In the way</div>
+              <p style="font-size:15px;line-height:1.6;margin:0">{{ lvBlocker }}</p>
+            </div>
+            <div style="padding-left:16px;border-left:2px solid var(--color-accent-2-300);margin-bottom:24px">
+              <div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:8px">What cannot go</div>
+              <p style="font-size:15px;line-height:1.6;margin:0">{{ lvKeeps }}</p>
+            </div>
+
+            <sc-if value="{{ lvActionable }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <div style="display:flex;flex-wrap:wrap;gap:10px">
+                  <button onClick="{{ doDelete }}" class="btn btn-primary" style="min-height:46px;font-size:15px;font-family:Gabarito,var(--font-body);font-weight:600;padding:0 20px">Delete what can go</button>
+                  <button class="btn btn-secondary" style="min-height:46px;font-size:15px;padding:0 20px">Message them</button>
+                </div>
+                <sc-if value="{{ lvBlocked }}" hint-placeholder-val="{{ false }}">
+                  <p style="font-size:14px;line-height:1.6;margin:14px 0 0;max-width:44ch;color:var(--color-accent-700)">Hand his stable to someone else first, or the yard loses its only admin.</p>
+                </sc-if>
+              </div>
+            </sc-if>
+            <sc-if value="{{ lvSettled }}" hint-placeholder-val="{{ false }}">
+              <p style="font-size:15px;line-height:1.6;margin:0;max-width:44ch;opacity:.75">{{ lvSettledNote }}</p>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isAudit }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <p style="font-size:16px;line-height:1.6;margin:0 0 26px;max-width:66ch;opacity:.75;text-wrap:pretty">Every console action is written here and cannot be edited or deleted. This is what you show someone who asks why a stable was blocked.</p>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ auditRows }}" as="a" hint-placeholder-count="8">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="display:flex;gap:22px;align-items:baseline;padding:15px 0">
+                  <div style="width:130px;flex:none;font-size:13px;opacity:.5">{{ a.when }}</div>
+                  <div style="width:120px;flex:none;font-size:14px">{{ a.who }}</div>
+                  <div style="width:110px;flex:none"><span class="{{ a.tagClass }}" style="font-size:11px;padding:4px 10px">{{ a.kind }}</span></div>
+                  <div style="flex:1;min-width:0;font-size:15px;line-height:1.4">{{ a.what }}</div>
+                  <div style="width:110px;flex:none;font-size:13px;opacity:.45;text-align:right">{{ a.ip }}</div>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isFlags }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <p style="font-size:16px;line-height:1.6;margin:0 0 14px;max-width:66ch;opacity:.75;text-wrap:pretty">Turn a feature on for one stable before all of them. Toggles here take effect in the app immediately.</p>
+          <div style="max-width:66ch;margin-bottom:26px;padding-left:16px;border-left:2px solid var(--color-accent-2-300)">
+            <p style="font-size:15px;line-height:1.6;margin:0">The three <strong style="font-weight:600">outside the yard</strong> flags are off for everyone. With them off, the app is only a yard app — no Yard / Shows switch on home, no market, and nobody can apply to sell. Turn one on for a single stable first; turning it back off hides the feature without deleting anything behind it.</p>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ flags }}" as="f" hint-placeholder-count="6">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="display:flex;gap:22px;align-items:center;padding:18px 0">
+                  <div style="flex:1;min-width:0">
+                    <div style="font-size:17px;line-height:1.3">{{ f.name }}</div>
+                    <div style="font-size:14px;opacity:.55;margin-top:5px">{{ f.detail }}</div>
+                  </div>
+                  <div style="width:170px;flex:none;font-size:14px;opacity:.7">{{ f.scope }}</div>
+                  <button onClick="{{ f.toggle }}" style="{{ f.switchStyle }}">
+                    <span style="{{ f.knobStyle }}"></span>
+                  </button>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:920},&quot;compactRows&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Density&quot;}}">
+class Component extends DCLogic {
+  sectionDefs = [
+    { id: 'overview', label: 'Overview', group: 'Today', title: 'Overview', sub: 'Fourteen stables on the platform · everything on Free' },
+    { id: 'stables', label: 'Stables', group: 'Manage', title: 'Stables', sub: 'Every yard on the platform, and whether it is allowed in' },
+    { id: 'inspect', label: 'Inspect a stable', group: 'Manage', title: 'Serc', sub: 'Everything the app holds for this stable · read-only, and logged' },
+    { id: 'users', label: 'Users and access', group: 'Manage', title: 'Users and access', sub: 'One account per person, a role per stable' },
+    { id: 'roles', label: 'Roles and permissions', group: 'Manage', title: 'Roles and permissions', sub: 'Who on your team can open which section' },
+    { id: 'subs', label: 'Subscriptions', group: 'Money', title: 'Subscriptions and plans', sub: 'Free while you grow · three tiers drafted, none published' },
+    { id: 'payments', label: 'Payments', group: 'Money', title: 'Payments and invoices', sub: 'Nothing billed yet · the ledger is scaffolded' },
+    { id: 'revenue', label: 'Revenue', group: 'Money', title: 'Revenue reporting', sub: 'Zero, honestly · usage is the number that matters now' },
+    { id: 'applications', label: 'Applications', group: 'Market', title: 'Applications', sub: 'Nobody trades until you say so' },
+    { id: 'sellers', label: 'Sellers and providers', group: 'Market', title: 'Sellers and providers', sub: 'Approved to trade · suspend takes their listings down' },
+    { id: 'disputes', label: 'Disputes', group: 'Market', title: 'Disputes', sub: 'You decide, and the money moves accordingly' },
+    { id: 'due', label: 'Payouts due', group: 'Market', title: 'Payouts due', sub: 'Paid on the 1st and the 15th · you hold it until then' },
+    { id: 'fees', label: 'Fees and delivery', group: 'Market', title: 'Fees and delivery', sub: 'Your cut, and who pays for the van' },
+    { id: 'marketing', label: 'Marketing', group: 'Grow', title: 'Marketing', sub: 'Campaigns and referral codes' },
+    { id: 'announce', label: 'Announcements', group: 'Grow', title: 'Announcements', sub: 'A message above every stable\u2019s noticeboard' },
+    { id: 'placements', label: 'Board and placements', group: 'Grow', title: 'Board and placements', sub: 'What everyone with Shows sees, and where adverts sit' },
+    { id: 'ops', label: 'Support queue', group: 'Run', title: 'Operations', sub: 'What people have asked you to fix' },
+    { id: 'leaving', label: 'Leaving', group: 'Run', title: 'People and stables leaving', sub: 'Deletion requests · what goes, what must stay' },
+    { id: 'audit', label: 'Audit log', group: 'Run', title: 'Audit log', sub: 'Append-only · every console action, forever' },
+    { id: 'flags', label: 'Feature flags', group: 'Run', title: 'Feature flags', sub: 'Roll a feature out to one stable first' },
+  ];
+
+  roleNames = ['Owner', 'Finance', 'Operations', 'Marketing', 'Support', 'Read-only'];
+
+  defaultGrants = {
+    Owner: ['overview', 'stables', 'inspect', 'users', 'roles', 'subs', 'payments', 'revenue', 'applications', 'sellers', 'disputes', 'due', 'fees', 'marketing', 'announce', 'placements', 'ops', 'leaving', 'audit', 'flags'],
+    Finance: ['overview', 'subs', 'payments', 'revenue', 'due', 'fees', 'disputes', 'audit'],
+    Operations: ['overview', 'stables', 'inspect', 'users', 'applications', 'sellers', 'disputes', 'ops', 'announce', 'placements', 'leaving', 'flags', 'audit'],
+    Marketing: ['overview', 'stables', 'sellers', 'marketing', 'announce', 'placements'],
+    Support: ['overview', 'stables', 'inspect', 'users', 'disputes', 'ops', 'leaving'],
+    'Read-only': ['overview', 'stables', 'users', 'sellers'],
+  };
+
+  applicationDefs = [
+    {
+      id: 'a1', name: 'Marina Saddlery', kind: 'Shop', where: 'Dubai Marina', applied: '3 days ago',
+      wants: 'Tack, boots, rugs', person: 'Elena Petrova', licence: 'Dubai DED · verified automatically',
+      insurance: 'Public liability · expires 12 Mar 2027', flags: [], state: 'New',
+    },
+    {
+      id: 'a2', name: 'Rashid Bin Omar', kind: 'Farrier', where: 'Al Ain', applied: '4 days ago',
+      wants: 'Farriery visits', person: 'Rashid Bin Omar', licence: 'Trade licence · verified automatically',
+      insurance: 'None uploaded', flags: ['No insurance on file'], state: 'New',
+    },
+    {
+      id: 'a3', name: 'Gulf Equine Pharma', kind: 'Shop', where: 'Sharjah', applied: '6 days ago',
+      wants: 'Feed, supplements, medicines', person: 'Dr Samir Haddad', licence: 'Dubai DED · verified automatically',
+      insurance: 'Public liability · expires 8 Sep 2026', flags: ['Wants to sell medicines — needs a veterinary licence', 'Insurance expires in three weeks'], state: 'Needs a person',
+    },
+    {
+      id: 'a4', name: 'Al Qudra Equine Clinic', kind: 'Vet', where: 'Dubai', applied: 'Yesterday',
+      wants: 'Vet visits, emergency call-outs', person: 'Dr Yara Fahmy', licence: 'MOCCAE veterinary licence · uploaded',
+      insurance: 'Professional indemnity · expires 30 Jun 2027', flags: ['Veterinary licence needs reading by hand'], state: 'Needs a person',
+    },
+    {
+      id: 'a5', name: 'Bargain Tack UAE', kind: 'Shop', where: '—', applied: '8 days ago',
+      wants: 'Tack, bits', person: 'not given', licence: 'No trade licence',
+      insurance: 'None uploaded', flags: ['No trade licence', 'Company address is a PO box', 'Two earlier applications refused'], state: 'Refuse',
+    },
+  ];
+
+  sellerDefs = [
+    { id: 's1', name: 'Al Suwaidi', kind: 'Shop and farrier', since: 'Jun 2026', sales: 'AED 12,480', jobs: '38 visits', rating: '4.8', disputes: '2', state: 'Trading' },
+    { id: 's2', name: 'Desert Feed Co.', kind: 'Shop', since: 'Apr 2026', sales: 'AED 31,900', jobs: '—', rating: '4.6', disputes: '5', state: 'Trading' },
+    { id: 's3', name: 'Dr Farah Nasser', kind: 'Vet', since: 'May 2026', sales: 'AED 18,200', jobs: '52 visits', rating: '4.9', disputes: '0', state: 'Trading' },
+    { id: 's4', name: 'Marina Physio', kind: 'Physiotherapist', since: 'Jul 2026', sales: 'AED 4,050', jobs: '11 visits', rating: '4.7', disputes: '0', state: 'Trading' },
+    { id: 's5', name: 'Ali Rahman', kind: 'Equine dentist', since: 'Jul 2026', sales: 'AED 2,300', jobs: '7 visits', rating: '4.4', disputes: '1', state: 'Trading' },
+    { id: 's6', name: 'Sandstorm Rugs', kind: 'Shop', since: 'May 2026', sales: 'AED 6,700', jobs: '—', rating: '3.1', disputes: '9', state: 'Suspended' },
+  ];
+
+  disputeDefs = [
+    {
+      id: 'd1', ref: '#4018', title: 'Loose ring snaffle · 115 mm listed, 125 mm delivered',
+      buyer: 'Sharjah Riding Club', seller: 'Al Suwaidi', amount: 'AED 210', age: '2 days',
+      buyerSays: 'Measured it twice. The listing said 115 mm and the bit is 125 mm.',
+      sellerSays: 'Supplier changed the batch. Happy to swap it, the buyer wants the money back.',
+      state: 'Waiting on you', open: true,
+    },
+    {
+      id: 'd2', ref: '#4102', title: 'Rugs never arrived · third time this month',
+      buyer: 'Emirates Park Stables', seller: 'Sandstorm Rugs', amount: 'AED 890', age: '5 days',
+      buyerSays: 'Marked as delivered. Nothing arrived, nobody signed for it.',
+      sellerSays: 'No reply in four days.',
+      state: 'Waiting on you', open: true,
+    },
+    {
+      id: 'd3', ref: '#3998', title: 'Feed balancer bag split in transit',
+      buyer: 'Al Marmoom Equestrian', seller: 'Al Suwaidi', amount: 'AED 195', age: '11 days',
+      buyerSays: 'Photo attached, bag split down the seam.',
+      sellerSays: 'Packed properly. This is the courier.',
+      state: 'Refunded the buyer', open: false,
+      decision: 'Refunded in full, not charged to Al Suwaidi. Raised with the courier.',
+    },
+    {
+      id: 'd4', ref: '#3975', title: 'Buyer asked to return a completed farrier visit',
+      buyer: 'Emirates Park Stables', seller: 'Al Suwaidi', amount: 'AED 0', age: '15 days',
+      buyerSays: 'Changed our mind about the shoeing.',
+      sellerSays: 'Work was done, horse was shod.',
+      state: 'Closed, no refund', open: false,
+      decision: 'Services are not returnable once done. Explained to the buyer.',
+    },
+  ];
+
+  leavingDefs = [
+    {
+      id: 'lv1', who: 'Ravi Menon', what: 'Delete my account', where: 'Sharjah Riding Club · manager',
+      asked: '2 days ago', deadline: '28 days left', state: 'Waiting on you', open: true,
+      blocker: 'He is the only admin at Sharjah Riding Club. Somebody has to take it over first.',
+      keeps: 'Health notes he wrote stay with the horses, under his name. Nine invoices stay for seven years.',
+    },
+    {
+      id: 'lv2', who: 'Noura Al Falasi', what: 'Delete my account', where: 'No stable · rider',
+      asked: '4 days ago', deadline: '26 days left', state: 'Ready', open: true,
+      blocker: 'Nothing in the way. One horse, no stable, no unsettled payments.',
+      keeps: 'Two receipts stay for seven years. Everything else goes.',
+    },
+    {
+      id: 'lv3', who: 'Test Stable 3', what: 'Close the stable', where: 'Blocked · no horses', asked: '8 days ago',
+      deadline: '22 days left', state: 'Ready', open: true,
+      blocker: 'Duplicate signup, nothing in it.',
+      keeps: 'Nothing worth keeping. The audit trail of the block stays.',
+    },
+    {
+      id: 'lv4', who: 'Bargain Tack UAE', what: 'Delete seller account', where: 'Application refused',
+      asked: '11 days ago', deadline: 'Done 19 Aug', state: 'Deleted', open: false,
+      blocker: 'Never traded, so nothing to unwind.',
+      keeps: 'The refusal reason stays, so a re-application is recognised.',
+    },
+    {
+      id: 'lv5', who: 'Layal', what: 'Leave Sharjah Riding Club', where: 'Rider · keeps her Serc account',
+      asked: 'Yesterday', deadline: 'Immediate', state: 'Done by her', open: false,
+      blocker: 'Riders can leave a stable themselves. This is here so you can see it happened.',
+      keeps: 'Abby went with her. Training notes written at Sharjah stayed there.',
+    },
+  ];
+
+  slotDefs = [
+    { id: 'sl1', name: 'Shows home · banner', where: 'Above the show list, first thing they see', filled: 'Al Qudra Equestrian · Spring Tour', until: 'until 15 Sep', on: true },
+    { id: 'sl2', name: 'Board · in the run of posts', where: 'Between notices, labelled Advert', filled: 'Desert Feed Co. · hay delivery', until: 'Dubai stables only', on: true },
+    { id: 'sl3', name: 'Market · top strip', where: 'Above the item groups', filled: 'Empty', until: '—', on: false },
+    { id: 'sl4', name: 'After paying', where: 'Under the delivery list on the confirmation', filled: 'Empty', until: 'Never sold — we keep this clean', on: false },
+    { id: 'sl5', name: 'Start list · footer', where: 'Under the running order', filled: 'Empty', until: '—', on: false },
+  ];
+
+  boardPostDefs = [
+    { title: 'Spring Tour entries open Monday', kind: 'Shows', audience: 'Everyone', state: 'Pinned', read: '268 of 312', tag: 'tag tag-accent' },
+    { title: 'Six languages, and right to left', kind: 'App', audience: 'Everyone', state: 'Sent', read: '240 of 312', tag: 'tag tag-neutral' },
+    { title: 'Maintenance, Friday 03:00', kind: 'App', audience: 'Everyone', state: 'Sent', read: '199 of 312', tag: 'tag tag-neutral' },
+    { title: 'Abu Dhabi stables · we are coming', kind: 'Shows', audience: 'Abu Dhabi only', state: 'Scheduled 1 Sep', read: '—', tag: 'tag tag-accent-2' },
+    { title: 'Farriers wanted on the platform', kind: 'App', audience: 'Admins and trainers', state: 'Draft', read: '—', tag: 'tag tag-neutral' },
+  ];
+
+  feeDefs = [
+    { id: 'g', label: 'Goods', detail: 'Tack, feed, rugs, hoofcare', rate: 8, note: 'Taken from the item price, not the delivery' },
+    { id: 's', label: 'Services', detail: 'Farriery, vet, physio, dentist', rate: 5, note: 'Lower — the provider carries the travel' },
+    { id: 't', label: 'Transport', detail: 'Journeys between yards, shows, clinics', rate: 5, note: 'On the quoted price' },
+    { id: 'e', label: 'Show entries', detail: 'Paid straight to the organiser', rate: 0, note: 'Pass-through · we take nothing' },
+  ];
+
+  dueDefs = [
+    { name: 'Al Suwaidi', kind: 'Shop and farrier', held: 'AED 1,135', payable: 'AED 1,265', refunds: 'AED 0', net: 'AED 1,265', ready: true },
+    { name: 'Desert Feed Co.', kind: 'Shop', held: 'AED 2,410', payable: 'AED 3,880', refunds: '−AED 195', net: 'AED 3,685', ready: true },
+    { name: 'Dr Farah Nasser', kind: 'Vet', held: 'AED 0', payable: 'AED 2,400', refunds: 'AED 0', net: 'AED 2,400', ready: true },
+    { name: 'Marina Physio', kind: 'Physiotherapist', held: 'AED 0', payable: 'AED 620', refunds: 'AED 0', net: 'AED 620', ready: true },
+    { name: 'Ali Rahman', kind: 'Equine dentist', held: 'AED 300', payable: 'AED 450', refunds: 'AED 0', net: 'AED 450', ready: true },
+    { name: 'Sandstorm Rugs', kind: 'Shop', held: 'AED 1,780', payable: 'AED 0', refunds: '−AED 890', net: 'Held', ready: false },
+  ];
+
+  inspectTabs = ['Horses', 'People', 'Schedule', 'Tasks', 'Tack', 'Records', 'Noticeboard'];
+
+  inspectData = {
+    Horses: {
+      cols: ['Horse', 'Age and height', 'Owner', 'Setups', 'Status'],
+      rows: [
+        ['Kiki', 'Mare · 9 · 16.1 hh', 'Layal', 'Flatwork, jumping, hacking', 'Well'],
+        ['Comme Ci', 'Gelding · 12 · 16.3 hh', 'Ahmad', 'Flatwork, lunging', 'Watch · box rest day 3'],
+        ['Abby', 'Mare · 7 · 15.2 hh', 'Layal', 'Flatwork, hacking', 'Well'],
+      ],
+    },
+    People: {
+      cols: ['Person', 'Role here', 'Language', 'Other stables', 'Last seen'],
+      rows: [
+        ['Ahmad', 'Admin', 'English', 'Al Marmoom — trainer', 'Now'],
+        ['Layal', 'Admin', 'English', 'Sharjah — rider', '12 min'],
+        ['Toni', 'Trainer', 'English', 'Emirates Park — trainer', '2 hours'],
+        ['Rasil', 'Groom', 'اردو', '—', '40 min'],
+        ['Jagdib', 'Groom', 'नेपाली', 'Wadi Hoof — groom', 'Yesterday'],
+      ],
+    },
+    Schedule: {
+      cols: ['When', 'What', 'Horse', 'Who', 'State'],
+      rows: [
+        ['Today 07:00', 'Morning feed', 'All', 'Rasil', 'Done'],
+        ['Today 08:45', 'Flatwork', 'Kiki', 'Toni', 'Done'],
+        ['Today 10:00', 'Poultice, left fore', 'Comme Ci', 'Jagdib', 'Open'],
+        ['Today 16:30', 'Lesson', 'Abby', 'Toni', 'Open'],
+        ['Thu 08:00', 'Vet · vaccinations', 'Six horses', 'Dr Farah Nasser', 'Booked'],
+        ['Thu 15:30', 'Farrier', 'Comme Ci', 'Hamad Al Suwaidi', 'Booked'],
+      ],
+    },
+    Tasks: {
+      cols: ['Task', 'Assigned to', 'Due', 'Ticked', 'By'],
+      rows: [
+        ['Morning feed, all 14 horses', 'Rasil', '06:30', 'Yes', 'Rasil 06:41'],
+        ['Turn out the front six', 'Rasil', '07:15', 'Yes', 'Rasil 07:22'],
+        ['Tack up Kiki for flatwork', 'Jagdib', '08:45', 'Yes', 'Jagdib 08:38'],
+        ['Poultice Comme Ci, left fore', 'Jagdib', '10:00', 'No', '—'],
+        ['Sweep the yard', 'Rasil', '12:00', 'No', '—'],
+      ],
+    },
+    Tack: {
+      cols: ['Item', 'Group', 'Belongs to', 'Used in', 'Note'],
+      rows: [
+        ['Cavesson bridle', 'Bridles', 'Layal', 'Kiki · flatwork', ''],
+        ['Grackle noseband', 'Nosebands', 'Layal', 'Kiki · jumping', ''],
+        ['Loose ring snaffle', 'Bits', 'Layal', 'Kiki · all', ''],
+        ['Rubber reins', 'Reins', 'Ahmad', 'Comme Ci · hacking', ''],
+        ['Brushing boots', 'Boots', 'Ahmad', 'Comme Ci · lunging', 'Left boot fraying'],
+      ],
+    },
+    Records: {
+      cols: ['Horse', 'Kind', 'Entry', 'Who wrote it', 'When'],
+      rows: [
+        ['Comme Ci', 'Health', 'Heat in left fore, box rest 10 days', 'Dr Farah Nasser', '11 Aug'],
+        ['Comme Ci', 'Documents', 'X-rays, left fore', 'Ahmad', '11 Aug'],
+        ['Kiki', 'Training', 'Flatwork 40 min, transitions', 'Toni', '18 Aug'],
+        ['Kiki', 'Documents', 'Insurance — expires 30 Sep', 'Layal', '4 Jan'],
+        ['Abby', 'Health', 'Farrier, front shoes replaced', 'Hamad Al Suwaidi', '7 Aug'],
+      ],
+    },
+    Noticeboard: {
+      cols: ['Posted', 'By', 'Notice', 'Audience', 'Read'],
+      rows: [
+        ['Monday', 'Ahmad', 'Arena closed Friday morning', 'Everyone', '6 of 6'],
+        ['2 hours ago', 'Layal', 'Navy headcollar on the tack room hook', 'Everyone', '3 of 6'],
+        ['Yesterday', 'Ahmad', 'Hay delivery Wednesday, keep the gateway clear', 'Staff', '4 of 4'],
+      ],
+    },
+  };
+
+  stableDefs = [
+    { id: 'st1', name: 'Serc', where: 'Dubai', horses: 14, people: 6, joined: 'Mar 2026' },
+    { id: 'st2', name: 'Al Marmoom Equestrian', where: 'Dubai', horses: 31, people: 12, joined: 'Apr 2026' },
+    { id: 'st3', name: 'Sharjah Riding Club', where: 'Sharjah', horses: 22, people: 9, joined: 'Apr 2026' },
+    { id: 'st4', name: 'Emirates Park Stables', where: 'Abu Dhabi', horses: 18, people: 7, joined: 'May 2026' },
+    { id: 'st5', name: 'Wadi Hoof', where: 'Ras Al Khaimah', horses: 9, people: 4, joined: 'Jun 2026' },
+    { id: 'st6', name: 'Desert Rose Yard', where: 'Al Ain', horses: 11, people: 5, joined: 'Jun 2026' },
+    { id: 'st7', name: 'Test Stable 3', where: '—', horses: 0, people: 1, joined: 'Jul 2026', blocked: true },
+    { id: 'st8', name: 'Golden Sands Riding', where: 'Fujairah', horses: 6, people: 3, joined: 'Aug 2026' },
+  ];
+
+  userDefs = [
+    { id: 'u1', name: 'Ahmad', email: 'ahmad@serc.ae', roles: 'Serc — admin · Al Marmoom — trainer', seen: 'Now' },
+    { id: 'u2', name: 'Layal', email: 'layal@serc.ae', roles: 'Serc — admin · Sharjah — rider', seen: '12 min' },
+    { id: 'u3', name: 'Toni', email: 'toni.k@gmail.com', roles: 'Serc — trainer · Emirates Park — trainer', seen: '2 hours' },
+    { id: 'u4', name: 'Rasil', email: 'rasil@serc.ae', roles: 'Serc — groom', seen: '40 min' },
+    { id: 'u5', name: 'Jagdib', email: 'jagdib@serc.ae', roles: 'Serc — groom · Wadi Hoof — groom', seen: 'Yesterday' },
+    { id: 'u6', name: 'Fatima Darwish', email: 'f.darwish@almarmoom.ae', roles: 'Al Marmoom — admin', seen: '3 hours' },
+    { id: 'u7', name: 'Ravi Menon', email: 'ravi@sharjahrc.ae', roles: 'Sharjah — manager', seen: '2 days' },
+    { id: 'u8', name: 'unknown', email: 'qa+3@mailinator.com', roles: 'Test Stable 3 — admin', seen: '3 weeks', blocked: true },
+  ];
+
+  planDefs = [
+    { name: 'Free', price: 'AED 0', detail: 'Everything, no limits, while we grow.', state: 'Live', count: 'All 14 stables', tag: 'tag tag-accent-2', live: true },
+    { name: 'Small yard', price: 'AED 0', detail: 'Up to 10 horses. Price not set.', state: 'Draft', count: 'Not published', tag: 'tag tag-neutral' },
+    { name: 'Yard', price: 'AED 0', detail: 'Up to 40 horses, all roles.', state: 'Draft', count: 'Not published', tag: 'tag tag-neutral' },
+    { name: 'Pro', price: 'AED 0', detail: 'Unlimited, plus multi-stable reporting.', state: 'Draft', count: 'Not published', tag: 'tag tag-neutral' },
+  ];
+
+  invoiceDefs = [
+    { id: 'INV-0001', stable: 'Serc', period: 'Sep 2026', amount: 'AED 0.00', method: '—', status: 'Not issued' },
+    { id: 'INV-0002', stable: 'Al Marmoom Equestrian', period: 'Sep 2026', amount: 'AED 0.00', method: '—', status: 'Not issued' },
+    { id: 'INV-0003', stable: 'Sharjah Riding Club', period: 'Sep 2026', amount: 'AED 0.00', method: '—', status: 'Not issued' },
+    { id: 'INV-0004', stable: 'Emirates Park Stables', period: 'Sep 2026', amount: 'AED 0.00', method: '—', status: 'Not issued' },
+    { id: 'INV-0005', stable: 'Wadi Hoof', period: 'Sep 2026', amount: 'AED 0.00', method: '—', status: 'Not issued' },
+  ];
+
+  ticketDefs = [
+    { id: '#218', title: 'Groom cannot tick tasks with no signal in the barn', meta: 'Wadi Hoof · Bikash · app 1.0.4 on Android', priority: 'High', owner: 'Unassigned', age: '2h', open: true, tag: 'tag tag-accent' },
+    { id: '#217', title: 'Two stables both named Test Stable 3', meta: 'Reported by Layal · possible duplicate signup', priority: 'Low', owner: 'Layal', age: '5h', open: true, tag: 'tag tag-neutral' },
+    { id: '#215', title: 'Arabic noticeboard shows English original first', meta: 'Al Marmoom · Fatima · expected the translation', priority: 'Medium', owner: 'Ahmad', age: '1d', open: true, tag: 'tag tag-accent-2' },
+    { id: '#213', title: 'Farrier reminder arrived twice', meta: 'Serc · Toni', priority: 'Low', owner: 'Ahmad', age: '2d', open: true, tag: 'tag tag-neutral' },
+    { id: '#209', title: 'Rider left a stable and lost her training notes', meta: 'Sharjah · resolved by restoring from the stable record', priority: 'High', owner: 'Ahmad', age: '6d', open: false, tag: 'tag tag-accent' },
+    { id: '#204', title: 'Invite QR expired before the groom scanned it', meta: 'Emirates Park · resolved, expiry raised to 7 days', priority: 'Medium', owner: 'Layal', age: '9d', open: false, tag: 'tag tag-accent-2' },
+  ];
+
+  campaignDefs = [
+    { name: 'Dubai yards, spring outreach', meta: 'Email and WhatsApp · 4 weeks', reach: '86 yards', signups: '11 stables', state: 'Finished', tag: 'tag tag-neutral' },
+    { name: 'Trainer referral push', meta: 'In-app · ongoing', reach: '212 people', signups: '6 stables', state: 'Running', tag: 'tag tag-accent-2' },
+    { name: 'Abu Dhabi launch', meta: 'Email · starts 1 Sep', reach: '—', signups: '—', state: 'Scheduled', tag: 'tag tag-accent' },
+    { name: 'Groom app onboarding, Hindi and Urdu', meta: 'Draft · needs translated copy', reach: '—', signups: '—', state: 'Draft', tag: 'tag tag-neutral' },
+  ];
+
+  referralDefs = [
+    { code: 'SERC-AHMAD', owner: 'Ahmad · Serc', used: '4 stables joined', made: 'Mar 2026' },
+    { code: 'TONI-TRAINER', owner: 'Toni · trainer at two yards', used: '2 stables joined', made: 'May 2026' },
+    { code: 'MARMOOM-F', owner: 'Fatima Darwish · Al Marmoom', used: '1 stable joined', made: 'Jun 2026' },
+  ];
+
+  announcementDefs = [
+    { title: 'Six languages, and right-to-left', meta: 'Sent 12 Aug · all stables · 268 of 312 read' },
+    { title: 'Tack setups now warn you when they change', meta: 'Sent 2 Aug · admins and trainers · 74 read' },
+    { title: 'Task lists for grooms', meta: 'Sent 21 Jul · all stables · 240 read' },
+    { title: 'Scheduled maintenance, Friday 03:00', meta: 'Sent 14 Jul · all stables · 199 read' },
+  ];
+
+  auditDefs = [
+    { when: '18 Aug 09:41', who: 'Ahmad', kind: 'Access', what: 'Blocked user qa+3@mailinator.com', ip: '94.200.11.4', tag: 'tag tag-accent' },
+    { when: '18 Aug 09:40', who: 'Ahmad', kind: 'Stable', what: 'Blocked stable Test Stable 3 — duplicate signup', ip: '94.200.11.4', tag: 'tag tag-accent' },
+    { when: '18 Aug 08:12', who: 'Layal', kind: 'Flag', what: 'Enabled arena_booking for Serc only', ip: '94.200.11.9', tag: 'tag tag-accent-2' },
+    { when: '17 Aug 16:55', who: 'Ahmad', kind: 'Role', what: 'Granted Finance role to accounts@mystables.ae', ip: '94.200.11.4', tag: 'tag tag-neutral' },
+    { when: '17 Aug 11:03', who: 'Layal', kind: 'Notice', what: 'Sent announcement “Six languages, and right-to-left”', ip: '94.200.11.9', tag: 'tag tag-neutral' },
+    { when: '16 Aug 14:20', who: 'Ahmad', kind: 'Plan', what: 'Created draft plan “Pro” — not published', ip: '94.200.11.4', tag: 'tag tag-neutral' },
+    { when: '15 Aug 10:47', who: 'System', kind: 'Access', what: 'Failed sign-in, 5 attempts, ravi@sharjahrc.ae', ip: '5.32.207.88', tag: 'tag tag-accent' },
+    { when: '14 Aug 09:02', who: 'Ahmad', kind: 'Stable', what: 'Approved stable Golden Sands Riding', ip: '94.200.11.4', tag: 'tag tag-neutral' },
+  ];
+
+  flagDefs = [
+    { id: 'f1', name: 'arena_booking', detail: 'Book the school or a paddock from the schedule', scope: 'Serc only', on: true },
+    { id: 'f2', name: 'payments', detail: 'Card entry, invoices and plan upgrades', scope: 'Nobody', on: false },
+    { id: 'f3', name: 'offline_tasks', detail: 'Grooms tick tasks with no signal, syncs later', scope: '3 stables', on: true },
+    { id: 'f4', name: 'horse_transfer', detail: 'Move a horse to another stable, both sides approve', scope: 'Nobody', on: false },
+    { id: 'f5', name: 'translate_notes', detail: 'Offer to translate what people write', scope: 'All stables', on: true },
+    { id: 'f6', name: 'weight_tracking', detail: 'Weight and condition score on the health log', scope: 'Nobody', on: false },
+    { id: 'f7', name: 'outside_shows', detail: 'The Yard / Shows switch on home · shows, start lists and entries. Off for everyone until we are ready.', scope: 'Nobody', on: false },
+    { id: 'f8', name: 'outside_market', detail: 'Shops and services inside Shows mode · needs approved sellers. Off for everyone until we are ready.', scope: 'Nobody', on: false },
+    { id: 'f9', name: 'seller_applications', detail: 'Lets providers apply at all · turning this off closes the door without touching anyone already trading', scope: 'Nobody', on: false },
+  ];
+
+  state = {
+    section: 'overview', role: 'Owner',
+    grants: null,
+    blockedStables: { st7: true }, blockedUsers: { u8: true },
+    stableFilter: 'All', ticketFilter: 'Open', audience: 'Everyone',
+    inspectTab: 'Horses', inspectStable: 'Serc',
+    appDecided: {}, openApp: 'a3', sellerState: { s6: 'Suspended' },
+    disputeFilter: 'Open', openDispute: 'd1', disputeDecided: {},
+    rates: null, freeOver: 300, deliveryFee: 25, exampleList: 210,
+    slotOn: { sl1: true, sl2: true },
+    openLeaving: 'lv1', leavingDone: {},
+    flagOn: { f1: true, f3: true, f5: true },
+  };
+
+  grantsNow() {
+    if (this.state.grants) return this.state.grants;
+    const g = {};
+    this.roleNames.forEach(r => { g[r] = this.defaultGrants[r].slice(); });
+    return g;
+  }
+
+  chip(active, tone) {
+    const fill = tone === 'sage' ? 'var(--color-accent-2)' : 'var(--color-accent)';
+    return 'border:1px solid var(--color-divider);border-radius:999px;padding:8px 16px;font-family:var(--font-body);font-size:14px;cursor:pointer;'
+      + (active ? 'background:' + fill + ';border-color:' + fill + ';color:var(--color-bg)' : 'background:transparent;color:var(--color-text)');
+  }
+
+  linkBtn(tone) {
+    return 'background:transparent;border:0;padding:0;font-family:var(--font-body);font-size:14px;cursor:pointer;color:'
+      + (tone === 'danger' ? 'var(--color-accent-700)' : 'color-mix(in srgb, var(--color-text) 60%, transparent)');
+  }
+
+  renderVals() {
+    const s = this.state;
+    const grants = this.grantsNow();
+    const allowed = grants[s.role] || [];
+    const rows = this.props.compactRows ?? false;
+    const rowPad = rows ? '11px 0' : '15px 0';
+
+    const current = this.sectionDefs.find(d => d.id === s.section) || this.sectionDefs[0];
+
+    const groups = [];
+    this.sectionDefs.forEach(d => {
+      if (allowed.indexOf(d.id) === -1) return;
+      let g = groups.find(x => x.label === d.group);
+      if (!g) { g = { label: d.group, items: [] }; groups.push(g); }
+      const on = s.section === d.id;
+      g.items.push({
+        label: d.label,
+        pick: () => this.setState({ section: d.id }),
+        style: 'display:flex;align-items:center;gap:8px;width:100%;border:0;border-radius:12px;padding:9px 10px;font-family:var(--font-body);font-size:14.5px;cursor:pointer;text-align:left;'
+          + (on
+            ? 'background:color-mix(in srgb, var(--color-accent) 24%, transparent);color:var(--color-accent-200)'
+            : 'background:transparent;color:color-mix(in srgb, var(--color-neutral-100) 72%, transparent)'),
+        badge: d.id === 'ops' ? '4' : d.id === 'applications' ? '5' : d.id === 'disputes' ? '2' : '',
+        badgeStyle: (d.id === 'ops' || d.id === 'applications' || d.id === 'disputes')
+          ? 'font-size:11px;padding:2px 7px;border-radius:999px;background:var(--color-accent);color:var(--color-bg);flex:none'
+          : 'display:none',
+      });
+    });
+
+    const roleChips = this.roleNames.map(r => ({
+      label: r,
+      pick: () => {
+        const next = grants[r] || [];
+        this.setState({ role: r, section: next.indexOf(s.section) === -1 ? 'overview' : s.section });
+      },
+      style: this.chip(s.role === r) + ';padding:7px 13px;font-size:13px',
+    }));
+
+    const activeStables = this.stableDefs.filter(d => !s.blockedStables[d.id]).length;
+    const kpis = [
+      { label: 'Stables', value: '14', delta: '+2 this month' },
+      { label: 'Horses', value: '148', delta: '+19 this month' },
+      { label: 'People', value: '312', delta: '+34 this month' },
+      { label: 'Active yesterday', value: '61%', delta: 'Grooms 78%' },
+      { label: 'MRR', value: 'AED 0', delta: 'Free while you grow' },
+    ];
+    const chartData = [
+      { label: 'Jan', v: 1 }, { label: 'Feb', v: 1 }, { label: 'Mar', v: 2 },
+      { label: 'Apr', v: 3 }, { label: 'May', v: 2 }, { label: 'Jun', v: 3 },
+      { label: 'Jul', v: 1 }, { label: 'Aug', v: 1 },
+    ];
+    const maxV = 3;
+    const chart = chartData.map((c, i) => ({
+      label: c.label, value: c.v,
+      barStyle: 'width:100%;border-radius:14px 14px 4px 4px;height:' + Math.round((c.v / maxV) * 100) + '%;background:'
+        + (i >= chartData.length - 2 ? 'var(--color-accent)' : 'var(--color-accent-2-400)'),
+    }));
+    const attention = [
+      { text: '4 support tickets open', meta: 'One unassigned for two hours', tag: 'Ops', tagClass: 'tag tag-accent' },
+      { text: 'Test Stable 3 blocked', meta: 'Duplicate signup, no horses', tag: 'Blocked', tagClass: 'tag tag-neutral' },
+      { text: 'Abu Dhabi campaign starts 1 Sep', meta: 'Copy not approved yet', tag: 'Marketing', tagClass: 'tag tag-accent-2' },
+      { text: 'Three plans still drafts', meta: 'Nothing bills until one is published', tag: 'Money', tagClass: 'tag tag-neutral' },
+    ];
+
+    const stableFilters = ['All', 'Active', 'Blocked'].map(f => ({
+      label: f, pick: () => this.setState({ stableFilter: f }), style: this.chip(s.stableFilter === f),
+    }));
+    const stableRows = this.stableDefs.filter(d => {
+      const blocked = !!s.blockedStables[d.id];
+      return s.stableFilter === 'All' || (s.stableFilter === 'Blocked' ? blocked : !blocked);
+    }).map(d => {
+      const blocked = !!s.blockedStables[d.id];
+      return {
+        name: d.name, where: d.where, horses: d.horses, people: d.people, joined: d.joined, plan: 'Free',
+        open: () => this.setState({ section: 'inspect', inspectStable: d.name, inspectTab: 'Horses' }),
+        nameStyle: 'background:transparent;border:0;padding:0;font-family:var(--font-body);font-size:16px;line-height:1.3;text-align:left;cursor:pointer;color:var(--color-accent-700)',
+        status: blocked ? 'Blocked' : 'Active',
+        statusClass: blocked ? 'tag tag-neutral' : 'tag tag-accent-2',
+        action: blocked ? 'Allow' : 'Block',
+        actionStyle: this.linkBtn(blocked ? 'quiet' : 'danger'),
+        rowStyle: 'display:grid;grid-template-columns:1.5fr 1fr .6fr .6fr .8fr .9fr .9fr;gap:0 20px;align-items:center;padding:' + rowPad
+          + (blocked ? ';opacity:.5' : ''),
+        toggle: () => this.setState({ blockedStables: Object.assign({}, s.blockedStables, { [d.id]: !blocked }) }),
+      };
+    });
+
+    const userRows = this.userDefs.map(d => {
+      const blocked = !!s.blockedUsers[d.id];
+      return {
+        name: d.name, email: d.email, roles: d.roles, seen: d.seen,
+        initial: d.name === 'unknown' ? '?' : d.name.charAt(0),
+        avatarStyle: 'width:32px;height:32px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-family:Gabarito,var(--font-body);font-weight:600;font-size:14px;background:'
+          + (blocked ? 'var(--color-neutral-300);color:var(--color-neutral-700)' : 'var(--color-accent-2-300);color:var(--color-accent-2-900)'),
+        status: blocked ? 'Blocked' : 'Active',
+        statusClass: blocked ? 'tag tag-neutral' : 'tag tag-accent-2',
+        action: blocked ? 'Allow' : 'Block',
+        actionStyle: this.linkBtn(blocked ? 'quiet' : 'danger'),
+        rowStyle: 'display:grid;grid-template-columns:1.3fr 1.4fr 1.5fr .8fr .8fr .9fr;gap:0 20px;align-items:center;padding:' + rowPad
+          + (blocked ? ';opacity:.5' : ''),
+        toggle: () => this.setState({ blockedUsers: Object.assign({}, s.blockedUsers, { [d.id]: !blocked }) }),
+      };
+    });
+
+    const matrixRows = this.sectionDefs.map(d => ({
+      label: d.label,
+      cells: this.roleNames.map(r => {
+        const on = (grants[r] || []).indexOf(d.id) !== -1;
+        const locked = r === 'Owner';
+        return {
+          mark: on ? '✓' : '',
+          style: 'width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;font-family:var(--font-body);'
+            + (locked ? 'cursor:default;' : 'cursor:pointer;')
+            + (on
+              ? 'background:var(--color-accent-2);border:1px solid var(--color-accent-2);color:var(--color-bg)'
+              : 'background:transparent;border:1px solid var(--color-divider);color:transparent'),
+          toggle: locked ? () => {} : () => {
+            const next = {};
+            this.roleNames.forEach(rn => { next[rn] = (grants[rn] || []).slice(); });
+            const list = next[r];
+            const i = list.indexOf(d.id);
+            if (i === -1) list.push(d.id); else list.splice(i, 1);
+            this.setState({ grants: next, section: (next[s.role] || []).indexOf(s.section) === -1 ? 'overview' : s.section });
+          },
+        };
+      }),
+    }));
+
+    const plans = this.planDefs.map(p => ({
+      name: p.name, price: p.price, detail: p.detail, state: p.state, count: p.count, tagClass: p.tag,
+      cardStyle: 'background:var(--color-bg);padding:22px 22px 24px' + (p.live ? '' : ';opacity:.6'),
+    }));
+
+    const ticketFilters = ['Open', 'Closed', 'All'].map(f => ({
+      label: f, pick: () => this.setState({ ticketFilter: f }), style: this.chip(s.ticketFilter === f),
+    }));
+    const tickets = this.ticketDefs.filter(t =>
+      s.ticketFilter === 'All' || (s.ticketFilter === 'Open' ? t.open : !t.open)
+    ).map(t => ({
+      id: t.id, title: t.title, meta: t.meta, priority: t.priority, owner: t.owner, age: t.age, tagClass: t.tag,
+    }));
+
+    const audiences = ['Everyone', 'Admins', 'Trainers', 'Grooms', 'One stable'];
+    const reachMap = {
+      Everyone: '312 people across 14 stables',
+      Admins: '19 people across 14 stables',
+      Trainers: '26 people across 11 stables',
+      Grooms: '58 people across 14 stables',
+      'One stable': 'Pick a stable to see the reach',
+    };
+    const audienceChips = audiences.map(a => ({
+      label: a, pick: () => this.setState({ audience: a }), style: this.chip(s.audience === a, 'sage'),
+    }));
+
+    const flags = this.flagDefs.map(f => {
+      const on = !!s.flagOn[f.id];
+      return {
+        name: f.name, detail: f.detail, scope: f.scope,
+        switchStyle: 'width:52px;height:30px;border-radius:999px;border:0;flex:none;cursor:pointer;display:flex;align-items:center;padding:3px;justify-content:'
+          + (on ? 'flex-end' : 'flex-start') + ';background:' + (on ? 'var(--color-accent-2)' : 'var(--color-neutral-300)'),
+        knobStyle: 'width:24px;height:24px;border-radius:50%;background:var(--color-bg);display:block',
+        toggle: () => this.setState({ flagOn: Object.assign({}, s.flagOn, { [f.id]: !on }) }),
+      };
+    });
+
+    const inspectSet = this.inspectData[s.inspectTab] || this.inspectData.Horses;
+    const cols = inspectSet.cols;
+    const gridCols = '1.1fr 1.5fr 1fr 1.4fr .9fr';
+    const inspectTabChips = this.inspectTabs.map(t => ({
+      label: t, pick: () => this.setState({ inspectTab: t }), style: this.chip(s.inspectTab === t),
+    }));
+    const inspectRows = inspectSet.rows.map(r => ({
+      cells: r.map((v, i) => ({
+        value: v,
+        style: 'font-size:' + (i === 0 ? '16px' : '14.5px') + ';line-height:1.4;min-width:0'
+          + (i === 0 ? '' : ';opacity:.75'),
+      })),
+      rowStyle: 'display:grid;grid-template-columns:' + gridCols + ';gap:0 20px;align-items:baseline;padding:' + rowPad,
+    }));
+
+    const appRows = this.applicationDefs.map(a => {
+      const decided = s.appDecided[a.id];
+      const on = s.openApp === a.id;
+      return {
+        name: a.name, kind: a.kind, where: a.where, applied: a.applied,
+        state: decided || a.state,
+        tagClass: decided === 'Approved' ? 'tag tag-accent-2'
+          : decided === 'Refused' ? 'tag tag-neutral'
+          : a.state === 'Refuse' ? 'tag tag-neutral' : a.state === 'New' ? 'tag tag-accent-2' : 'tag tag-accent',
+        flagCount: a.flags.length === 0 ? 'Nothing flagged' : a.flags.length + (a.flags.length === 1 ? ' flag' : ' flags'),
+        rowStyle: 'display:grid;grid-template-columns:1.4fr .9fr .9fr .8fr 1fr .9fr;gap:0 20px;align-items:center;width:100%;background:'
+          + (on ? 'color-mix(in srgb, var(--color-accent) 8%, transparent)' : 'transparent')
+          + ';border:0;padding:' + rowPad + ';font-family:var(--font-body);color:var(--color-text);cursor:pointer;text-align:left'
+          + (decided ? ';opacity:.55' : ''),
+        open: () => this.setState({ openApp: a.id }),
+      };
+    });
+    const openApp = this.applicationDefs.find(a => a.id === s.openApp) || this.applicationDefs[0];
+    const openDecided = s.appDecided[openApp.id];
+
+    const sellerRows = this.sellerDefs.map(d => {
+      const st = s.sellerState[d.id] || d.state;
+      const suspended = st === 'Suspended';
+      return {
+        name: d.name, kind: d.kind, since: d.since, sales: d.sales, jobs: d.jobs, rating: d.rating, disputes: d.disputes,
+        state: st,
+        statusClass: suspended ? 'tag tag-neutral' : 'tag tag-accent-2',
+        action: suspended ? 'Reinstate' : 'Suspend',
+        actionStyle: this.linkBtn(suspended ? 'quiet' : 'danger'),
+        rowStyle: 'display:grid;grid-template-columns:1.3fr 1fr .7fr 1fr .8fr .7fr .8fr .9fr;gap:0 18px;align-items:center;padding:' + rowPad
+          + (suspended ? ';opacity:.55' : ''),
+        toggle: () => this.setState({ sellerState: Object.assign({}, s.sellerState, { [d.id]: suspended ? 'Trading' : 'Suspended' }) }),
+      };
+    });
+
+    const disputeFilters = ['Open', 'Decided', 'All'].map(f => ({
+      label: f, pick: () => this.setState({ disputeFilter: f }), style: this.chip(s.disputeFilter === f),
+    }));
+    const disputeRows = this.disputeDefs.filter(d => {
+      const decided = !!s.disputeDecided[d.id] || !d.open;
+      return s.disputeFilter === 'All' || (s.disputeFilter === 'Open' ? !decided : decided);
+    }).map(d => {
+      const verdict = s.disputeDecided[d.id];
+      const on = s.openDispute === d.id;
+      return {
+        ref: d.ref, title: d.title, buyer: d.buyer, seller: d.seller, amount: d.amount, age: d.age,
+        state: verdict || d.state,
+        tagClass: verdict ? 'tag tag-neutral' : d.open ? 'tag tag-accent' : 'tag tag-neutral',
+        rowStyle: 'display:flex;gap:18px;align-items:baseline;width:100%;background:'
+          + (on ? 'color-mix(in srgb, var(--color-accent) 8%, transparent)' : 'transparent')
+          + ';border:0;padding:16px 0;font-family:var(--font-body);color:var(--color-text);cursor:pointer;text-align:left',
+        open: () => this.setState({ openDispute: d.id }),
+      };
+    });
+    const openDispute = this.disputeDefs.find(d => d.id === s.openDispute) || this.disputeDefs[0];
+    const openVerdict = s.disputeDecided[openDispute.id] || (openDispute.open ? '' : openDispute.state);
+
+    const openLeaving = this.leavingDefs.find(l => l.id === s.openLeaving) || this.leavingDefs[0];
+    const rates = s.rates || this.feeDefs.reduce((o, f) => { o[f.id] = f.rate; return o; }, {});
+    const feeRows = this.feeDefs.map(f => ({
+      label: f.label, detail: f.detail, note: f.note,
+      rate: rates[f.id] + '%',
+      rowStyle: 'display:grid;grid-template-columns:1.2fr 1.4fr .5fr 1.4fr;gap:0 20px;align-items:center;padding:' + rowPad,
+      up: () => this.setState({ rates: Object.assign({}, rates, { [f.id]: Math.min(25, rates[f.id] + 1) }) }),
+      down: () => this.setState({ rates: Object.assign({}, rates, { [f.id]: Math.max(0, rates[f.id] - 1) }) }),
+      stepStyle: 'width:32px;height:32px;border-radius:50%;border:1px solid var(--color-divider);background:transparent;color:var(--color-accent-700);font-family:var(--font-body);font-size:16px;cursor:pointer;flex:none',
+    }));
+    const listPrice = s.exampleList;
+    const goodsRate = rates.g;
+    const ourCut = Math.round(listPrice * goodsRate) / 100;
+    const exampleRows = [
+      { label: 'Rider pays for the item', value: 'AED ' + listPrice.toFixed(2), strong: false },
+      { label: 'Delivery', value: listPrice >= s.freeOver ? 'Free' : 'AED ' + s.deliveryFee.toFixed(2), strong: false },
+      { label: 'Our cut at ' + goodsRate + '%', value: '−AED ' + ourCut.toFixed(2), strong: false },
+      { label: 'Seller receives', value: 'AED ' + (listPrice - ourCut).toFixed(2), strong: true },
+    ].map(r => ({
+      label: r.label, value: r.value,
+      labelStyle: 'font-size:' + (r.strong ? '17px' : '16px') + (r.strong ? ';font-family:Gabarito,var(--font-body);font-weight:600' : ';opacity:.7'),
+      valueStyle: 'font-size:' + (r.strong ? '19px' : '16px') + ';font-family:Gabarito,var(--font-body)' + (r.strong ? ';font-weight:600' : ';font-weight:500;opacity:.85'),
+    }));
+
+    const dueRows = this.dueDefs.map(d => ({
+      name: d.name, kind: d.kind, held: d.held, payable: d.payable, refunds: d.refunds, net: d.net,
+      note: d.ready ? '' : 'Held — nine disputes open',
+      rowStyle: 'display:grid;grid-template-columns:1.3fr 1.1fr .9fr .9fr .9fr 1fr;gap:0 20px;align-items:center;padding:' + rowPad
+        + (d.ready ? '' : ';opacity:.6'),
+      netStyle: 'text-align:right;font-family:Gabarito,var(--font-body);font-weight:600;font-size:16px;color:'
+        + (d.ready ? 'var(--color-text)' : 'var(--color-accent-700)'),
+    }));
+
+    return {
+      navGroups: groups, roleChips,
+      appRows,
+      appName: openApp.name,
+      appKind: openApp.kind + ' · ' + openApp.where,
+      appPerson: openApp.person,
+      appWants: openApp.wants,
+      appLicence: openApp.licence,
+      appInsurance: openApp.insurance,
+      appApplied: 'Applied ' + openApp.applied,
+      appFlags: openApp.flags.map(f => ({ text: f })),
+      appHasFlags: openApp.flags.length > 0,
+      appClean: openApp.flags.length === 0,
+      appUndecided: !openDecided,
+      appDecidedLabel: openDecided || '',
+      appDecidedNote: openDecided === 'Approved'
+        ? 'They can list from now. Anything they list is still checked before riders see it.'
+        : 'Refused. They are told the reason and can apply again in 30 days.',
+      approveApp: () => this.setState({ appDecided: Object.assign({}, s.appDecided, { [openApp.id]: 'Approved' }) }),
+      refuseApp: () => this.setState({ appDecided: Object.assign({}, s.appDecided, { [openApp.id]: 'Refused' }) }),
+      appQueueNote: this.applicationDefs.filter(a => !s.appDecided[a.id]).length + ' waiting · oldest 8 days',
+      sellerRows,
+      disputeFilters, disputeRows,
+      dRef: openDispute.ref, dTitle: openDispute.title,
+      dBuyer: openDispute.buyer, dSeller: openDispute.seller, dAmount: openDispute.amount, dAge: openDispute.age,
+      dBuyerSays: openDispute.buyerSays, dSellerSays: openDispute.sellerSays,
+      dUndecided: !openVerdict,
+      dVerdict: openVerdict,
+      dVerdictNote: openVerdict === 'Refunded the buyer'
+        ? 'Money returns to the buyer and comes off the seller\u2019s next payout.'
+        : openVerdict === 'Paid the seller'
+        ? 'Released to the seller on the next cycle. The buyer is told why.'
+        : openVerdict === 'Split it'
+        ? 'Half back to the buyer, half released. Both sides are told the reasoning.'
+        : openDispute.decision || '',
+      refundBuyer: () => this.setState({ disputeDecided: Object.assign({}, s.disputeDecided, { [openDispute.id]: 'Refunded the buyer' }) }),
+      paySeller: () => this.setState({ disputeDecided: Object.assign({}, s.disputeDecided, { [openDispute.id]: 'Paid the seller' }) }),
+      splitDispute: () => this.setState({ disputeDecided: Object.assign({}, s.disputeDecided, { [openDispute.id]: 'Split it' }) }),
+      dueRows,
+      dueKpis: [
+        { label: 'Due 1 September', value: 'AED 8,420', note: 'Five sellers' },
+        { label: 'Held, windows open', value: 'AED 5,625', note: 'Not yours, not theirs yet' },
+        { label: 'Held by dispute', value: 'AED 1,780', note: 'Sandstorm Rugs' },
+        { label: 'Refunds this period', value: '−AED 1,085', note: 'Three decided against sellers' },
+      ],
+      isApplications: s.section === 'applications',
+      isSellers: s.section === 'sellers',
+      isDisputes: s.section === 'disputes',
+      isDue: s.section === 'due',
+      isFees: s.section === 'fees',
+      isPlacements: s.section === 'placements',
+      isLeaving: s.section === 'leaving',
+      leavingRows: this.leavingDefs.map(l => {
+        const done = !!s.leavingDone[l.id];
+        const on = s.openLeaving === l.id;
+        return {
+          who: l.who, what: l.what, where: l.where, asked: l.asked, deadline: l.deadline,
+          state: done ? 'Deleted' : l.state,
+          tagClass: done || !l.open ? 'tag tag-neutral' : l.state === 'Ready' ? 'tag tag-accent-2' : 'tag tag-accent',
+          rowStyle: 'display:grid;grid-template-columns:1.1fr 1.2fr 1.4fr .8fr .9fr .9fr;gap:0 18px;align-items:center;width:100%;border:0;text-align:left;cursor:pointer;padding:' + rowPad
+            + ';font-family:var(--font-body);color:var(--color-text);background:'
+            + (on ? 'color-mix(in srgb, var(--color-accent) 8%, transparent)' : 'transparent')
+            + (done || !l.open ? ';opacity:.55' : ''),
+          open: () => this.setState({ openLeaving: l.id }),
+        };
+      }),
+      lvWho: openLeaving.who,
+      lvWhat: openLeaving.what + ' · ' + openLeaving.where,
+      lvAsked: 'Asked ' + openLeaving.asked + ' · ' + openLeaving.deadline,
+      lvBlocker: openLeaving.blocker,
+      lvKeeps: openLeaving.keeps,
+      lvActionable: openLeaving.open && !s.leavingDone[openLeaving.id],
+      lvBlocked: openLeaving.state === 'Waiting on you',
+      lvSettled: !openLeaving.open || !!s.leavingDone[openLeaving.id],
+      lvSettledNote: s.leavingDone[openLeaving.id]
+        ? 'Deleted. What had to stay is listed above, and this decision is in the audit log.'
+        : openLeaving.keeps,
+      doDelete: () => this.setState({ leavingDone: Object.assign({}, s.leavingDone, { [openLeaving.id]: true }) }),
+      leavingNote: this.leavingDefs.filter(l => l.open && !s.leavingDone[l.id]).length
+        + ' open · the law gives you 30 days, so none of this is urgent today',
+      slotRows: this.slotDefs.map(sl => {
+        const on = !!s.slotOn[sl.id];
+        return {
+          name: sl.name, where: sl.where, filled: on ? sl.filled : 'Off',
+          until: on ? sl.until : 'Hidden from every stable',
+          rowStyle: 'display:grid;grid-template-columns:1.3fr 1.6fr 1.2fr 1fr .5fr;gap:0 20px;align-items:center;padding:' + rowPad
+            + (on ? '' : ';opacity:.55'),
+          switchStyle: 'width:50px;height:29px;border-radius:999px;border:0;flex:none;cursor:pointer;display:flex;align-items:center;padding:3px;justify-self:end;justify-content:'
+            + (on ? 'flex-end' : 'flex-start') + ';background:' + (on ? 'var(--color-accent-2)' : 'var(--color-neutral-300)'),
+          knobStyle: 'width:23px;height:23px;border-radius:50%;background:var(--color-bg);display:block',
+          toggle: () => this.setState({ slotOn: Object.assign({}, s.slotOn, { [sl.id]: !on }) }),
+        };
+      }),
+      boardPosts: this.boardPostDefs.map(p => ({
+        title: p.title, kind: p.kind, audience: p.audience, state: p.state, read: p.read, tagClass: p.tag,
+        rowStyle: 'display:grid;grid-template-columns:2fr .7fr 1.1fr 1fr .8fr;gap:0 20px;align-items:center;padding:' + rowPad,
+      })),
+      slotsOnCount: this.slotDefs.filter(sl => s.slotOn[sl.id]).length + ' of ' + this.slotDefs.length + ' slots on',
+      feeRows,
+      feeExample: exampleRows,
+      feeExampleTitle: 'A seller lists a snaffle at AED ' + s.exampleList,
+      deliveryRules: [
+        { label: 'Free delivery over', value: 'AED ' + s.freeOver, meta: 'Set by you, the same for every seller' },
+        { label: 'Otherwise', value: 'AED ' + s.deliveryFee, meta: 'Charged to the buyer at checkout' },
+        { label: 'Our cut of delivery', value: 'Nothing', meta: 'It goes to whoever moves the box' },
+        { label: 'Two sellers, one basket', value: 'Two charges', meta: 'Never merged — each delivery is its own job, priced on its own' },
+      ],
+      feeNote: 'Change a rate and every seller is told before the period it applies to — never retrospectively. Nothing already sold is recalculated.',
+      inspectTabChips, inspectRows,
+      inspectHeaderStyle: 'display:grid;grid-template-columns:' + gridCols + ';gap:0 20px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;padding-bottom:12px',
+      inspectCols: cols,
+      inspectNote: s.inspectTab === 'Records'
+        ? 'Health notes and documents are the most private thing in the app. Opening this tab is written to the audit log with your name against it.'
+        : 'Read-only. Nothing here can be changed from the console — the stable owns its own data.',
+      inspectCount: inspectSet.rows.length + ' ' + s.inspectTab.toLowerCase() + ' · ' + s.inspectStable,
+      roleLabel: s.role,
+      roleReach: allowed.length + ' of ' + this.sectionDefs.length + ' sections',
+      pageTitle: s.section === 'inspect' ? s.inspectStable : current.title,
+      pageSub: current.sub,
+      isOverview: s.section === 'overview',
+      isStables: s.section === 'stables',
+      isInspect: s.section === 'inspect',
+      isUsers: s.section === 'users',
+      isRoles: s.section === 'roles',
+      isSubs: s.section === 'subs',
+      isPayments: s.section === 'payments',
+      isRevenue: s.section === 'revenue',
+      isMarketing: s.section === 'marketing',
+      isAnnounce: s.section === 'announce',
+      isOps: s.section === 'ops',
+      isAudit: s.section === 'audit',
+      isFlags: s.section === 'flags',
+      kpis, chart, attention,
+      stableFilters, stableRows,
+      stableFootnote: activeStables + ' active, ' + (this.stableDefs.length - activeStables) + ' blocked. Blocking a stable signs everyone in it out and keeps the data.',
+      userRows,
+      matrixRoles: this.roleNames, matrixRows,
+      plans,
+      invoiceRows: this.invoiceDefs,
+      revenueKpis: [
+        { label: 'MRR', value: 'AED 0', note: 'No plan published' },
+        { label: 'Collected, all time', value: 'AED 0', note: 'No payments taken' },
+        { label: 'Paying stables', value: '0 of 14', note: 'Everyone on Free' },
+        { label: 'If Yard tier at 299', value: 'AED 4,186', note: 'Fourteen stables, illustrative only' },
+      ],
+      ticketFilters, tickets,
+      campaigns: this.campaignDefs.map(c => ({
+        name: c.name, meta: c.meta, reach: c.reach, signups: c.signups, state: c.state, tagClass: c.tag,
+      })),
+      referrals: this.referralDefs,
+      audienceChips, audienceReach: reachMap[s.audience],
+      sentAnnouncements: this.announcementDefs,
+      auditRows: this.auditDefs.map(a => ({
+        when: a.when, who: a.who, kind: a.kind, what: a.what, ip: a.ip, tagClass: a.tag,
+      })),
+      flags,
+    };
+  }
+}
+</script>
+</body>
+</html>

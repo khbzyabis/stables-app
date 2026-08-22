@@ -1,0 +1,46 @@
+{
+  "@@locale": "bn",
+  "appName": "মাই স্টেবলস",
+  "splashTagline": "প্রতিটি ঘোড়া, প্রতিটি নোট, এক জায়গায়।",
+
+  "welcomeBack": "ফিরে আসায় স্বাগতম",
+  "signInSubtitle": "আপনার আস্তাবলে সাইন ইন করুন।",
+  "email": "ইমেইল",
+  "password": "পাসওয়ার্ড",
+  "show": "দেখান",
+  "hide": "লুকান",
+  "forgotPassword": "পাসওয়ার্ড ভুলে গেছেন?",
+  "signIn": "সাইন ইন",
+  "orDivider": "অথবা",
+  "continueWithApple": "Apple দিয়ে চালিয়ে যান",
+  "continueWithGoogle": "Google দিয়ে চালিয়ে যান",
+  "newHere": "নতুন এসেছেন? ",
+  "createAnAccount": "অ্যাকাউন্ট তৈরি করুন",
+  "haveInviteCode": "আমার কাছে আমন্ত্রণ কোড আছে",
+
+  "back": "পিছনে",
+  "yourDetails": "আপনার তথ্য",
+  "step1of3": "ধাপ ১ / ৩ — আপনার সম্পর্কে।",
+  "fullName": "পুরো নাম",
+  "phone": "ফোন",
+  "passwordHint": "৮টি অক্ষর বা তার বেশি",
+  "sendMeCode": "আমাকে কোড পাঠান",
+
+  "checkYourPhone": "আপনার ফোন দেখুন",
+  "verify": "যাচাই করুন",
+
+  "yourStable": "আপনার আস্তাবল",
+  "createStable": "আস্তাবল তৈরি করুন",
+  "roleAdmin": "অ্যাডমিন",
+  "joinStable": "আস্তাবলে যোগ দিন",
+  "createStableCta": "আস্তাবল তৈরি করুন",
+  "joinStableCta": "আস্তাবলে যোগ দিন",
+
+  "language": "ভাষা",
+  "langEnglish": "English",
+  "langArabic": "العربية",
+  "langHindi": "हिन्दी",
+  "langUrdu": "اردو",
+  "langBengali": "বাংলা",
+  "langNepali": "नेपाली"
+}

@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="_ds/organic-07b13dc3-fcc8-4e70-b2c2-fd7f5889f38a/styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600&family=Gabarito:wght@500;600;700&display=swap">
+<style>
+body{margin:0;background:#e7dcc8;font-family:var(--font-body,system-ui)}
+a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-600)}
+</style>
+</helmet>
+
+<div style="padding:56px 56px 36px;max-width:900px">
+  <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700);margin-bottom:14px">My Stables · the provider's phone</div>
+  <h1 style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:48px;line-height:1;margin:0 0 20px">Hamad's day, one hand, dirty hands</h1>
+  <p style="font-size:17px;line-height:1.6;max-width:62ch;margin:0 0 12px;text-wrap:pretty">Ten screens — three to apply, seven to work — and deliberately fewer than the web dashboard: today's work, a request to answer, a job being finished, the stable thread, orders to pack, and what he has earned. Everything else — listings, payouts, disputes, staff — stays on the desktop, where he has time to read.</p>
+  <p style="font-size:15px;line-height:1.6;max-width:62ch;margin:0;opacity:.75;text-wrap:pretty">Live: accept or decline a request, tick a job through its steps, and the earnings toggle. Buttons are 56px and up, because this is used standing in a barn.</p>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:64px;padding:0 56px 80px;align-items:flex-start">
+
+  <div id="p0a" data-screen-label="P0a Apply" style="display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;opacity:.55">P0a · Applying — what you do, and where</div>
+    <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+      <div style="height:100%;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);display:flex;flex-direction:column;padding:76px 32px 40px;box-sizing:border-box;overflow:auto">
+        <div style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-700);margin-bottom:10px;flex:none">Step 1 of 3</div>
+        <h1 style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:34px;line-height:1.05;margin:0 0 10px;flex:none">What do you do?</h1>
+        <p style="font-size:16px;line-height:1.5;margin:0 0 24px;opacity:.6;max-width:30ch;flex:none">Pick everything that applies. Each one is checked separately.</p>
+
+        <div style="display:flex;gap:6px;margin-bottom:26px;flex:none">
+          <div style="flex:1;height:4px;border-radius:999px;background:var(--color-accent)"></div>
+          <div style="flex:1;height:4px;border-radius:999px;background:var(--color-neutral-300)"></div>
+          <div style="flex:1;height:4px;border-radius:999px;background:var(--color-neutral-300)"></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;flex:none">
+          <sc-for list="{{ tradeRows }}" as="t" hint-placeholder-count="6">
+            <div>
+              <div style="height:1px;background:var(--color-divider)"></div>
+              <button onClick="{{ t.toggle }}" style="{{ t.rowStyle }}">
+                <span style="{{ t.boxStyle }}">{{ t.mark }}</span>
+                <div style="flex:1;text-align:left;min-width:0">
+                  <div style="font-size:17px;line-height:1.3">{{ t.label }}</div>
+                  <div style="font-size:14px;opacity:.5;margin-top:4px;line-height:1.4">{{ t.needs }}</div>
+                </div>
+              </button>
+            </div>
+          </sc-for>
+          <div style="height:1px;background:var(--color-divider)"></div>
+        </div>
+
+        <div class="field" style="margin-top:24px;flex:none">
+          <label style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:9px">Trading name</label>
+          <input class="input" value="Al Suwaidi" style="min-height:54px;font-size:17px;background:var(--color-neutral-100);border-color:transparent">
+        </div>
+        <div class="field" style="margin-top:18px;flex:none">
+          <label style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:9px">Where you work</label>
+          <a href="#p0a" style="display:flex;align-items:center;gap:14px;min-height:54px;padding:0 18px 0 16px;border-radius:999px;background:var(--color-neutral-100);text-decoration:none;color:inherit;box-sizing:border-box">
+            <span style="width:32px;height:32px;border-radius:50%;flex:none;background:var(--color-accent-200);display:flex;align-items:center;justify-content:center;color:var(--color-accent-700)">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"></path><circle cx="12" cy="10" r="2.6"></circle></svg>
+            </span>
+            <span style="flex:1;font-size:16px">Dubai · within 40 km</span>
+            <span style="font-size:19px;opacity:.4;flex:none">›</span>
+          </a>
+        </div>
+
+        <a class="btn btn-primary" href="#p0b" style="min-height:56px;font-size:17px;font-family:Gabarito,var(--font-body);font-weight:600;width:100%;margin-top:26px;flex:none">{{ tradeCta }}</a>
+        <p style="font-size:14px;line-height:1.55;opacity:.55;margin:14px 0 0;flex:none">{{ tradeNote }}</p>
+      </div>
+    </x-import>
+  </div>
+
+  <div id="p0b" data-screen-label="P0b Papers" style="display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;opacity:.55">P0b · Papers — what you must upload</div>
+    <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+      <div style="height:100%;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);display:flex;flex-direction:column;padding:76px 32px 40px;box-sizing:border-box;overflow:auto">
+        <a href="#p0a" style="font-size:15px;opacity:.55;color:inherit;text-decoration:none;margin-bottom:18px;flex:none">← Back</a>
+        <div style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-700);margin-bottom:10px;flex:none">Step 2 of 3</div>
+        <h1 style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:34px;line-height:1.05;margin:0 0 10px;flex:none">Your papers</h1>
+        <p style="font-size:16px;line-height:1.5;margin:0 0 22px;opacity:.6;max-width:30ch;flex:none">Photograph them. We read the licence number and the expiry.</p>
+
+        <div style="display:flex;gap:6px;margin-bottom:24px;flex:none">
+          <div style="flex:1;height:4px;border-radius:999px;background:var(--color-accent)"></div>
+          <div style="flex:1;height:4px;border-radius:999px;background:var(--color-accent)"></div>
+          <div style="flex:1;height:4px;border-radius:999px;background:var(--color-neutral-300)"></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:12px;flex:none">
+          <sc-for list="{{ papers }}" as="p" hint-placeholder-count="4">
+            <button onClick="{{ p.toggle }}" style="{{ p.wrapStyle }}">
+              <span style="{{ p.iconStyle }}">{{ p.icon }}</span>
+              <span style="flex:1;text-align:left;min-width:0">
+                <span style="font-size:17px;display:block;line-height:1.3">{{ p.label }}</span>
+                <span style="font-size:14px;opacity:.6;display:block;margin-top:4px;line-height:1.4">{{ p.meta }}</span>
+              </span>
+              <span style="{{ p.tagStyle }}">{{ p.tag }}</span>
+            </button>
+          </sc-for>
+        </div>
+
+        <div style="margin-top:24px;padding-left:16px;border-left:2px solid var(--color-accent-2-300);flex:none">
+          <p style="font-size:15px;line-height:1.6;margin:0">{{ paperNote }}</p>
+        </div>
+
+        <div style="display:flex;flex-direction:column;margin-top:24px;flex:none">
+          <div style="height:1px;background:var(--color-divider)"></div>
+          <button onClick="{{ toggleAgreement }}" style="display:flex;align-items:flex-start;gap:14px;width:100%;text-align:left;background:transparent;border:0;padding:16px 0;font-family:var(--font-body);color:var(--color-text);cursor:pointer">
+            <span style="{{ agreementBoxStyle }}">{{ agreementMark }}</span>
+            <div style="flex:1">
+              <div style="font-size:16px;line-height:1.4">I accept the <span style="color:var(--color-accent-700)">seller agreement</span></div>
+              <div style="font-size:14px;opacity:.55;margin-top:5px;line-height:1.45">Our cut, when you are paid, and that My Stables decides disputes. Four pages, and worth reading.</div>
+            </div>
+          </button>
+          <div style="height:1px;background:var(--color-divider)"></div>
+        </div>
+
+        <button onClick="{{ sendApplication }}" style="{{ sendStyle }}">{{ paperCta }}</button>
+        <sc-if value="{{ agreementMissing }}" hint-placeholder-val="{{ false }}">
+          <p style="font-size:14px;line-height:1.55;color:var(--color-accent-700);margin:14px 0 0;flex:none">Accept the seller agreement to send this.</p>
+        </sc-if>
+      </div>
+    </x-import>
+  </div>
+
+  <div id="p0c" data-screen-label="P0c Waiting" style="display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;opacity:.55">P0c · Sent — and what happens while you wait</div>
+    <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+      <div style="height:100%;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);display:flex;flex-direction:column;padding:76px 32px 40px;box-sizing:border-box;overflow:auto">
+        <div style="width:52px;height:52px;border-radius:50%;border:4px solid var(--color-accent-2);border-bottom-color:transparent;margin-bottom:28px;flex:none"></div>
+        <h1 style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:34px;line-height:1.05;margin:0 0 12px;flex:none">With My Stables</h1>
+        <p style="font-size:17px;line-height:1.55;margin:0 0 26px;opacity:.7;max-width:30ch;flex:none">Sent this morning. Most applications are answered within two working days.</p>
+
+        <div style="display:flex;flex-direction:column;flex:none">
+          <sc-for list="{{ waitSteps }}" as="w" hint-placeholder-count="4">
+            <div style="display:flex;gap:16px">
+              <div style="display:flex;flex-direction:column;align-items:center;flex:none;width:22px">
+                <div style="{{ w.dotStyle }}"></div>
+                <div style="{{ w.lineStyle }}"></div>
+              </div>
+              <div style="padding-bottom:20px;min-width:0">
+                <div style="{{ w.titleStyle }}">{{ w.title }}</div>
+                <div style="font-size:14px;opacity:.55;margin-top:5px;line-height:1.5">{{ w.detail }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="padding:16px 18px;border-radius:22px;background:var(--color-neutral-100);flex:none">
+          <div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;margin-bottom:7px">In the meantime</div>
+          <div style="font-size:16px;line-height:1.55">You can set your prices and add your first items now. Nothing goes in front of a rider until you are approved.</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:24px;flex:none">
+          <button class="btn btn-primary" style="min-height:56px;font-size:17px;font-family:Gabarito,var(--font-body);font-weight:600;width:100%">Set up my shop</button>
+          <button class="btn btn-secondary" style="min-height:52px;font-size:16px;width:100%">Message My Stables</button>
+        </div>
+        <p style="font-size:14px;line-height:1.55;opacity:.55;margin:18px 0 0;flex:none">Hamad already rides at Serc. That account and this one are the same login.</p>
+      </div>
+    </x-import>
+  </div>
+
+  <div id="p7" data-screen-label="P7 When I work" style="display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;opacity:.55">P7 · When I work — tap a day to close it</div>
+    <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+      <div style="height:100%;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);display:flex;flex-direction:column;padding:76px 32px 40px;box-sizing:border-box;overflow:auto">
+        <a href="#p1" style="font-size:15px;opacity:.55;color:inherit;text-decoration:none;margin-bottom:18px;flex:none">← Today</a>
+        <h1 style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:34px;line-height:1.05;margin:0 0 10px;flex:none">When I work</h1>
+        <p style="font-size:16px;line-height:1.5;margin:0 0 24px;opacity:.6;max-width:30ch;flex:none">Nobody can book you outside this. Change it whenever.</p>
+
+        <div style="display:flex;flex-direction:column;flex:none">
+          <sc-for list="{{ weekDays }}" as="d" hint-placeholder-count="7">
+            <div>
+              <div style="height:1px;background:var(--color-divider)"></div>
+              <button onClick="{{ d.toggle }}" style="{{ d.rowStyle }}">
+                <div style="width:46px;flex:none;font-family:Gabarito,var(--font-body);font-weight:600;font-size:16px">{{ d.day }}</div>
+                <div style="flex:1;text-align:left;min-width:0">
+                  <div style="{{ d.hoursStyle }}">{{ d.hours }}</div>
+                  <div style="font-size:13px;opacity:.5;margin-top:4px">{{ d.meta }}</div>
+                </div>
+                <span style="{{ d.pillStyle }}">{{ d.pill }}</span>
+              </button>
+            </div>
+          </sc-for>
+          <div style="height:1px;background:var(--color-divider)"></div>
+        </div>
+
+        <div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-2-700);margin:26px 0 11px;flex:none">How many horses a day</div>
+        <div style="display:flex;align-items:center;gap:12px;flex:none">
+          <button onClick="{{ capDown }}" style="{{ capStepStyle }}">−</button>
+          <div style="font-family:Gabarito,var(--font-body);font-weight:600;font-size:24px;width:56px;text-align:center">{{ capValue }}</div>
+          <button onClick="{{ capUp }}" style="{{ capStepStyle }}">+</button>
+          <div style="flex:1;font-size:14px;opacity:.6;line-height:1.45">{{ capNote }}</div>
+        </div>
+
+        <div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-2-700);margin:26px 0 4px;flex:none">Away</div>
+        <div style="display:flex;flex-direction:column;flex:none">
+          <div style="height:1px;background:var(--color-divider)"></div>
+          <div style="display:flex;gap:14px;align-items:center;padding:15px 0">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:16px;line-height:1.3">14 – 21 September</div>
+              <div style="font-size:13px;opacity:.5;margin-top:4px">Nobody can request these days</div>
+            </div>
+            <button style="background:transparent;border:0;padding:0;font:inherit;font-size:14px;opacity:.55;color:inherit;cursor:pointer;flex:none">Remove</button>
+          </div>
+          <div style="height:1px;background:var(--color-divider)"></div>
+          <button style="background:transparent;border:0;padding:0;margin-top:16px;font:inherit;font-family:Gabarito,var(--font-body);font-weight:600;font-size:16px;color:var(--color-accent-700);cursor:pointer;align-self:flex-start">+ Add time away</button>
+        </div>
+
+        <div style="{{ clashStyle }}">
+          <div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-800);margin-bottom:7px">{{ clashTitle }}</div>
+          <div style="font-size:15px;line-height:1.6;color:var(--color-accent-900)">{{ clashBody }}</div>
+        </div>
+      </div>
+    </x-import>
+  </div>
+
+  <div id="p1" data-screen-label="P1 Today" style="display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;opacity:.55">P1 · Today, in the order he drives it</div>
+    <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+      <div style="height:100%;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);display:flex;flex-direction:column;box-sizing:border-box">
+        <div style="padding:74px 32px 0;flex:none">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between">
+            <div>
+              <div style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-700);margin-bottom:9px">Tuesday · 4 stops · 62 km</div>
+              <h1 style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:36px;line-height:1">Today</h1>
+            </div>
+            <div style="width:44px;height:44px;border-radius:50%;background:var(--color-accent-2-300);display:flex;align-items:center;justify-content:center;font-family:Gabarito,var(--font-body);font-weight:600;font-size:16px;color:var(--color-accent-2-900);flex:none;margin-top:20px">H</div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:20px">
+            <div style="flex:1;padding:12px 14px;border-radius:18px;background:var(--color-neutral-100)">
+              <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;margin-bottom:5px">Booked today</div>
+              <div style="font-family:Gabarito,var(--font-body);font-weight:600;font-size:19px">AED 1,280</div>
+            </div>
+            <div style="flex:1;padding:12px 14px;border-radius:18px;background:var(--color-neutral-100)">
+              <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;margin-bottom:5px">To answer</div>
+              <div style="font-family:Gabarito,var(--font-body);font-weight:600;font-size:19px">2 requests</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex:1;overflow:auto;padding:24px 32px 0">
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ stops }}" as="j" hint-placeholder-count="4">
+              <div>
+                <div style="height:1px;background:var(--color-divider)"></div>
+                <div style="{{ j.wrapStyle }}">
+                  <div style="display:flex;gap:14px;align-items:flex-start">
+                    <div style="width:56px;flex:none">
+                      <div style="font-family:Gabarito,var(--font-body);font-weight:600;font-size:18px;line-height:1">{{ j.time }}</div>
+                      <div style="font-size:12px;opacity:.5;margin-top:4px">{{ j.drive }}</div>
+                    </div>
+                    <div style="flex:1;min-width:0">
+                      <div style="font-family:Gabarito,var(--font-body);font-weight:600;font-size:19px;line-height:1.2">{{ j.stable }}</div>
+                      <div style="font-size:15px;opacity:.65;margin-top:4px">{{ j.what }}</div>
+                      <div style="font-size:14px;opacity:.5;margin-top:4px">{{ j.horses }}</div>
+                    </div>
+                    <span class="{{ j.tagClass }}" style="font-size:11px;padding:4px 10px;flex:none">{{ j.state }}</span>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+            <div style="height:1px;background:var(--color-divider)"></div>
+          </div>
+          <div style="display:flex;gap:10px;margin:22px 0 24px">
+            <button class="btn btn-primary" style="min-height:56px;font-size:17px;font-family:Gabarito,var(--font-body);font-weight:600;flex:1">Open the route</button>
+            <button class="btn btn-secondary" style="min-height:56px;font-size:16px;padding:0 22px">Tomorrow</button>
+          </div>
+        </div>
+
+        <div style="display:flex;padding:0 22px 38px;gap:4px;flex:none">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+            <div style="{{ t.style }}">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="{{ t.weight }}" stroke-linecap="round" stroke-linejoin="round"><path d="{{ t.path }}"></path></svg>
+              <span style="font-size:11px">{{ t.label }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </x-import>
+  </div>
+
+  <div id="p2" data-screen-label="P2 A request" style="display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;opacity:.55">P2 · A request — accept, quote or decline (works)</div>
+    <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+      <div style="height:100%;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);display:flex;flex-direction:column;padding:76px 32px 40px;box-sizing:border-box;overflow:auto">
+        <a href="#p1" style="font-size:15px;opacity:.55;color:inherit;text-decoration:none;margin-bottom:20px;flex:none">← Today</a>
+        <div style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-700);margin-bottom:9px;flex:none">Asked 40 minutes ago · 2 others asked</div>
+        <h1 style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:32px;line-height:1.1;margin:0 0 6px;flex:none">Front shoes, two horses</h1>
+        <div style="font-size:16px;opacity:.6;margin-bottom:24px;flex:none">Serc · Al Qudra Rd · 6 km from your last stop</div>
+
+        <div style="display:flex;flex-direction:column;flex:none">
+          <sc-for list="{{ requestFacts }}" as="f" hint-placeholder-count="4">
+            <div>
+              <div style="height:1px;background:var(--color-divider)"></div>
+              <div style="display:flex;gap:16px;align-items:baseline;padding:14px 0">
+                <div style="width:110px;flex:none;font-size:15px;opacity:.55">{{ f.label }}</div>
+                <div style="flex:1;font-size:16px;line-height:1.45">{{ f.value }}</div>
+              </div>
+            </div>
+          </sc-for>
+          <div style="height:1px;background:var(--color-divider)"></div>
+        </div>
+
+        <div style="margin:22px 0 0;padding-left:16px;border-left:2px solid var(--color-accent-2-300);flex:none">
+          <div style="font-size:13px;opacity:.5;margin-bottom:6px">Ahmad wrote</div>
+          <p style="margin:0;font-size:16px;line-height:1.6">Comme Ci has just come off ten days box rest, so have a look at him before you decide anything.</p>
+        </div>
+
+        <sc-if value="{{ requestOpen }}" hint-placeholder-val="{{ true }}">
+          <div style="margin-top:26px;flex:none">
+            <div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:11px">Your price</div>
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:20px">
+              <input class="input" value="520" style="min-height:56px;font-size:19px;background:var(--color-neutral-100);border-color:transparent;text-align:center">
+              <span style="font-size:16px;opacity:.5;flex:none">to</span>
+              <input class="input" value="640" style="min-height:56px;font-size:19px;background:var(--color-neutral-100);border-color:transparent;text-align:center">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <button onClick="{{ sendQuote }}" class="btn btn-primary" style="min-height:58px;font-size:17px;font-family:Gabarito,var(--font-body);font-weight:600;width:100%">Send this range</button>
+              <button onClick="{{ declineRequest }}" class="btn btn-secondary" style="min-height:56px;font-size:16px;width:100%">Cannot take it</button>
+            </div>
+            <p style="font-size:14px;line-height:1.55;opacity:.55;margin:16px 0 0">A range, not a figure — you have not seen the horses. It expires in three days.</p>
+          </div>
+        </sc-if>
+        <sc-if value="{{ requestAnswered }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:26px;flex:none">
+            <span class="{{ answerTagClass }}" style="font-size:12px;padding:6px 13px">{{ answerLabel }}</span>
+            <p style="font-size:16px;line-height:1.6;margin:14px 0 0;max-width:32ch">{{ answerNote }}</p>
+          </div>
+        </sc-if>
+      </div>
+    </x-import>
+  </div>
+
+  <div id="p3" data-screen-label="P3 Finishing a job" style="display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;opacity:.55">P3 · Finishing a job — tap the steps</div>
+    <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+      <div style="height:100%;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);display:flex;flex-direction:column;padding:76px 32px 40px;box-sizing:border-box;overflow:auto">
+        <a href="#p1" style="font-size:15px;opacity:.55;color:inherit;text-decoration:none;margin-bottom:20px;flex:none">← Today</a>
+        <div style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-700);margin-bottom:9px;flex:none">Serc · 15:30 · AED 320</div>
+        <h1 style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:32px;line-height:1.1;margin:0 0 22px;flex:none">Front shoes · Comme Ci</h1>
+
+        <div style="display:flex;flex-direction:column;flex:none">
+          <sc-for list="{{ jobSteps }}" as="j" hint-placeholder-count="4">
+            <div>
+              <div style="height:1px;background:var(--color-divider)"></div>
+              <button onClick="{{ j.toggle }}" style="{{ j.rowStyle }}">
+                <span style="{{ j.boxStyle }}">{{ j.mark }}</span>
+                <div style="flex:1;text-align:left">
+                  <div style="{{ j.labelStyle }}">{{ j.label }}</div>
+                  <div style="font-size:14px;opacity:.5;margin-top:4px">{{ j.meta }}</div>
+                </div>
+              </button>
+            </div>
+          </sc-for>
+          <div style="height:1px;background:var(--color-divider)"></div>
+        </div>
+
+        <div class="field" style="margin-top:24px;flex:none">
+          <label style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent-2-700);margin-bottom:9px">Note for the stable</label>
+          <textarea class="input" rows="3" placeholder="Heels were low. I would bring him back in five weeks, not six." style="font-size:16px;line-height:1.5;background:var(--color-neutral-100);border-color:transparent;resize:none;border-radius:22px;padding:14px 16px;min-height:96px;display:block"></textarea>
+        </div>
+
+        <button style="display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:transparent;border:1px dashed var(--color-divider);border-radius:22px;padding:14px 16px;margin-top:14px;font-family:var(--font-body);color:var(--color-text);cursor:pointer;flex:none">
+          <span style="width:44px;height:44px;border-radius:14px;flex:none;background:var(--color-neutral-200);display:flex;align-items:center;justify-content:center;color:var(--color-neutral-700)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h1.7l1.2-2h6.2l1.2 2h1.7A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5z"></path><circle cx="12" cy="12.5" r="3.2"></circle></svg>
+          </span>
+          <span style="flex:1">
+            <span style="font-size:17px;display:block">Photo of the feet</span>
+            <span style="font-size:14px;opacity:.55;display:block;margin-top:3px">Before and after, if it matters</span>
+          </span>
+        </button>
+
+        <button onClick="{{ finishJob }}" class="btn btn-primary" style="min-height:58px;font-size:17px;font-family:Gabarito,var(--font-body);font-weight:600;width:100%;margin-top:22px;flex:none">{{ finishLabel }}</button>
+        <p style="font-size:14px;line-height:1.6;opacity:.55;margin:16px 0 0;flex:none">{{ finishNote }}</p>
+      </div>
+    </x-import>
+  </div>
+
+  <div id="p4" data-screen-label="P4 Stable thread" style="display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;opacity:.55">P4 · Talking to the stable</div>
+    <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+      <div style="height:100%;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);display:flex;flex-direction:column;box-sizing:border-box">
+        <div style="padding:74px 32px 18px;border-bottom:1px solid var(--color-divider);flex:none">
+          <a href="#p1" style="font-size:15px;opacity:.55;color:inherit;text-decoration:none">← Today</a>
+          <div style="display:flex;align-items:center;gap:13px;margin-top:16px">
+            <div style="width:42px;height:42px;border-radius:50%;background:var(--color-accent-2-300);display:flex;align-items:center;justify-content:center;font-family:Gabarito,var(--font-body);font-weight:600;font-size:16px;color:var(--color-accent-2-900);flex:none">S</div>
+            <div style="min-width:0">
+              <div style="font-family:Gabarito,var(--font-body);font-weight:600;font-size:20px;line-height:1.15">Serc</div>
+              <div style="font-size:14px;opacity:.55;margin-top:3px">Ahmad, Layal and Rasil</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex:1;overflow:auto;padding:22px 32px 0;display:flex;flex-direction:column;gap:14px">
+          <sc-for list="{{ messages }}" as="m" hint-placeholder-count="6">
+            <div style="{{ m.wrapStyle }}">
+              <div style="{{ m.bubbleStyle }}">
+                <sc-if value="{{ m.showWho }}" hint-placeholder-val="{{ true }}">
+                  <div style="font-size:12px;opacity:.55;margin-bottom:5px">{{ m.who }}</div>
+                </sc-if>
+                <div style="font-size:16px;line-height:1.5">{{ m.text }}</div>
+              </div>
+              <div style="font-size:12px;opacity:.45;margin-top:5px">{{ m.when }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="padding:18px 32px 38px;flex:none;display:flex;gap:10px;align-items:center">
+          <div style="flex:1;min-height:52px;border-radius:999px;background:var(--color-neutral-100);display:flex;align-items:center;padding:0 18px;font-size:16px;opacity:.5">Message Serc</div>
+          <button style="width:52px;height:52px;border-radius:50%;border:0;background:var(--color-accent);color:var(--color-bg);cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"></path></svg>
+          </button>
+        </div>
+      </div>
+    </x-import>
+  </div>
+
+  <div id="p5" data-screen-label="P5 Orders to pack" style="display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;opacity:.55">P5 · Orders to pack — the shop half</div>
+    <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+      <div style="height:100%;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);display:flex;flex-direction:column;padding:76px 32px 40px;box-sizing:border-box;overflow:auto">
+        <h1 style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:36px;line-height:1;margin:0 0 10px;flex:none">To pack</h1>
+        <p style="font-size:16px;margin:0 0 24px;opacity:.6;flex:none">Two orders · the courier comes at four.</p>
+
+        <div style="display:flex;flex-direction:column;flex:none">
+          <sc-for list="{{ packOrders }}" as="o" hint-placeholder-count="3">
+            <div>
+              <div style="height:1px;background:var(--color-divider)"></div>
+              <div style="padding:18px 0">
+                <div style="display:flex;gap:14px;align-items:baseline">
+                  <div style="flex:1;min-width:0">
+                    <div style="font-family:Gabarito,var(--font-body);font-weight:600;font-size:19px;line-height:1.2">{{ o.stable }}</div>
+                    <div style="font-size:14px;opacity:.5;margin-top:4px">{{ o.id }} · {{ o.when }}</div>
+                  </div>
+                  <div style="font-size:16px;flex:none">{{ o.total }}</div>
+                </div>
+                <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+                  <sc-for list="{{ o.lines }}" as="l" hint-placeholder-count="2">
+                    <div style="display:flex;gap:12px;align-items:baseline">
+                      <div style="width:26px;flex:none;font-size:15px;opacity:.5">{{ l.qty }}</div>
+                      <div style="flex:1;font-size:16px;line-height:1.4">{{ l.name }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+                <button onClick="{{ o.pack }}" style="{{ o.buttonStyle }}">{{ o.buttonLabel }}</button>
+              </div>
+            </div>
+          </sc-for>
+          <div style="height:1px;background:var(--color-divider)"></div>
+        </div>
+
+        <p style="font-size:14px;line-height:1.6;opacity:.55;margin:20px 0 0;flex:none">Marking it packed prints the label and tells the stable. Nothing else about the money changes yet.</p>
+      </div>
+    </x-import>
+  </div>
+
+  <div id="p6" data-screen-label="P6 Earnings" style="display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;opacity:.55">P6 · Earnings — this month, or the next payout</div>
+    <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+      <div style="height:100%;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);display:flex;flex-direction:column;padding:76px 32px 40px;box-sizing:border-box;overflow:auto">
+        <h1 style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:36px;line-height:1;margin:0 0 20px;flex:none">Earnings</h1>
+
+        <div style="display:flex;gap:4px;padding:3px;border-radius:999px;background:var(--color-neutral-200);margin-bottom:26px;flex:none">
+          <sc-for list="{{ earnTabs }}" as="t" hint-placeholder-count="2">
+            <button onClick="{{ t.pick }}" style="{{ t.style }}">{{ t.label }}</button>
+          </sc-for>
+        </div>
+
+        <div style="flex:none">
+          <div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;margin-bottom:9px">{{ earnLabel }}</div>
+          <div style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:46px;line-height:1">{{ earnValue }}</div>
+          <div style="font-size:16px;margin-top:10px;color:var(--color-accent-700)">{{ earnNote }}</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;margin-top:28px;flex:none">
+          <sc-for list="{{ earnRows }}" as="r" hint-placeholder-count="4">
+            <div>
+              <div style="height:1px;background:var(--color-divider)"></div>
+              <div style="display:flex;gap:16px;align-items:baseline;padding:15px 0">
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:16px;line-height:1.35">{{ r.label }}</div>
+                  <div style="font-size:14px;opacity:.5;margin-top:4px">{{ r.meta }}</div>
+                </div>
+                <div style="{{ r.valueStyle }}">{{ r.value }}</div>
+              </div>
+            </div>
+          </sc-for>
+          <div style="height:1px;background:var(--color-divider)"></div>
+        </div>
+
+        <p style="font-size:15px;line-height:1.6;margin:22px 0 0;opacity:.7;flex:none">{{ earnFootnote }}</p>
+        <button style="background:transparent;border:0;padding:0;margin-top:18px;font:inherit;font-size:16px;color:var(--color-accent-700);cursor:pointer;align-self:flex-start;flex:none">Open the full dashboard</button>
+      </div>
+    </x-import>
+  </div>
+</div>
+
+<div style="padding:0 56px 90px;max-width:820px">
+  <div style="height:1px;background:var(--color-divider);margin-bottom:26px"></div>
+  <h2 style="font-family:Gabarito,var(--font-body);font-weight:600;letter-spacing:-.02em;font-size:26px;margin:0 0 14px">What is deliberately not here</h2>
+  <p style="font-size:16px;line-height:1.6;margin:0;opacity:.75;text-wrap:pretty">No listings editor, no payout ledger, no disputes, no staff permissions. A farrier between two yards should not be reading an arbitration thread on a phone, and adding an item properly needs photographs and measurements — both live on the web dashboard. The phone answers one question: what am I doing next, and did I get paid for the last one.</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1400,&quot;height&quot;:1100}}">
+class Component extends DCLogic {
+  state = {
+    requestState: 'open', jobDone: { s1: true, s2: true }, jobFinished: false,
+    packed: {}, earnTab: 'This month',
+    trades: { t1: true, t3: true }, uploaded: { d1: true },
+    agreement: false, agreementTried: false,
+    closed: { Fri: true }, dayCap: 8,
+  };
+
+  box(on) {
+    return 'width:30px;height:30px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;font-size:16px;margin-top:1px;'
+      + (on ? 'background:var(--color-accent-2);color:var(--color-bg);border:1px solid var(--color-accent-2)'
+            : 'background:transparent;color:transparent;border:1px solid var(--color-divider)');
+  }
+
+  renderVals() {
+    const s = this.state;
+
+    const stopDefs = [
+      { time: '08:00', drive: '—', stable: 'Emirates Park Stables', what: 'Full set ×2', horses: 'Two horses · Nadia meets you', state: 'Done', tag: 'tag tag-neutral', done: true },
+      { time: '11:15', drive: '24 km', stable: 'Al Marmoom Equestrian', what: 'Trim ×3', horses: 'Three horses · yard 4', state: 'Done', tag: 'tag tag-neutral', done: true },
+      { time: '15:30', drive: '18 km', stable: 'Serc', what: 'Front shoes', horses: 'Comme Ci · just off box rest', state: 'Next', tag: 'tag tag-accent', done: false },
+      { time: '17:00', drive: '20 km', stable: 'Wadi Hoof', what: 'Trim', horses: 'One horse · gate code 4417', state: 'Booked', tag: 'tag tag-accent-2', done: false },
+    ];
+    const stops = stopDefs.map(j => ({
+      time: j.time, drive: j.drive, stable: j.stable, what: j.what, horses: j.horses, state: j.state, tagClass: j.tag,
+      wrapStyle: 'padding:17px 0' + (j.done ? ';opacity:.5' : ''),
+    }));
+
+    const icons = {
+      Today: { d: 'M3.5 5.5h17v15h-17zM8 3v4M16 3v4M3.5 10.5h17', w: 2.2 },
+      Requests: { d: 'M4 6.5h16M4 12h16M4 17.5h10', w: 2.4 },
+      Orders: { d: 'M9.5 3.5h5v2.5h-5zM7.5 5H5.5v15.5h13V5h-2M9 11h6M9 15h4', w: 2.4 },
+      Chat: { d: 'M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z', w: 2.4 },
+      Money: { d: 'M12 3.5v17M8 7.5h5.5a2.5 2.5 0 0 1 0 5H9a2.5 2.5 0 0 0 0 5h6', w: 2.4 },
+    };
+    const tabs = [['Today', true], ['Requests', false], ['Orders', false], ['Chat', false], ['Money', false]]
+      .map(([label, on]) => ({
+        label, path: icons[label].d, weight: icons[label].w,
+        style: 'flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 0;border-radius:22px;color:'
+          + (on ? 'var(--color-accent-700)' : 'color-mix(in srgb, var(--color-text) 55%, transparent)'),
+      }));
+
+    const answered = s.requestState !== 'open';
+    const jobStepDefs = [
+      { id: 's1', label: 'Arrived at Serc', meta: '15:26 · logged automatically' },
+      { id: 's2', label: 'Looked him over first', meta: 'Ahmad asked for this' },
+      { id: 's3', label: 'Old shoes off, feet trimmed', meta: '' },
+      { id: 's4', label: 'New fronts on', meta: '' },
+    ];
+    const doneCount = jobStepDefs.filter(j => s.jobDone[j.id]).length;
+    const jobSteps = jobStepDefs.map(j => {
+      const on = !!s.jobDone[j.id];
+      return {
+        label: j.label, meta: j.meta, mark: on ? '✓' : '', boxStyle: this.box(on),
+        labelStyle: 'font-size:17px;line-height:1.35' + (on ? ';opacity:.5;text-decoration:line-through' : ''),
+        rowStyle: 'display:flex;gap:14px;width:100%;background:transparent;border:0;padding:16px 0;font-family:var(--font-body);color:var(--color-text);cursor:pointer',
+        toggle: () => this.setState({ jobDone: Object.assign({}, s.jobDone, { [j.id]: !on }) }),
+      };
+    });
+
+    const messageDefs = [
+      { who: 'Ahmad', text: 'Comme Ci comes off box rest Monday. Can you look at him Thursday?', mine: false, when: 'Mon 09:12' },
+      { who: 'You', text: 'Yes. I have Serc at 15:30 Thursday anyway, I will do him then.', mine: true, when: 'Mon 09:40' },
+      { who: 'Ahmad', text: 'Perfect. Rasil will have him in.', mine: false, when: 'Mon 09:41' },
+      { who: 'Rasil', text: 'He is in box 4 today, not 7.', mine: false, when: 'Today 14:02' },
+      { who: 'You', text: 'Noted. Running about twenty minutes late from Al Marmoom.', mine: true, when: 'Today 15:04' },
+      { who: 'Rasil', text: 'No problem, I am here until six.', mine: false, when: 'Today 15:06' },
+    ];
+    const messages = messageDefs.map((m, i) => ({
+      who: m.who, text: m.text, when: m.when,
+      showWho: !m.mine && (i === 0 || messageDefs[i - 1].who !== m.who),
+      wrapStyle: 'display:flex;flex-direction:column;max-width:78%;' + (m.mine ? 'align-self:flex-end;align-items:flex-end' : 'align-self:flex-start'),
+      bubbleStyle: 'padding:13px 16px;border-radius:22px;' + (m.mine
+        ? 'background:var(--color-accent);color:var(--color-bg);border-bottom-right-radius:8px'
+        : 'background:var(--color-neutral-100);border-bottom-left-radius:8px'),
+    }));
+
+    const packDefs = [
+      {
+        id: '#4016', stable: 'Emirates Park Stables', when: 'Paid yesterday', total: 'AED 460',
+        lines: [{ qty: '×4', name: 'Rubber reins' }],
+      },
+      {
+        id: '#4015', stable: 'Wadi Hoof', when: 'Paid this morning', total: 'AED 275',
+        lines: [{ qty: '×1', name: 'Grackle noseband' }, { qty: '×1', name: 'Hoof oil and brush' }],
+      },
+    ];
+    const packOrders = packDefs.map(o => {
+      const done = !!s.packed[o.id];
+      return {
+        id: o.id, stable: o.stable, when: o.when, total: o.total, lines: o.lines,
+        buttonLabel: done ? 'Packed · label printed' : 'Mark packed',
+        buttonStyle: 'margin-top:14px;width:100%;min-height:52px;border-radius:999px;font-family:Gabarito,var(--font-body);font-weight:600;font-size:16px;cursor:pointer;border:1px solid '
+          + (done ? 'var(--color-accent-2);background:transparent;color:var(--color-accent-2-700)'
+                  : 'var(--color-accent);background:var(--color-accent);color:var(--color-bg)'),
+        pack: () => this.setState({ packed: Object.assign({}, s.packed, { [o.id]: !done }) }),
+      };
+    });
+
+    const earnTabs = ['This month', 'Next payout'].map(t => ({
+      label: t, pick: () => this.setState({ earnTab: t }),
+      style: 'flex:1;padding:10px 0;border:0;border-radius:999px;font-family:Gabarito,var(--font-body);font-weight:600;font-size:15px;cursor:pointer;'
+        + (s.earnTab === t
+          ? 'background:var(--color-bg);color:var(--color-accent-700);box-shadow:var(--shadow-sm)'
+          : 'background:transparent;color:color-mix(in srgb, var(--color-text) 70%, transparent)'),
+    }));
+    const thisMonth = s.earnTab === 'This month';
+
+    const tradeDefs = [
+      { id: 't1', label: 'Sell goods', needs: 'Trade licence' },
+      { id: 't2', label: 'Sell feed and supplements', needs: 'Trade licence · read by a person' },
+      { id: 't3', label: 'Farriery', needs: 'Trade licence and public liability insurance' },
+      { id: 't4', label: 'Veterinary work', needs: 'MOCCAE veterinary licence' },
+      { id: 't5', label: 'Physiotherapy or chiropractic', needs: 'Professional qualification and indemnity' },
+      { id: 't7', label: 'Horse transport', needs: 'Vehicle registration and goods-in-transit insurance' },
+      { id: 't6', label: 'Sell medicines', needs: 'Veterinary licence · rarely approved' },
+    ];
+    const pickedTrades = tradeDefs.filter(t => s.trades[t.id]);
+    const tradeRows = tradeDefs.map(t => {
+      const on = !!s.trades[t.id];
+      return {
+        label: t.label, needs: t.needs, mark: on ? '✓' : '', boxStyle: this.box(on),
+        rowStyle: 'display:flex;gap:14px;width:100%;background:transparent;border:0;padding:15px 0;font-family:var(--font-body);color:var(--color-text);cursor:pointer',
+        toggle: () => this.setState({ trades: Object.assign({}, s.trades, { [t.id]: !on }) }),
+      };
+    });
+
+    const needsVet = !!(s.trades.t4 || s.trades.t6);
+    const needsInsurance = !!(s.trades.t3 || s.trades.t5);
+    const paperDefs = [
+      { id: 'd1', label: 'Trade licence', meta: 'Dubai DED · we read the number', required: true },
+      { id: 'd2', label: 'Emirates ID', meta: 'Both sides', required: true },
+      { id: 'd3', label: 'Public liability insurance', meta: 'Because you selected farriery', required: needsInsurance },
+      { id: 'd5', label: 'Vehicle and transit insurance', meta: 'Registration, and what you are insured to carry per horse', required: !!s.trades.t7 },
+      { id: 'd4', label: 'Veterinary licence', meta: 'MOCCAE · read by a person', required: needsVet },
+    ].filter(p => p.required);
+    const uploadedCount = paperDefs.filter(p => s.uploaded[p.id]).length;
+    const papers = paperDefs.map(p => {
+      const on = !!s.uploaded[p.id];
+      return {
+        label: p.label, meta: on ? 'Photographed · expires 4 Apr 2027' : p.meta,
+        icon: on ? '✓' : '+',
+        iconStyle: 'width:44px;height:44px;border-radius:14px;flex:none;display:flex;align-items:center;justify-content:center;font-size:19px;'
+          + (on ? 'background:var(--color-accent-2);color:var(--color-bg)' : 'background:var(--color-neutral-200);color:var(--color-accent-700)'),
+        tag: on ? 'Read' : 'Needed',
+        tagStyle: 'flex:none;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;'
+          + (on ? 'background:var(--color-accent-2-200);color:var(--color-accent-2-900)' : 'background:var(--color-neutral-200);color:var(--color-neutral-800)'),
+        wrapStyle: 'display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:14px 16px;border-radius:22px;font-family:var(--font-body);color:var(--color-text);cursor:pointer;background:transparent;border:1px '
+          + (on ? 'solid var(--color-divider)' : 'dashed var(--color-divider)'),
+        toggle: () => this.setState({ uploaded: Object.assign({}, s.uploaded, { [p.id]: !on }) }),
+      };
+    });
+
+    const dayDefs = [
+      { day: 'Mon', hours: '07:00 – 17:00', meta: 'Usually Dubai' },
+      { day: 'Tue', hours: '07:00 – 17:00', meta: '4 stops booked' },
+      { day: 'Wed', hours: '07:00 – 13:00', meta: 'Half day' },
+      { day: 'Thu', hours: '07:00 – 17:00', meta: '3 stops booked' },
+      { day: 'Fri', hours: '07:00 – 17:00', meta: '' },
+      { day: 'Sat', hours: '08:00 – 14:00', meta: 'Shows only' },
+      { day: 'Sun', hours: '07:00 – 17:00', meta: 'Usually Sharjah and Al Ain' },
+    ];
+    const weekDays = dayDefs.map(d => {
+      const off = !!s.closed[d.day];
+      return {
+        day: d.day,
+        hours: off ? 'Closed' : d.hours,
+        meta: off ? 'Requests for this day are refused automatically' : d.meta,
+        hoursStyle: 'font-size:17px;line-height:1.3' + (off ? ';opacity:.5' : ''),
+        pill: off ? 'Closed' : 'Open',
+        pillStyle: 'flex:none;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;'
+          + (off ? 'background:var(--color-neutral-200);color:var(--color-neutral-800)'
+                 : 'background:var(--color-accent-2-200);color:var(--color-accent-2-900)'),
+        rowStyle: 'display:flex;gap:14px;align-items:center;width:100%;background:transparent;border:0;padding:15px 0;font-family:var(--font-body);color:var(--color-text);cursor:pointer',
+        toggle: () => this.setState({ closed: Object.assign({}, s.closed, { [d.day]: !off }) }),
+      };
+    });
+    const thuClash = !!s.closed.Thu;
+    const capNote = s.dayCap <= 5
+      ? 'A full set takes an hour. Below six you will turn work away.'
+      : s.dayCap >= 12 ? 'Twelve is a long day with travel between yards.' : 'Requests stop once the day is full.';
+
+    return {
+      weekDays,
+      capValue: s.dayCap,
+      capNote,
+      capStepStyle: 'width:44px;height:44px;border-radius:50%;border:1px solid var(--color-divider);background:transparent;color:var(--color-accent-700);font-family:var(--font-body);font-size:19px;cursor:pointer;flex:none',
+      capUp: () => this.setState({ dayCap: Math.min(14, s.dayCap + 1) }),
+      capDown: () => this.setState({ dayCap: Math.max(3, s.dayCap - 1) }),
+      clashStyle: 'margin-top:26px;padding:16px 18px;border-radius:22px;flex:none;background:'
+        + (thuClash ? 'var(--color-accent-200)' : 'var(--color-neutral-100)'),
+      clashTitle: thuClash ? 'Three jobs already booked on Thursday' : 'Nothing clashes',
+      clashBody: thuClash
+        ? 'Closing Thursday does not cancel them. Serc, Emirates Park and Al Marmoom are expecting you — tell them, or reopen the day.'
+        : 'Your open days cover everything already booked. Two requests are waiting for a price.',
+      tradeRows,
+      tradeCta: pickedTrades.length === 0 ? 'Pick what you do'
+        : pickedTrades.length === 1 ? 'Continue · one trade' : 'Continue · ' + pickedTrades.length + ' trades',
+      tradeNote: s.trades.t6
+        ? 'Medicines need a veterinary licence against your name and are rarely approved. Everything else can go ahead without it.'
+        : needsVet
+        ? 'Veterinary work is read by a person, not a machine. Expect two working days.'
+        : 'Most of this is verified automatically against the licence register.',
+      papers,
+      agreementMark: s.agreement ? '✓' : '',
+      agreementBoxStyle: this.box(s.agreement),
+      toggleAgreement: () => this.setState({ agreement: !s.agreement, agreementTried: false }),
+      agreementMissing: s.agreementTried && !s.agreement,
+      sendApplication: () => {
+        if (s.agreement) { window.location.hash = 'p0c'; return; }
+        this.setState({ agreementTried: true });
+      },
+      sendStyle: 'min-height:56px;width:100%;margin-top:22px;border-radius:999px;border:0;font-family:Gabarito,var(--font-body);font-weight:600;font-size:17px;cursor:pointer;flex:none;'
+        + (s.agreement
+          ? 'background:var(--color-accent);color:var(--color-bg)'
+          : 'background:var(--color-neutral-300);color:color-mix(in srgb, var(--color-text) 45%, transparent)'),
+      paperNote: uploadedCount === paperDefs.length
+        ? 'Everything we need. The licence register is checked automatically; anything it cannot match goes to a person.'
+        : (paperDefs.length - uploadedCount) + ' still needed. You cannot be approved without them, but you can come back to this.',
+      paperCta: uploadedCount === paperDefs.length
+        ? 'Send my application'
+        : 'Send my application · ' + uploadedCount + ' of ' + paperDefs.length + ' papers',
+      waitSteps: [
+        { title: 'Application sent', detail: 'This morning, 08:40', done: true },
+        { title: 'Licence checked automatically', detail: 'Matched to the Dubai DED register', done: true },
+        { title: 'Read by a person', detail: 'Only when something does not match, or you asked for medicines or veterinary work', done: false },
+        { title: 'Approved, and you can trade', detail: 'Your listings are still checked one by one before riders see them', done: false },
+      ].map((w, i, arr) => ({
+        title: w.title, detail: w.detail,
+        titleStyle: 'font-size:17px;line-height:1.3' + (w.done ? '' : ';opacity:.6'),
+        dotStyle: 'width:13px;height:13px;border-radius:50%;flex:none;margin-top:5px;background:'
+          + (w.done ? 'var(--color-accent-2)' : 'var(--color-bg)') + ';border:2px solid '
+          + (w.done ? 'var(--color-accent-2)' : 'var(--color-divider)'),
+        lineStyle: i === arr.length - 1 ? 'display:none' : 'flex:1;width:2px;background:var(--color-divider);margin:4px 0',
+      })),
+      stops, tabs,
+      requestFacts: [
+        { label: 'Horses', value: 'Kiki and Comme Ci' },
+        { label: 'When', value: 'Thursday or Friday' },
+        { label: 'Last visit', value: '18 August · trim, both horses' },
+        { label: 'They pay', value: 'Through My Stables, after the visit' },
+      ],
+      requestOpen: !answered,
+      requestAnswered: answered,
+      answerLabel: s.requestState === 'quoted' ? 'Quote sent' : 'Declined',
+      answerTagClass: s.requestState === 'quoted' ? 'tag tag-accent-2' : 'tag tag-neutral',
+      answerNote: s.requestState === 'quoted'
+        ? 'AED 520 to 640, expires Friday. If Ahmad accepts it, Thursday 15:30 goes straight onto your day.'
+        : 'Ahmad has been told. It stays with the other two farriers he asked.',
+      sendQuote: () => this.setState({ requestState: 'quoted' }),
+      declineRequest: () => this.setState({ requestState: 'declined' }),
+      jobSteps,
+      finishLabel: s.jobFinished ? 'Finished · sent to Serc' : 'Finish · ' + doneCount + ' of 4 done',
+      finishNote: s.jobFinished
+        ? 'Serc has it. AED 320 is added to your next payout, on 1 September.'
+        : 'Finishing tells the stable and adds AED 320 to your next payout. Services settle the day they are done — no return window.',
+      finishJob: () => this.setState({ jobFinished: true }),
+      messages, packOrders, earnTabs,
+      earnLabel: thisMonth ? 'Earned in August' : 'Paid on 1 September',
+      earnValue: thisMonth ? 'AED 3,410' : 'AED 1,265',
+      earnNote: thisMonth ? '14 visits and 9 orders' : 'Nothing can reduce this now',
+      earnRows: thisMonth
+        ? [
+            { label: 'Farriery visits', meta: '14 · four stables', value: 'AED 2,180' },
+            { label: 'Shop orders', meta: '9 · delivered', value: 'AED 1,230' },
+            { label: 'Refunds', meta: 'One bag split in transit', value: '−AED 195' },
+            { label: 'Still inside return windows', meta: 'Not payable yet', value: 'AED 1,135' },
+          ].map(r => ({ label: r.label, meta: r.meta, value: r.value, valueStyle: 'font-size:16px;flex:none;font-family:Gabarito,var(--font-body);font-weight:600' }))
+        : [
+            { label: 'Visits done', meta: 'Settled the day of the visit', value: 'AED 890' },
+            { label: 'Orders past their window', meta: 'Two orders', value: 'AED 375' },
+            { label: 'Disputed', meta: 'The snaffle · with My Stables', value: 'Held' },
+            { label: 'Paid to', meta: 'Account ending 4417', value: '1 Sep' },
+          ].map(r => ({ label: r.label, meta: r.meta, value: r.value, valueStyle: 'font-size:16px;flex:none;font-family:Gabarito,var(--font-body);font-weight:600' })),
+      earnFootnote: thisMonth
+        ? 'August is not finished. What you actually receive depends on which return windows close before the 1st.'
+        : 'Twice a month, on the 1st and the 15th. One transfer, whatever it is made of.',
+    };
+  }
+}
+</script>
+</body>
+</html>

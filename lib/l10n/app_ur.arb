@@ -1,0 +1,46 @@
+{
+  "@@locale": "ur",
+  "appName": "مائی اسٹیبلز",
+  "splashTagline": "ہر گھوڑا، ہر نوٹ، ایک ہی جگہ۔",
+
+  "welcomeBack": "واپسی پر خوش آمدید",
+  "signInSubtitle": "اپنے اصطبل میں سائن اِن کریں۔",
+  "email": "ای میل",
+  "password": "پاس ورڈ",
+  "show": "دکھائیں",
+  "hide": "چھپائیں",
+  "forgotPassword": "پاس ورڈ بھول گئے؟",
+  "signIn": "سائن اِن",
+  "orDivider": "یا",
+  "continueWithApple": "Apple کے ساتھ جاری رکھیں",
+  "continueWithGoogle": "Google کے ساتھ جاری رکھیں",
+  "newHere": "یہاں نئے ہیں؟ ",
+  "createAnAccount": "اکاؤنٹ بنائیں",
+  "haveInviteCode": "میرے پاس دعوتی کوڈ ہے",
+
+  "back": "واپس",
+  "yourDetails": "آپ کی تفصیلات",
+  "step1of3": "مرحلہ ۱ از ۳ — آپ کے بارے میں۔",
+  "fullName": "پورا نام",
+  "phone": "فون",
+  "passwordHint": "۸ حروف یا اس سے زیادہ",
+  "sendMeCode": "مجھے کوڈ بھیجیں",
+
+  "checkYourPhone": "اپنا فون دیکھیں",
+  "verify": "تصدیق کریں",
+
+  "yourStable": "آپ کا اصطبل",
+  "createStable": "اصطبل بنائیں",
+  "roleAdmin": "ایڈمن",
+  "joinStable": "اصطبل میں شامل ہوں",
+  "createStableCta": "اصطبل بنائیں",
+  "joinStableCta": "اصطبل میں شامل ہوں",
+
+  "language": "زبان",
+  "langEnglish": "English",
+  "langArabic": "العربية",
+  "langHindi": "हिन्दी",
+  "langUrdu": "اردو",
+  "langBengali": "বাংলা",
+  "langNepali": "नेपाली"
+}
