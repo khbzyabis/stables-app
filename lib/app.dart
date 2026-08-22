@@ -14,6 +14,9 @@ import 'features/auth/verify_screen.dart';
 import 'features/home/home_screen.dart';
 import 'features/horses/add_horse_screen.dart';
 import 'features/horses/horse_profile_screen.dart';
+import 'features/schedule/add_activity_screen.dart';
+import 'features/schedule/month_screen.dart';
+import 'features/schedule/schedule_screen.dart';
 import 'l10n/app_localizations.dart';
 import 'theme/app_theme.dart';
 
@@ -88,6 +91,9 @@ class _MyStablesAppState extends State<MyStablesApp> {
                 HomeScreen.route: (_) => const HomeScreen(),
                 AddHorseScreen.route: (_) => const AddHorseScreen(),
                 HorseProfileScreen.route: (_) => const HorseProfileScreen(),
+                ScheduleScreen.route: (_) => const ScheduleScreen(),
+                MonthScreen.route: (_) => const MonthScreen(),
+                AddActivityScreen.route: (_) => const AddActivityScreen(),
               },
             );
           },

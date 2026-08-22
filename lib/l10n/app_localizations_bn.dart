@@ -195,6 +195,65 @@ class AppL10nBn extends AppL10n {
   String get logSomething => 'Log something';
 
   @override
+  String get schedule => 'Schedule';
+
+  @override
+  String get monthView => 'Month';
+
+  @override
+  String get weekView => 'Week';
+
+  @override
+  String get addToSchedule => 'Add to the schedule';
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get quietStable =>
+      'Nothing of that kind today. A quiet stable is allowed.';
+
+  @override
+  String get nothingBooked => 'Nothing booked.';
+
+  @override
+  String get whatIsHappening => 'What is happening?';
+
+  @override
+  String get whichHorse => 'Which horse';
+
+  @override
+  String get starts => 'Starts';
+
+  @override
+  String get forDuration => 'For';
+
+  @override
+  String get repeats => 'Repeats';
+
+  @override
+  String get noteIfAny => 'Note, if any';
+
+  @override
+  String get repeatOnce => 'Once';
+
+  @override
+  String get repeatDaily => 'Daily';
+
+  @override
+  String get repeatWeekly => 'Weekly';
+
+  @override
+  String get repeatWeekdays => 'Weekdays';
+
+  @override
+  String get openSchedule => 'The schedule';
+
+  @override
+  String get scheduleSub =>
+      'Everything the stable does — lessons, farrier, vet, transport.';
+
+  @override
   String get back => 'পিছনে';
 
   @override

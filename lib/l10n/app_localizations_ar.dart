@@ -193,6 +193,64 @@ class AppL10nAr extends AppL10n {
   String get logSomething => 'سجّل شيئًا';
 
   @override
+  String get schedule => 'الجدول';
+
+  @override
+  String get monthView => 'الشهر';
+
+  @override
+  String get weekView => 'الأسبوع';
+
+  @override
+  String get addToSchedule => 'أضِف إلى الجدول';
+
+  @override
+  String get filterAll => 'الكل';
+
+  @override
+  String get quietStable => 'لا شيء من هذا النوع اليوم. الإسطبل الهادئ مسموح.';
+
+  @override
+  String get nothingBooked => 'لا شيء محجوز.';
+
+  @override
+  String get whatIsHappening => 'ما الذي سيحدث؟';
+
+  @override
+  String get whichHorse => 'أي حصان';
+
+  @override
+  String get starts => 'يبدأ';
+
+  @override
+  String get forDuration => 'لمدة';
+
+  @override
+  String get repeats => 'التكرار';
+
+  @override
+  String get noteIfAny => 'ملاحظة، إن وُجدت';
+
+  @override
+  String get repeatOnce => 'مرة';
+
+  @override
+  String get repeatDaily => 'يوميًا';
+
+  @override
+  String get repeatWeekly => 'أسبوعيًا';
+
+  @override
+  String get repeatWeekdays => 'أيام الأسبوع';
+
+  @override
+  String get openSchedule => 'الجدول';
+
+  @override
+  String get scheduleSub =>
+      'كل ما يفعله الإسطبل — الدروس، البيطرة، الطبيب، النقل.';
+
+  @override
   String get back => 'رجوع';
 
   @override

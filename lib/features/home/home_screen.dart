@@ -13,6 +13,7 @@ import '../../widgets/hairline.dart';
 import '../../widgets/photo_placeholder.dart';
 import '../horses/add_horse_screen.dart';
 import '../horses/horse_profile_screen.dart';
+import '../schedule/schedule_screen.dart';
 
 /// Screen 06 — Home. Leads with My horses; a four-tab bar switches to the
 /// noticeboard, the stable, and you. Home leads with horses because that is
@@ -80,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: switch (_tab) {
                   AppTab.horses => _HorsesTab(store: store),
                   AppTab.board => const _BoardTab(),
-                  AppTab.stable => _ComingSoonTab(text: l10n.stableTabHint),
+                  AppTab.stable => const _StableTab(),
                   AppTab.you => const _YouTab(),
                 },
               ),
@@ -276,21 +277,46 @@ class _Notice extends StatelessWidget {
   }
 }
 
-class _ComingSoonTab extends StatelessWidget {
-  const _ComingSoonTab({required this.text});
-  final String text;
+/// The Stable tab — the stable-wide views. The schedule is live; people,
+/// contacts and settings follow.
+class _StableTab extends StatelessWidget {
+  const _StableTab();
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppL10n.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
+      padding: EdgeInsets.zero,
       children: [
-        const SizedBox(height: 8),
+        const Hairline(),
+        InkWell(
+          onTap: () => Navigator.of(context).pushNamed(ScheduleScreen.route),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l10n.openSchedule, style: AppText.heading(23, height: 1.1)),
+                      const SizedBox(height: 4),
+                      Text(l10n.scheduleSub,
+                          style: AppText.body(15, color: AppColors.ink(0.6))),
+                    ],
+                  ),
+                ),
+                Icon(Icons.chevron_right, color: AppColors.ink(0.4)),
+              ],
+            ),
+          ),
+        ),
+        const Hairline(),
+        const SizedBox(height: 26),
         AppTag(l10n.comingSoon.toUpperCase(), tone: TagTone.neutral),
-        const SizedBox(height: 16),
-        Text(text,
-            style: AppText.body(17, height: 1.5, color: AppColors.ink(0.6))),
+        const SizedBox(height: 12),
+        Text(l10n.stableTabHint,
+            style: AppText.body(16, height: 1.5, color: AppColors.ink(0.6))),
       ],
     );
   }

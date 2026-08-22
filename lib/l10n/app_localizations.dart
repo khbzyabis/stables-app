@@ -465,6 +465,120 @@ abstract class AppL10n {
   /// **'Log something'**
   String get logSomething;
 
+  /// No description provided for @schedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule'**
+  String get schedule;
+
+  /// No description provided for @monthView.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get monthView;
+
+  /// No description provided for @weekView.
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get weekView;
+
+  /// No description provided for @addToSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to the schedule'**
+  String get addToSchedule;
+
+  /// No description provided for @filterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filterAll;
+
+  /// No description provided for @quietStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing of that kind today. A quiet stable is allowed.'**
+  String get quietStable;
+
+  /// No description provided for @nothingBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing booked.'**
+  String get nothingBooked;
+
+  /// No description provided for @whatIsHappening.
+  ///
+  /// In en, this message translates to:
+  /// **'What is happening?'**
+  String get whatIsHappening;
+
+  /// No description provided for @whichHorse.
+  ///
+  /// In en, this message translates to:
+  /// **'Which horse'**
+  String get whichHorse;
+
+  /// No description provided for @starts.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts'**
+  String get starts;
+
+  /// No description provided for @forDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'For'**
+  String get forDuration;
+
+  /// No description provided for @repeats.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeats'**
+  String get repeats;
+
+  /// No description provided for @noteIfAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Note, if any'**
+  String get noteIfAny;
+
+  /// No description provided for @repeatOnce.
+  ///
+  /// In en, this message translates to:
+  /// **'Once'**
+  String get repeatOnce;
+
+  /// No description provided for @repeatDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get repeatDaily;
+
+  /// No description provided for @repeatWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get repeatWeekly;
+
+  /// No description provided for @repeatWeekdays.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekdays'**
+  String get repeatWeekdays;
+
+  /// No description provided for @openSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'The schedule'**
+  String get openSchedule;
+
+  /// No description provided for @scheduleSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything the stable does — lessons, farrier, vet, transport.'**
+  String get scheduleSub;
+
   /// No description provided for @back.
   ///
   /// In en, this message translates to:
