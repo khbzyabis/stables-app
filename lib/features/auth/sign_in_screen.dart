@@ -6,7 +6,7 @@ import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/app_field.dart';
 import '../../widgets/app_screen.dart';
-import '../home/home_placeholder_screen.dart';
+import '../home/home_screen.dart';
 import 'sign_up_screen.dart';
 import 'create_stable_screen.dart';
 
@@ -38,7 +38,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
   void _signIn() {
     Navigator.of(context).pushNamedAndRemoveUntil(
-      HomePlaceholderScreen.route,
+      HomeScreen.route,
       (r) => false,
     );
   }

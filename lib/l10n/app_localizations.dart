@@ -201,6 +201,270 @@ abstract class AppL10n {
   /// **'I have an invite code'**
   String get haveInviteCode;
 
+  /// No description provided for @navHorses.
+  ///
+  /// In en, this message translates to:
+  /// **'Horses'**
+  String get navHorses;
+
+  /// No description provided for @navBoard.
+  ///
+  /// In en, this message translates to:
+  /// **'Board'**
+  String get navBoard;
+
+  /// No description provided for @navStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Stable'**
+  String get navStable;
+
+  /// No description provided for @navYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get navYou;
+
+  /// No description provided for @titleMyHorses.
+  ///
+  /// In en, this message translates to:
+  /// **'My horses'**
+  String get titleMyHorses;
+
+  /// No description provided for @titleNoticeboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Noticeboard'**
+  String get titleNoticeboard;
+
+  /// No description provided for @titleTheStable.
+  ///
+  /// In en, this message translates to:
+  /// **'The stable'**
+  String get titleTheStable;
+
+  /// No description provided for @titleYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get titleYou;
+
+  /// No description provided for @stableAndDay.
+  ///
+  /// In en, this message translates to:
+  /// **'{stable} · {day}'**
+  String stableAndDay(String stable, String day);
+
+  /// No description provided for @addAHorse.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a horse'**
+  String get addAHorse;
+
+  /// No description provided for @postANotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Post a notice'**
+  String get postANotice;
+
+  /// No description provided for @statusWell.
+  ///
+  /// In en, this message translates to:
+  /// **'Well'**
+  String get statusWell;
+
+  /// No description provided for @statusWatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch'**
+  String get statusWatch;
+
+  /// No description provided for @addedToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Added today'**
+  String get addedToday;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get comingSoon;
+
+  /// No description provided for @stableTabHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The yard, schedule and people live here — coming next.'**
+  String get stableTabHint;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @addHorseSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A name is all we need. Add the rest whenever you like.'**
+  String get addHorseSubtitle;
+
+  /// No description provided for @addAPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a photo'**
+  String get addAPhoto;
+
+  /// No description provided for @optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get optional;
+
+  /// No description provided for @labelName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get labelName;
+
+  /// No description provided for @nameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Willow'**
+  String get nameHint;
+
+  /// No description provided for @detailsIfYouWant.
+  ///
+  /// In en, this message translates to:
+  /// **'Details, if you want them'**
+  String get detailsIfYouWant;
+
+  /// No description provided for @saveHorse.
+  ///
+  /// In en, this message translates to:
+  /// **'Save horse'**
+  String get saveHorse;
+
+  /// No description provided for @fillLater.
+  ///
+  /// In en, this message translates to:
+  /// **'You can fill anything in later from the profile.'**
+  String get fillLater;
+
+  /// No description provided for @detailAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Age'**
+  String get detailAge;
+
+  /// No description provided for @detailAgeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 9 years'**
+  String get detailAgeHint;
+
+  /// No description provided for @detailBreed.
+  ///
+  /// In en, this message translates to:
+  /// **'Breed'**
+  String get detailBreed;
+
+  /// No description provided for @detailBreedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Arabian'**
+  String get detailBreedHint;
+
+  /// No description provided for @detailSex.
+  ///
+  /// In en, this message translates to:
+  /// **'Sex'**
+  String get detailSex;
+
+  /// No description provided for @detailSexHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Mare, gelding, stallion'**
+  String get detailSexHint;
+
+  /// No description provided for @detailHeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Height'**
+  String get detailHeight;
+
+  /// No description provided for @detailHeightHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 15.2 hh'**
+  String get detailHeightHint;
+
+  /// No description provided for @detailBox.
+  ///
+  /// In en, this message translates to:
+  /// **'Box number'**
+  String get detailBox;
+
+  /// No description provided for @detailBoxHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Box 7'**
+  String get detailBoxHint;
+
+  /// No description provided for @detailNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get detailNotes;
+
+  /// No description provided for @detailNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Anything worth remembering'**
+  String get detailNotesHint;
+
+  /// No description provided for @profileNoDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'No age, breed or notes yet. That is fine — add them when you know them.'**
+  String get profileNoDetails;
+
+  /// No description provided for @addDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Add details'**
+  String get addDetails;
+
+  /// No description provided for @sectionHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health'**
+  String get sectionHealth;
+
+  /// No description provided for @healthEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing logged. First entry starts the record.'**
+  String get healthEmpty;
+
+  /// No description provided for @sectionTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'Training'**
+  String get sectionTraining;
+
+  /// No description provided for @trainingEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No sessions yet.'**
+  String get trainingEmpty;
+
+  /// No description provided for @logSomething.
+  ///
+  /// In en, this message translates to:
+  /// **'Log something'**
+  String get logSomething;
+
   /// No description provided for @back.
   ///
   /// In en, this message translates to:

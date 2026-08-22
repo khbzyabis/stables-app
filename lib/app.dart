@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'app_state.dart';
+import 'data/stable_store.dart';
 import 'features/auth/create_stable_screen.dart';
 import 'features/auth/sign_in_screen.dart';
 import 'features/auth/sign_up_screen.dart';
 import 'features/auth/splash_screen.dart';
 import 'features/auth/verify_screen.dart';
-import 'features/home/home_placeholder_screen.dart';
+import 'features/home/home_screen.dart';
+import 'features/horses/add_horse_screen.dart';
+import 'features/horses/horse_profile_screen.dart';
 import 'l10n/app_localizations.dart';
 import 'theme/app_theme.dart';
 
@@ -20,6 +23,7 @@ class MyStablesApp extends StatefulWidget {
 
 class _MyStablesAppState extends State<MyStablesApp> {
   final _localeController = LocaleController();
+  final _stableStore = StableStore();
 
   @override
   void initState() {
@@ -42,6 +46,7 @@ class _MyStablesAppState extends State<MyStablesApp> {
   @override
   void dispose() {
     _localeController.dispose();
+    _stableStore.dispose();
     super.dispose();
   }
 
@@ -49,10 +54,12 @@ class _MyStablesAppState extends State<MyStablesApp> {
   Widget build(BuildContext context) {
     return LocaleScope(
       controller: _localeController,
-      child: AnimatedBuilder(
-        animation: _localeController,
-        builder: (context, _) {
-          return MaterialApp(
+      child: StableScope(
+        store: _stableStore,
+        child: AnimatedBuilder(
+          animation: _localeController,
+          builder: (context, _) {
+            return MaterialApp(
             title: 'My Stables',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.light,
@@ -64,17 +71,20 @@ class _MyStablesAppState extends State<MyStablesApp> {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            initialRoute: SplashScreen.route,
-            routes: {
-              SplashScreen.route: (_) => const SplashScreen(),
-              SignInScreen.route: (_) => const SignInScreen(),
-              SignUpScreen.route: (_) => const SignUpScreen(),
-              VerifyScreen.route: (_) => const VerifyScreen(),
-              CreateStableScreen.route: (_) => const CreateStableScreen(),
-              HomePlaceholderScreen.route: (_) => const HomePlaceholderScreen(),
-            },
-          );
-        },
+              initialRoute: SplashScreen.route,
+              routes: {
+                SplashScreen.route: (_) => const SplashScreen(),
+                SignInScreen.route: (_) => const SignInScreen(),
+                SignUpScreen.route: (_) => const SignUpScreen(),
+                VerifyScreen.route: (_) => const VerifyScreen(),
+                CreateStableScreen.route: (_) => const CreateStableScreen(),
+                HomeScreen.route: (_) => const HomeScreen(),
+                AddHorseScreen.route: (_) => const AddHorseScreen(),
+                HorseProfileScreen.route: (_) => const HorseProfileScreen(),
+              },
+            );
+          },
+        ),
       ),
     );
   }

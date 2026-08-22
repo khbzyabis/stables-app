@@ -58,6 +58,141 @@ class AppL10nAr extends AppL10n {
   String get haveInviteCode => 'لديّ رمز دعوة';
 
   @override
+  String get navHorses => 'الخيول';
+
+  @override
+  String get navBoard => 'اللوحة';
+
+  @override
+  String get navStable => 'الإسطبل';
+
+  @override
+  String get navYou => 'أنت';
+
+  @override
+  String get titleMyHorses => 'خيولي';
+
+  @override
+  String get titleNoticeboard => 'لوحة الإعلانات';
+
+  @override
+  String get titleTheStable => 'الإسطبل';
+
+  @override
+  String get titleYou => 'أنت';
+
+  @override
+  String stableAndDay(String stable, String day) {
+    return '$stable · $day';
+  }
+
+  @override
+  String get addAHorse => 'إضافة حصان';
+
+  @override
+  String get postANotice => 'نشر إعلان';
+
+  @override
+  String get statusWell => 'بخير';
+
+  @override
+  String get statusWatch => 'مراقبة';
+
+  @override
+  String get addedToday => 'أُضيف اليوم';
+
+  @override
+  String get comingSoon => 'قريبًا';
+
+  @override
+  String get stableTabHint => 'الفناء والجدول والأشخاص هنا — قريبًا.';
+
+  @override
+  String get cancel => 'إلغاء';
+
+  @override
+  String get addHorseSubtitle => 'الاسم هو كل ما نحتاجه. أضف الباقي متى شئت.';
+
+  @override
+  String get addAPhoto => 'إضافة صورة';
+
+  @override
+  String get optional => 'اختياري';
+
+  @override
+  String get labelName => 'الاسم';
+
+  @override
+  String get nameHint => 'ويلو';
+
+  @override
+  String get detailsIfYouWant => 'تفاصيل، إن أردت';
+
+  @override
+  String get saveHorse => 'حفظ الحصان';
+
+  @override
+  String get fillLater => 'يمكنك ملء أي شيء لاحقًا من الملف.';
+
+  @override
+  String get detailAge => 'العمر';
+
+  @override
+  String get detailAgeHint => 'مثال: ٩ سنوات';
+
+  @override
+  String get detailBreed => 'السلالة';
+
+  @override
+  String get detailBreedHint => 'مثال: عربي';
+
+  @override
+  String get detailSex => 'الجنس';
+
+  @override
+  String get detailSexHint => 'فرس، مخصي، فحل';
+
+  @override
+  String get detailHeight => 'الطول';
+
+  @override
+  String get detailHeightHint => 'مثال: ١٥٫٢ قبضة';
+
+  @override
+  String get detailBox => 'رقم البوكس';
+
+  @override
+  String get detailBoxHint => 'مثال: بوكس ٧';
+
+  @override
+  String get detailNotes => 'ملاحظات';
+
+  @override
+  String get detailNotesHint => 'أي شيء يستحق التذكّر';
+
+  @override
+  String get profileNoDetails =>
+      'لا عمر أو سلالة أو ملاحظات بعد. لا بأس — أضفها حين تعرفها.';
+
+  @override
+  String get addDetails => 'إضافة تفاصيل';
+
+  @override
+  String get sectionHealth => 'الصحة';
+
+  @override
+  String get healthEmpty => 'لا شيء مُسجّل. أول إدخال يبدأ السجل.';
+
+  @override
+  String get sectionTraining => 'التدريب';
+
+  @override
+  String get trainingEmpty => 'لا جلسات بعد.';
+
+  @override
+  String get logSomething => 'سجّل شيئًا';
+
+  @override
   String get back => 'رجوع';
 
   @override

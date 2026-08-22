@@ -9,7 +9,7 @@ import '../../widgets/app_screen.dart';
 import '../../widgets/app_tag.dart';
 import '../../widgets/hairline.dart';
 import '../../widgets/step_progress.dart';
-import '../home/home_placeholder_screen.dart';
+import '../home/home_screen.dart';
 import 'back_link.dart';
 
 enum _Setup { create, join }
@@ -86,7 +86,7 @@ class _CreateStableScreenState extends State<CreateStableScreen> {
           AppButton(
             label: isCreate ? l10n.createStableCta : l10n.joinStableCta,
             onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
-              HomePlaceholderScreen.route,
+              HomeScreen.route,
               (r) => false,
             ),
           ),

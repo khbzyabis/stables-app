@@ -58,6 +58,143 @@ class AppL10nNe extends AppL10n {
   String get haveInviteCode => 'मसँग निमन्त्रणा कोड छ';
 
   @override
+  String get navHorses => 'Horses';
+
+  @override
+  String get navBoard => 'Board';
+
+  @override
+  String get navStable => 'Stable';
+
+  @override
+  String get navYou => 'You';
+
+  @override
+  String get titleMyHorses => 'My horses';
+
+  @override
+  String get titleNoticeboard => 'Noticeboard';
+
+  @override
+  String get titleTheStable => 'The stable';
+
+  @override
+  String get titleYou => 'You';
+
+  @override
+  String stableAndDay(String stable, String day) {
+    return '$stable · $day';
+  }
+
+  @override
+  String get addAHorse => 'Add a horse';
+
+  @override
+  String get postANotice => 'Post a notice';
+
+  @override
+  String get statusWell => 'Well';
+
+  @override
+  String get statusWatch => 'Watch';
+
+  @override
+  String get addedToday => 'Added today';
+
+  @override
+  String get comingSoon => 'Coming soon';
+
+  @override
+  String get stableTabHint =>
+      'The yard, schedule and people live here — coming next.';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get addHorseSubtitle =>
+      'A name is all we need. Add the rest whenever you like.';
+
+  @override
+  String get addAPhoto => 'Add a photo';
+
+  @override
+  String get optional => 'Optional';
+
+  @override
+  String get labelName => 'Name';
+
+  @override
+  String get nameHint => 'Willow';
+
+  @override
+  String get detailsIfYouWant => 'Details, if you want them';
+
+  @override
+  String get saveHorse => 'Save horse';
+
+  @override
+  String get fillLater => 'You can fill anything in later from the profile.';
+
+  @override
+  String get detailAge => 'Age';
+
+  @override
+  String get detailAgeHint => 'e.g. 9 years';
+
+  @override
+  String get detailBreed => 'Breed';
+
+  @override
+  String get detailBreedHint => 'e.g. Arabian';
+
+  @override
+  String get detailSex => 'Sex';
+
+  @override
+  String get detailSexHint => 'Mare, gelding, stallion';
+
+  @override
+  String get detailHeight => 'Height';
+
+  @override
+  String get detailHeightHint => 'e.g. 15.2 hh';
+
+  @override
+  String get detailBox => 'Box number';
+
+  @override
+  String get detailBoxHint => 'e.g. Box 7';
+
+  @override
+  String get detailNotes => 'Notes';
+
+  @override
+  String get detailNotesHint => 'Anything worth remembering';
+
+  @override
+  String get profileNoDetails =>
+      'No age, breed or notes yet. That is fine — add them when you know them.';
+
+  @override
+  String get addDetails => 'Add details';
+
+  @override
+  String get sectionHealth => 'Health';
+
+  @override
+  String get healthEmpty => 'Nothing logged. First entry starts the record.';
+
+  @override
+  String get sectionTraining => 'Training';
+
+  @override
+  String get trainingEmpty => 'No sessions yet.';
+
+  @override
+  String get logSomething => 'Log something';
+
+  @override
   String get back => 'पछाडि';
 
   @override
