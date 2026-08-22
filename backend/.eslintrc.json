@@ -1,0 +1,31 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": { "sourceType": "module" },
+  "plugins": ["@typescript-eslint"],
+  "extends": ["plugin:@typescript-eslint/recommended"],
+  "root": true,
+  "env": { "node": true, "jest": true },
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "warn",
+    "no-restricted-properties": [
+      "error",
+      {
+        "object": "prisma",
+        "property": "$queryRawUnsafe",
+        "message": "Never build SQL from strings. Use Prisma query methods or $queryRaw with Prisma.sql parameters."
+      },
+      {
+        "object": "prisma",
+        "property": "$executeRawUnsafe",
+        "message": "Never build SQL from strings. Use Prisma query methods or $executeRaw with Prisma.sql parameters."
+      }
+    ],
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "CallExpression[callee.property.name=/^\\$(query|execute)RawUnsafe$/]",
+        "message": "Unsafe raw SQL is forbidden — use parameterized Prisma.sql / query builder to prevent SQL injection."
+      }
+    ]
+  }
+}

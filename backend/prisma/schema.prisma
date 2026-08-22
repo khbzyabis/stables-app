@@ -1,0 +1,189 @@
+// My Stables — data model.
+//
+// Access is always through Prisma's query API, which sends values as bind
+// parameters (never string-concatenated SQL) — this is the primary SQL-injection
+// defense. Row-Level Security policies in Supabase enforce that a caller only
+// sees rows for stables they are a member of.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// A person. One login belongs to a person, not a stable.
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique
+  phone        String?  @unique
+  fullName     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  memberships  Membership[]
+  deviceTokens DeviceToken[]
+  authoredNotes Note[]  @relation("NoteAuthor")
+
+  @@map("users")
+}
+
+/// A stable (yard). A person can create their own while being staff at another.
+model Stable {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  latitude  Float?
+  longitude Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships Membership[]
+  horses      Horse[]
+  notices     Notice[]
+  tasks       Task[]
+  notes       Note[]
+
+  @@map("stables")
+}
+
+enum Role {
+  admin
+  trainer
+  groom
+  rider
+}
+
+/// Ties a user to a stable WITH A ROLE. Permissions are resolved per membership,
+/// never per user — the rule the whole product depends on.
+model Membership {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  stableId  String   @db.Uuid
+  role      Role
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stable Stable @relation(fields: [stableId], references: [id], onDelete: Cascade)
+
+  authoredNotes Note[] @relation("NoteAuthorMembership")
+
+  @@unique([userId, stableId])
+  @@index([stableId])
+  @@index([userId])
+  @@map("memberships")
+}
+
+enum HorseStatus {
+  well
+  watch
+}
+
+/// A horse. Adding one is deliberately minimal — only a name is required.
+/// The horse's records (passport, vaccination, feed chart, setups) travel with
+/// the horse when it moves stables; stable-scoped notes stay behind.
+model Horse {
+  id         String      @id @default(uuid()) @db.Uuid
+  stableId   String      @db.Uuid
+  name       String
+  status     HorseStatus @default(well)
+  statusLine String?
+  age        String?
+  breed      String?
+  sex        String?
+  height     String?
+  box        String?
+  notes      String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  stable       Stable @relation(fields: [stableId], references: [id], onDelete: Cascade)
+  healthNotes  Note[]
+
+  @@index([stableId])
+  @@map("horses")
+}
+
+enum NoteKind {
+  health
+  training
+}
+
+/// Notes follow their author: they carry both the author and the stable they
+/// were written at, so they stay with that stable when a horse moves.
+model Note {
+  id                  String   @id @default(uuid()) @db.Uuid
+  horseId             String   @db.Uuid
+  stableId            String   @db.Uuid
+  authorId            String   @db.Uuid
+  authorMembershipId  String   @db.Uuid
+  kind                NoteKind
+  body                String
+  createdAt           DateTime @default(now())
+
+  horse            Horse      @relation(fields: [horseId], references: [id], onDelete: Cascade)
+  stable           Stable     @relation(fields: [stableId], references: [id])
+  author           User       @relation("NoteAuthor", fields: [authorId], references: [id])
+  authorMembership Membership @relation("NoteAuthorMembership", fields: [authorMembershipId], references: [id])
+
+  @@index([horseId])
+  @@index([stableId])
+  @@map("notes")
+}
+
+/// Per-stable noticeboard post.
+model Notice {
+  id        String   @id @default(uuid()) @db.Uuid
+  stableId  String   @db.Uuid
+  authorId  String   @db.Uuid
+  pinned    Boolean  @default(false)
+  body      String
+  createdAt DateTime @default(now())
+
+  stable Stable @relation(fields: [stableId], references: [id], onDelete: Cascade)
+
+  @@index([stableId])
+  @@map("notices")
+}
+
+/// A task set by an admin/trainer, ticked by grooms. Ticks are offline-capable
+/// on the client and synced when signal returns.
+model Task {
+  id         String    @id @default(uuid()) @db.Uuid
+  stableId   String    @db.Uuid
+  horseId    String?   @db.Uuid
+  setById    String    @db.Uuid
+  title      String
+  dueOn      DateTime? @db.Date
+  doneAt     DateTime?
+  createdAt  DateTime  @default(now())
+
+  stable Stable @relation(fields: [stableId], references: [id], onDelete: Cascade)
+
+  @@index([stableId, dueOn])
+  @@map("tasks")
+}
+
+enum DevicePlatform {
+  ios
+  android
+  web
+}
+
+/// A registered push-notification token for a user's device (FCM/APNs).
+/// Stale tokens are pruned on delivery failure.
+model DeviceToken {
+  id        String         @id @default(uuid()) @db.Uuid
+  userId    String         @db.Uuid
+  platform  DevicePlatform
+  token     String         @unique
+  locale    String?
+  createdAt DateTime       @default(now())
+  lastSeenAt DateTime      @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("device_tokens")
+}
