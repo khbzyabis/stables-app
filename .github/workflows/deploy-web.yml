@@ -1,0 +1,42 @@
+name: Deploy web to Vercel
+
+# Builds the Flutter web app and deploys it to Vercel. Vercel can't build
+# Flutter itself, so we build here (GitHub Actions has the Flutter toolchain)
+# and ship the output with the Vercel CLI.
+#
+# Required repo secrets (Settings → Secrets and variables → Actions):
+#   VERCEL_TOKEN       — from https://vercel.com/account/tokens
+#   VERCEL_ORG_ID      — from `vercel link` (.vercel/project.json) or team settings
+#   VERCEL_PROJECT_ID  — from `vercel link` (.vercel/project.json)
+# Optional repo variable:
+#   API_BASE_URL       — the deployed API URL; omit for an offline/sample preview
+
+on:
+  workflow_dispatch:        # manual "Run workflow" button
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      - name: Build web
+        run: |
+          flutter build web --release \
+            ${API_BASE_URL:+--dart-define=API_BASE_URL=$API_BASE_URL}
+        env:
+          API_BASE_URL: ${{ vars.API_BASE_URL }}
+      - name: Deploy to Vercel
+        run: |
+          npm i -g vercel
+          vercel deploy build/web --prod --yes \
+            --token "$VERCEL_TOKEN"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
