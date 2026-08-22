@@ -251,6 +251,53 @@ class AppL10nAr extends AppL10n {
       'كل ما يفعله الإسطبل — الدروس، البيطرة، الطبيب، النقل.';
 
   @override
+  String get yourTasks => 'مهامك';
+
+  @override
+  String taskProgress(int done, int total, int left) {
+    return '$done من $total منجزة · $left متبقية';
+  }
+
+  @override
+  String get ticksVisible => 'علامات الإنجاز تظهر لأحمد وليال فورًا.';
+
+  @override
+  String get newTask => 'مهمة جديدة';
+
+  @override
+  String get whatNeedsDoing => 'ما الذي يجب عمله';
+
+  @override
+  String get who => 'لمن';
+
+  @override
+  String get byTime => 'بحلول';
+
+  @override
+  String get noteForThem => 'ملاحظة لهم';
+
+  @override
+  String get assign => 'إسناد';
+
+  @override
+  String get tasksToday => 'مهام اليوم';
+
+  @override
+  String get stillOpen => 'ما زالت مفتوحة';
+
+  @override
+  String get statusLate => 'متأخرة';
+
+  @override
+  String get statusOpen => 'مفتوحة';
+
+  @override
+  String get openTasks => 'المهام';
+
+  @override
+  String get tasksSub => 'أسنِد المهام وتابع مَن أنجز ماذا.';
+
+  @override
   String get back => 'رجوع';
 
   @override

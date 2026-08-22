@@ -88,6 +88,25 @@
   "openSchedule": "The schedule",
   "scheduleSub": "Everything the stable does — lessons, farrier, vet, transport.",
 
+  "yourTasks": "Your tasks",
+  "taskProgress": "{done} of {total} done · {left} left",
+  "@taskProgress": {
+    "placeholders": { "done": {"type":"int"}, "total": {"type":"int"}, "left": {"type":"int"} }
+  },
+  "ticksVisible": "Ticks are visible to Ahmad and Layal straight away.",
+  "newTask": "New task",
+  "whatNeedsDoing": "What needs doing",
+  "who": "Who",
+  "byTime": "By",
+  "noteForThem": "Note for them",
+  "assign": "Assign",
+  "tasksToday": "Tasks today",
+  "stillOpen": "Still open",
+  "statusLate": "Late",
+  "statusOpen": "Open",
+  "openTasks": "Tasks",
+  "tasksSub": "Set tasks and see who has done what.",
+
   "back": "Back",
   "yourDetails": "Your details",
   "step1of3": "Step 1 of 3 — about you.",

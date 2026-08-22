@@ -254,6 +254,54 @@ class AppL10nBn extends AppL10n {
       'Everything the stable does — lessons, farrier, vet, transport.';
 
   @override
+  String get yourTasks => 'Your tasks';
+
+  @override
+  String taskProgress(int done, int total, int left) {
+    return '$done of $total done · $left left';
+  }
+
+  @override
+  String get ticksVisible =>
+      'Ticks are visible to Ahmad and Layal straight away.';
+
+  @override
+  String get newTask => 'New task';
+
+  @override
+  String get whatNeedsDoing => 'What needs doing';
+
+  @override
+  String get who => 'Who';
+
+  @override
+  String get byTime => 'By';
+
+  @override
+  String get noteForThem => 'Note for them';
+
+  @override
+  String get assign => 'Assign';
+
+  @override
+  String get tasksToday => 'Tasks today';
+
+  @override
+  String get stillOpen => 'Still open';
+
+  @override
+  String get statusLate => 'Late';
+
+  @override
+  String get statusOpen => 'Open';
+
+  @override
+  String get openTasks => 'Tasks';
+
+  @override
+  String get tasksSub => 'Set tasks and see who has done what.';
+
+  @override
   String get back => 'পিছনে';
 
   @override

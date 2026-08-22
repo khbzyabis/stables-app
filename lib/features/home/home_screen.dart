@@ -14,6 +14,8 @@ import '../../widgets/photo_placeholder.dart';
 import '../horses/add_horse_screen.dart';
 import '../horses/horse_profile_screen.dart';
 import '../schedule/schedule_screen.dart';
+import '../tasks/groom_day_screen.dart';
+import '../tasks/task_progress_screen.dart';
 
 /// Screen 06 — Home. Leads with My horses; a four-tab bar switches to the
 /// noticeboard, the stable, and you. Home leads with horses because that is
@@ -289,27 +291,22 @@ class _StableTab extends StatelessWidget {
       padding: EdgeInsets.zero,
       children: [
         const Hairline(),
-        InkWell(
+        _NavRow(
+          title: l10n.openSchedule,
+          subtitle: l10n.scheduleSub,
           onTap: () => Navigator.of(context).pushNamed(ScheduleScreen.route),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(l10n.openSchedule, style: AppText.heading(23, height: 1.1)),
-                      const SizedBox(height: 4),
-                      Text(l10n.scheduleSub,
-                          style: AppText.body(15, color: AppColors.ink(0.6))),
-                    ],
-                  ),
-                ),
-                Icon(Icons.chevron_right, color: AppColors.ink(0.4)),
-              ],
-            ),
-          ),
+        ),
+        const Hairline(),
+        _NavRow(
+          title: l10n.openTasks,
+          subtitle: l10n.tasksSub,
+          onTap: () => Navigator.of(context).pushNamed(TaskProgressScreen.route),
+        ),
+        const Hairline(),
+        _NavRow(
+          title: l10n.yourTasks,
+          subtitle: l10n.ticksVisible,
+          onTap: () => Navigator.of(context).pushNamed(GroomDayScreen.route),
         ),
         const Hairline(),
         const SizedBox(height: 26),
@@ -318,6 +315,40 @@ class _StableTab extends StatelessWidget {
         Text(l10n.stableTabHint,
             style: AppText.body(16, height: 1.5, color: AppColors.ink(0.6))),
       ],
+    );
+  }
+}
+
+class _NavRow extends StatelessWidget {
+  const _NavRow(
+      {required this.title, required this.subtitle, required this.onTap});
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: AppText.heading(23, height: 1.1)),
+                  const SizedBox(height: 4),
+                  Text(subtitle,
+                      style: AppText.body(15, color: AppColors.ink(0.6))),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: AppColors.ink(0.4)),
+          ],
+        ),
+      ),
     );
   }
 }

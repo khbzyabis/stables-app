@@ -579,6 +579,96 @@ abstract class AppL10n {
   /// **'Everything the stable does — lessons, farrier, vet, transport.'**
   String get scheduleSub;
 
+  /// No description provided for @yourTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Your tasks'**
+  String get yourTasks;
+
+  /// No description provided for @taskProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total} done · {left} left'**
+  String taskProgress(int done, int total, int left);
+
+  /// No description provided for @ticksVisible.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticks are visible to Ahmad and Layal straight away.'**
+  String get ticksVisible;
+
+  /// No description provided for @newTask.
+  ///
+  /// In en, this message translates to:
+  /// **'New task'**
+  String get newTask;
+
+  /// No description provided for @whatNeedsDoing.
+  ///
+  /// In en, this message translates to:
+  /// **'What needs doing'**
+  String get whatNeedsDoing;
+
+  /// No description provided for @who.
+  ///
+  /// In en, this message translates to:
+  /// **'Who'**
+  String get who;
+
+  /// No description provided for @byTime.
+  ///
+  /// In en, this message translates to:
+  /// **'By'**
+  String get byTime;
+
+  /// No description provided for @noteForThem.
+  ///
+  /// In en, this message translates to:
+  /// **'Note for them'**
+  String get noteForThem;
+
+  /// No description provided for @assign.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign'**
+  String get assign;
+
+  /// No description provided for @tasksToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks today'**
+  String get tasksToday;
+
+  /// No description provided for @stillOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Still open'**
+  String get stillOpen;
+
+  /// No description provided for @statusLate.
+  ///
+  /// In en, this message translates to:
+  /// **'Late'**
+  String get statusLate;
+
+  /// No description provided for @statusOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get statusOpen;
+
+  /// No description provided for @openTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks'**
+  String get openTasks;
+
+  /// No description provided for @tasksSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Set tasks and see who has done what.'**
+  String get tasksSub;
+
   /// No description provided for @back.
   ///
   /// In en, this message translates to:
