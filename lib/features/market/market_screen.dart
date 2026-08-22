@@ -9,6 +9,7 @@ import '../../widgets/hairline.dart';
 import '../../widgets/photo_placeholder.dart';
 import 'basket_screen.dart';
 import 'item_screen.dart';
+import 'quote_request_screen.dart';
 
 /// Screen 48 — Market (Shop). Browse by group; every seller is operator-approved.
 class MarketScreen extends StatefulWidget {
@@ -156,13 +157,10 @@ class _ItemRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppL10n.of(context);
     return InkWell(
       onTap: () {
         if (item.isService) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.askForPrice)),
-          );
+          Navigator.of(context).pushNamed(QuoteRequestScreen.route);
         } else {
           Navigator.of(context).pushNamed(ItemScreen.route);
         }

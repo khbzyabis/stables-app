@@ -356,6 +356,59 @@ class AppL10nAr extends AppL10n {
       'أنت تدفع لـ My Stables، لا للبائعين. إن حدث خطأ، نحتفظ بالمال حتى تُحلّ المسألة.';
 
   @override
+  String get orders => 'الطلبات';
+
+  @override
+  String get somethingWrong => 'هناك خطأ في هذا الطلب';
+
+  @override
+  String get buyAgain => 'اشترِ هذه مجددًا';
+
+  @override
+  String get whatIsWrong => 'ما الخطأ';
+
+  @override
+  String get sendToMyStables => 'أرسِل إلى My Stables';
+
+  @override
+  String get sellerAnswersFirst =>
+      'يردّ البائع أولًا. إن بقي الخلاف، تقرّر My Stables.';
+
+  @override
+  String get askSubtitle =>
+      'اختر مَن تسأل. يردّون بنطاق سعري وينتهي خلال ثلاثة أيام.';
+
+  @override
+  String get whatFor => 'لأجل ماذا';
+
+  @override
+  String get whichHorses => 'أي خيول';
+
+  @override
+  String get whenNeeded => 'متى تحتاجه';
+
+  @override
+  String get whoToAsk => 'مَن تسأل';
+
+  @override
+  String get sendRequest => 'أرسِل الطلب';
+
+  @override
+  String get othersAskedNote => 'يمكنهم رؤية عدد مَن سألت، لا مَن هم.';
+
+  @override
+  String get acceptQuote => 'قبول';
+
+  @override
+  String get notThisTime => 'ليس هذه المرة';
+
+  @override
+  String get quoteBooked => 'تم الحجز · انتهت البقية';
+
+  @override
+  String get askedFarriers => 'سُئل ثلاثة بيطّارين يوم الاثنين.';
+
+  @override
   String get back => 'رجوع';
 
   @override

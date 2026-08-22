@@ -361,6 +361,60 @@ class AppL10nNe extends AppL10n {
       'You pay My Stables, not the sellers. If something is wrong, we hold the money until it is sorted.';
 
   @override
+  String get orders => 'Orders';
+
+  @override
+  String get somethingWrong => 'Something is wrong with this order';
+
+  @override
+  String get buyAgain => 'Buy these again';
+
+  @override
+  String get whatIsWrong => 'What is wrong';
+
+  @override
+  String get sendToMyStables => 'Send to My Stables';
+
+  @override
+  String get sellerAnswersFirst =>
+      'The seller answers first. If you still disagree, My Stables decides.';
+
+  @override
+  String get askSubtitle =>
+      'Pick who to ask. They answer with a range and it expires in three days.';
+
+  @override
+  String get whatFor => 'What for';
+
+  @override
+  String get whichHorses => 'Which horses';
+
+  @override
+  String get whenNeeded => 'When you need it';
+
+  @override
+  String get whoToAsk => 'Who to ask';
+
+  @override
+  String get sendRequest => 'Send the request';
+
+  @override
+  String get othersAskedNote =>
+      'They can see how many others you asked, not who.';
+
+  @override
+  String get acceptQuote => 'Accept';
+
+  @override
+  String get notThisTime => 'Not this time';
+
+  @override
+  String get quoteBooked => 'Booked · the others have lapsed';
+
+  @override
+  String get askedFarriers => 'Asked three farriers on Monday.';
+
+  @override
   String get back => 'पछाडि';
 
   @override

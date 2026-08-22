@@ -765,6 +765,108 @@ abstract class AppL10n {
   /// **'You pay My Stables, not the sellers. If something is wrong, we hold the money until it is sorted.'**
   String get basketTerms;
 
+  /// No description provided for @orders.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders'**
+  String get orders;
+
+  /// No description provided for @somethingWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something is wrong with this order'**
+  String get somethingWrong;
+
+  /// No description provided for @buyAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy these again'**
+  String get buyAgain;
+
+  /// No description provided for @whatIsWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'What is wrong'**
+  String get whatIsWrong;
+
+  /// No description provided for @sendToMyStables.
+  ///
+  /// In en, this message translates to:
+  /// **'Send to My Stables'**
+  String get sendToMyStables;
+
+  /// No description provided for @sellerAnswersFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'The seller answers first. If you still disagree, My Stables decides.'**
+  String get sellerAnswersFirst;
+
+  /// No description provided for @askSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick who to ask. They answer with a range and it expires in three days.'**
+  String get askSubtitle;
+
+  /// No description provided for @whatFor.
+  ///
+  /// In en, this message translates to:
+  /// **'What for'**
+  String get whatFor;
+
+  /// No description provided for @whichHorses.
+  ///
+  /// In en, this message translates to:
+  /// **'Which horses'**
+  String get whichHorses;
+
+  /// No description provided for @whenNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'When you need it'**
+  String get whenNeeded;
+
+  /// No description provided for @whoToAsk.
+  ///
+  /// In en, this message translates to:
+  /// **'Who to ask'**
+  String get whoToAsk;
+
+  /// No description provided for @sendRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the request'**
+  String get sendRequest;
+
+  /// No description provided for @othersAskedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'They can see how many others you asked, not who.'**
+  String get othersAskedNote;
+
+  /// No description provided for @acceptQuote.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get acceptQuote;
+
+  /// No description provided for @notThisTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Not this time'**
+  String get notThisTime;
+
+  /// No description provided for @quoteBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked · the others have lapsed'**
+  String get quoteBooked;
+
+  /// No description provided for @askedFarriers.
+  ///
+  /// In en, this message translates to:
+  /// **'Asked three farriers on Monday.'**
+  String get askedFarriers;
+
   /// No description provided for @back.
   ///
   /// In en, this message translates to:
