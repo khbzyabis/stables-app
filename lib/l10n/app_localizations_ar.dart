@@ -991,4 +991,19 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get backToMarket => 'العودة إلى المتجر';
+
+  @override
+  String get notNow => 'ليس الآن';
+
+  @override
+  String get saveChanges => 'حفظ التغييرات';
+
+  @override
+  String get deleteActivity => 'حذف هذا النشاط';
+
+  @override
+  String get delete => 'حذف';
+
+  @override
+  String get keepIt => 'الإبقاء عليه';
 }

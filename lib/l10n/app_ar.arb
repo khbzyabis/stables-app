@@ -326,5 +326,10 @@
   "shows": "العروض",
   "pickAClass": "اختر فئة",
   "seeReceipt": "عرض الإيصال",
-  "backToMarket": "العودة إلى المتجر"
+  "backToMarket": "العودة إلى المتجر",
+  "notNow": "ليس الآن",
+  "saveChanges": "حفظ التغييرات",
+  "deleteActivity": "حذف هذا النشاط",
+  "delete": "حذف",
+  "keepIt": "الإبقاء عليه"
 }

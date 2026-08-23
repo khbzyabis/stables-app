@@ -6,6 +6,7 @@ import '../../models/task.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/hairline.dart';
+import 'kit_screen.dart';
 
 /// Screen 29 — Groom's day. The day's tasks; tick them done. Ticks work
 /// offline (held locally and synced when signal returns) and, when online,
@@ -61,6 +62,12 @@ class _GroomDayScreenState extends State<GroomDayScreen> {
               const Hairline(),
             ],
             const SizedBox(height: 24),
+            GestureDetector(
+              onTap: () => Navigator.of(context).pushNamed(KitScreen.route),
+              child: Text("See today's kit for Kiki",
+                  style: AppText.body(16, color: AppColors.accent700)),
+            ),
+            const SizedBox(height: 16),
             Text(l10n.ticksVisible,
                 style: AppText.body(15, height: 1.5, color: AppColors.ink(0.55))),
           ],

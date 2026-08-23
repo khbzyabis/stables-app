@@ -6,6 +6,7 @@ import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_tag.dart';
 import '../../widgets/hairline.dart';
+import '../edge/invite_accepted_screen.dart';
 
 /// Screen 12 — My stables. One account, several stables; role and permissions
 /// change with the stable.
@@ -67,8 +68,12 @@ class MyStablesScreen extends StatelessWidget {
             Text('+ ${l10n.createAnotherStable}',
                 style: AppText.heading(17, color: AppColors.accent700)),
             const SizedBox(height: 14),
-            Text(l10n.joinWithCode,
-                style: AppText.body(16, color: AppColors.ink(0.6))),
+            GestureDetector(
+              onTap: () =>
+                  Navigator.of(context).pushNamed(InviteAcceptedScreen.route),
+              child: Text(l10n.joinWithCode,
+                  style: AppText.body(16, color: AppColors.ink(0.6))),
+            ),
             const SizedBox(height: 30),
             Text(l10n.adminNoRights,
                 style: AppText.body(15, height: 1.5, color: AppColors.ink(0.55))),

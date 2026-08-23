@@ -40,6 +40,12 @@ import 'features/shows/show_screen.dart';
 import 'features/shows/shows_screen.dart';
 import 'features/shows/start_list_screen.dart';
 import 'features/market/paid_screen.dart';
+import 'features/edge/day_one_screen.dart';
+import 'features/edge/horse_pending_screen.dart';
+import 'features/edge/invite_accepted_screen.dart';
+import 'features/edge/offline_screen.dart';
+import 'features/schedule/edit_activity_screen.dart';
+import 'features/tasks/kit_screen.dart';
 import 'features/schedule/add_activity_screen.dart';
 import 'features/schedule/month_screen.dart';
 import 'features/schedule/schedule_screen.dart';
@@ -163,6 +169,12 @@ class _MyStablesAppState extends State<MyStablesApp> {
                 ShowScreen.route: (_) => const ShowScreen(),
                 StartListScreen.route: (_) => const StartListScreen(),
                 PaidScreen.route: (_) => const PaidScreen(),
+                InviteAcceptedScreen.route: (_) => const InviteAcceptedScreen(),
+                HorsePendingScreen.route: (_) => const HorsePendingScreen(),
+                EditActivityScreen.route: (_) => const EditActivityScreen(),
+                KitScreen.route: (_) => const KitScreen(),
+                DayOneScreen.route: (_) => const DayOneScreen(),
+                OfflineScreen.route: (_) => const OfflineScreen(),
                 ScheduleScreen.route: (_) => const ScheduleScreen(),
                 MonthScreen.route: (_) => const MonthScreen(),
                 AddActivityScreen.route: (_) => const AddActivityScreen(),

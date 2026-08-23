@@ -9,6 +9,7 @@ import '../../widgets/app_button.dart';
 import '../../widgets/app_tag.dart';
 import '../../widgets/hairline.dart';
 import 'add_activity_screen.dart';
+import 'edit_activity_screen.dart';
 import 'month_screen.dart';
 
 const _weekdayNames = {
@@ -257,7 +258,10 @@ class _AgendaRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return InkWell(
+      onTap: () =>
+          Navigator.of(context).pushNamed(EditActivityScreen.route),
+      child: Padding(
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -297,6 +301,7 @@ class _AgendaRow extends StatelessWidget {
           const SizedBox(width: 12),
           AppTag(event.kind.label, tone: event.kind.tone),
         ],
+      ),
       ),
     );
   }

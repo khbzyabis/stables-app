@@ -342,5 +342,10 @@
   "shows": "Shows",
   "pickAClass": "Pick a class",
   "seeReceipt": "See the receipt",
-  "backToMarket": "Back to the market"
+  "backToMarket": "Back to the market",
+  "notNow": "Not now",
+  "saveChanges": "Save changes",
+  "deleteActivity": "Delete this activity",
+  "delete": "Delete",
+  "keepIt": "Keep it"
 }

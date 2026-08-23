@@ -1002,4 +1002,19 @@ class AppL10nBn extends AppL10n {
 
   @override
   String get backToMarket => 'Back to the market';
+
+  @override
+  String get notNow => 'Not now';
+
+  @override
+  String get saveChanges => 'Save changes';
+
+  @override
+  String get deleteActivity => 'Delete this activity';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get keepIt => 'Keep it';
 }

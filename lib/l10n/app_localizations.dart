@@ -2000,6 +2000,36 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Back to the market'**
   String get backToMarket;
+
+  /// No description provided for @notNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get notNow;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get saveChanges;
+
+  /// No description provided for @deleteActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this activity'**
+  String get deleteActivity;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @keepIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it'**
+  String get keepIt;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {
