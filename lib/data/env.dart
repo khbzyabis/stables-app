@@ -26,6 +26,19 @@ class Env {
 
   static bool get sentryEnabled => sentryDsn.isNotEmpty;
 
+  /// PostHog product analytics. Project (public) API key — safe to ship.
+  static const posthogKey = String.fromEnvironment(
+    'POSTHOG_KEY',
+    defaultValue: 'phc_BstEb2VjnyKKJzVmSAg6FcQ5mE4KsF9hEbEajrBShetF',
+  );
+
+  static const posthogHost = String.fromEnvironment(
+    'POSTHOG_HOST',
+    defaultValue: 'https://us.i.posthog.com',
+  );
+
+  static bool get analyticsEnabled => posthogKey.isNotEmpty;
+
   static bool get isConfigured =>
       supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
 }

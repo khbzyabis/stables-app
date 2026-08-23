@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'analytics.dart';
+
 /// Thin wrapper over the Supabase client — auth plus the read/write calls the
 /// app needs. Row Level Security on the database enforces that a person only
 /// ever sees data for stables they belong to; `created_by` / `user_id` are
@@ -34,14 +36,22 @@ class SupabaseService {
     required String email,
     required String password,
     required String name,
-  }) =>
-      _db.auth.signUp(email: email, password: password, data: {'name': name});
+  }) async {
+    final res = await _db.auth
+        .signUp(email: email, password: password, data: {'name': name});
+    Analytics.capture('signed_up');
+    return res;
+  }
 
   static Future<AuthResponse> signIn({
     required String email,
     required String password,
-  }) =>
-      _db.auth.signInWithPassword(email: email, password: password);
+  }) async {
+    final res =
+        await _db.auth.signInWithPassword(email: email, password: password);
+    Analytics.capture('signed_in');
+    return res;
+  }
 
   static Future<void> resendConfirmation(String email) =>
       _db.auth.resend(type: OtpType.signup, email: email);
@@ -75,6 +85,7 @@ class SupabaseService {
     await _db
         .from('memberships')
         .insert({'stable_id': stable['id'], 'role': 'Admin'});
+    Analytics.capture('stable_created', {'stable_id': stable['id'] as String});
     return stable;
   }
 
@@ -124,6 +135,7 @@ class SupabaseService {
   /// Join a stable using an invite code. Returns the stable row.
   static Future<Map<String, dynamic>> redeemInvite(String code) async {
     final row = await _db.rpc('redeem_invite', params: {'invite_code': code});
+    Analytics.capture('stable_joined');
     // rpc returns the stable record (a single row).
     if (row is List && row.isNotEmpty) return Map<String, dynamic>.from(row.first);
     return Map<String, dynamic>.from(row as Map);
@@ -155,7 +167,10 @@ class SupabaseService {
         if (height != null && height.isNotEmpty) 'height': height,
         if (box != null && box.isNotEmpty) 'box': box,
         if (notes != null && notes.isNotEmpty) 'notes': notes,
-      }).select().single();
+      }).select().single().then((row) {
+        Analytics.capture('horse_added', {'stable_id': stableId});
+        return row;
+      });
 
   // ---- Schedule activities --------------------------------------------
   static Future<List<Map<String, dynamic>>> activities(String stableId) => _db
@@ -208,10 +223,13 @@ class SupabaseService {
         if (note != null && note.isNotEmpty) 'note': note,
       }).select().single();
 
-  static Future<void> setTaskDone(String id, bool done) => _db
-      .from('tasks')
-      .update({'done': done, 'done_by': done ? currentUser?.id : null})
-      .eq('id', id);
+  static Future<void> setTaskDone(String id, bool done) async {
+    await _db
+        .from('tasks')
+        .update({'done': done, 'done_by': done ? currentUser?.id : null})
+        .eq('id', id);
+    if (done) Analytics.capture('task_completed');
+  }
 
   // ---- Health, training, feed (a horse's record) ----------------------
   static Future<List<Map<String, dynamic>>> healthEntries(String horseId) => _db

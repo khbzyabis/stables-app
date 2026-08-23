@@ -4,7 +4,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'api/api_client.dart';
 import 'api/api_config.dart';
 import 'api/horses_api.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
+
 import 'app_state.dart';
+import 'data/analytics.dart';
+import 'data/env.dart';
 import 'data/session.dart';
 import 'data/stable_store.dart';
 import 'data/supabase_service.dart';
@@ -95,12 +99,17 @@ class _MyStablesAppState extends State<MyStablesApp> {
     super.initState();
     // Keep the session in step with Supabase auth: load stables on sign-in,
     // clear them on sign-out.
-    if (SupabaseService.isSignedIn) _session.refresh();
+    if (SupabaseService.isSignedIn) {
+      _session.refresh();
+      _identify(SupabaseService.currentUser);
+    }
     SupabaseService.authChanges.listen((state) {
       if (state.session != null) {
         _session.refresh();
+        _identify(state.session!.user);
       } else {
         _session.clear();
+        Analytics.reset();
       }
     });
     // On first launch, honour the device language if it is one we support.
@@ -116,6 +125,17 @@ class _MyStablesAppState extends State<MyStablesApp> {
         break;
       }
     }
+  }
+
+  void _identify(dynamic user) {
+    if (user == null) return;
+    final md = user.userMetadata as Map?;
+    final name = md?['name'] as String?;
+    final email = user.email as String?;
+    Analytics.identify(user.id as String, traits: {
+      if (email != null && email.isNotEmpty) 'email': email,
+      if (name != null && name.isNotEmpty) 'name': name,
+    });
   }
 
   @override
@@ -149,6 +169,8 @@ class _MyStablesAppState extends State<MyStablesApp> {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
+              navigatorObservers:
+                  Env.analyticsEnabled ? [PosthogObserver()] : const [],
               initialRoute: SupabaseService.isSignedIn
                   ? HomeScreen.route
                   : SplashScreen.route,
