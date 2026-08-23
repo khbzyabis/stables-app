@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Thin wrapper over the Supabase client — auth plus the read/write calls the
@@ -324,6 +326,63 @@ class SupabaseService {
         'slots': slots,
         'updated_at': DateTime.now().toUtc().toIso8601String(),
       }, onConflict: 'horse_id,activity');
+
+  // ---- Contacts --------------------------------------------------------
+  static Future<List<Map<String, dynamic>>> contacts(String stableId) => _db
+      .from('contacts')
+      .select()
+      .eq('stable_id', stableId)
+      .order('created_at');
+
+  static Future<Map<String, dynamic>> addContact({
+    required String stableId,
+    required String name,
+    String? role,
+    String? phone,
+    String? nextNote,
+  }) =>
+      _db.from('contacts').insert({
+        'stable_id': stableId,
+        'name': name,
+        if (role != null && role.isNotEmpty) 'role': role,
+        if (phone != null && phone.isNotEmpty) 'phone': phone,
+        if (nextNote != null && nextNote.isNotEmpty) 'next_note': nextNote,
+      }).select().single();
+
+  // ---- Documents (metadata + files in the horse-docs bucket) ----------
+  static const _docsBucket = 'horse-docs';
+
+  static Future<List<Map<String, dynamic>>> documents(String horseId) => _db
+      .from('documents')
+      .select()
+      .eq('horse_id', horseId)
+      .order('created_at', ascending: false);
+
+  /// Upload the file bytes to storage, then record the document row.
+  static Future<Map<String, dynamic>> addDocument({
+    required String horseId,
+    required String stableId,
+    required String name,
+    required String fileName,
+    required Uint8List bytes,
+    String status = 'On file',
+  }) async {
+    final path =
+        '$horseId/${DateTime.now().microsecondsSinceEpoch}_$fileName';
+    await _db.storage.from(_docsBucket).uploadBinary(path, bytes,
+        fileOptions: const FileOptions(upsert: false));
+    return _db.from('documents').insert({
+      'horse_id': horseId,
+      'stable_id': stableId,
+      'name': name,
+      'status': status,
+      'storage_path': path,
+    }).select().single();
+  }
+
+  /// A short-lived link to open/download a stored document.
+  static Future<String> documentUrl(String storagePath) =>
+      _db.storage.from(_docsBucket).createSignedUrl(storagePath, 3600);
 
   // ---- Notices (the board) --------------------------------------------
   static Future<List<Map<String, dynamic>>> notices(String stableId) => _db
