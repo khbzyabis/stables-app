@@ -12,6 +12,7 @@ import '../../widgets/bottom_tab_bar.dart';
 import '../../widgets/hairline.dart';
 import '../../widgets/photo_placeholder.dart';
 import '../horses/add_horse_screen.dart';
+import '../horses/horse_record_screen.dart';
 import '../horses/tack_box_screen.dart';
 import '../board/board_screen.dart';
 import '../board/post_notice_screen.dart';
@@ -248,30 +249,34 @@ class _RealHorseRow extends StatelessWidget {
         if ((horse[k] as String?)?.isNotEmpty == true) horse[k] as String,
       if ((horse['box'] as String?)?.isNotEmpty == true) 'Box ${horse['box']}',
     ];
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: Row(
-        children: [
-          const PhotoPlaceholder(size: 66),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text((horse['name'] as String?) ?? 'Horse',
-                    style: AppText.heading(23, height: 1.1)),
-                if (bits.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  Text(bits.join(' · '),
-                      style: AppText.body(15, color: AppColors.ink(0.6))),
+    return InkWell(
+      onTap: () => Navigator.of(context)
+          .pushNamed(HorseRecordScreen.route, arguments: horse),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Row(
+          children: [
+            const PhotoPlaceholder(size: 66),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text((horse['name'] as String?) ?? 'Horse',
+                      style: AppText.heading(23, height: 1.1)),
+                  if (bits.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(bits.join(' · '),
+                        style: AppText.body(15, color: AppColors.ink(0.6))),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          AppTag(well ? l10n.statusWell : l10n.statusWatch,
-              tone: well ? TagTone.sage : TagTone.neutral),
-        ],
+            const SizedBox(width: 12),
+            AppTag(well ? l10n.statusWell : l10n.statusWatch,
+                tone: well ? TagTone.sage : TagTone.neutral),
+          ],
+        ),
       ),
     );
   }

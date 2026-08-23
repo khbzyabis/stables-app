@@ -211,6 +211,79 @@ class SupabaseService {
       .update({'done': done, 'done_by': done ? currentUser?.id : null})
       .eq('id', id);
 
+  // ---- Health, training, feed (a horse's record) ----------------------
+  static Future<List<Map<String, dynamic>>> healthEntries(String horseId) => _db
+      .from('health_entries')
+      .select()
+      .eq('horse_id', horseId)
+      .order('on_date', ascending: false);
+
+  static Future<Map<String, dynamic>> addHealthEntry({
+    required String horseId,
+    required String stableId,
+    required String kind,
+    required String title,
+    String? note,
+    String? onDate,
+  }) =>
+      _db.from('health_entries').insert({
+        'horse_id': horseId,
+        'stable_id': stableId,
+        'kind': kind,
+        'title': title,
+        if (note != null && note.isNotEmpty) 'note': note,
+        if (onDate != null && onDate.isNotEmpty) 'on_date': onDate,
+      }).select().single();
+
+  static Future<List<Map<String, dynamic>>> trainingSessions(String horseId) =>
+      _db
+          .from('training_sessions')
+          .select()
+          .eq('horse_id', horseId)
+          .order('on_date', ascending: false);
+
+  static Future<Map<String, dynamic>> addTrainingSession({
+    required String horseId,
+    required String stableId,
+    required String title,
+    required String feel,
+    String? meta,
+    String? detail,
+    String? onDate,
+  }) =>
+      _db.from('training_sessions').insert({
+        'horse_id': horseId,
+        'stable_id': stableId,
+        'title': title,
+        'feel': feel,
+        if (meta != null && meta.isNotEmpty) 'meta': meta,
+        if (detail != null && detail.isNotEmpty) 'detail': detail,
+        if (onDate != null && onDate.isNotEmpty) 'on_date': onDate,
+      }).select().single();
+
+  static Future<List<Map<String, dynamic>>> feedItems(String horseId) => _db
+      .from('feed_items')
+      .select()
+      .eq('horse_id', horseId)
+      .order('created_at');
+
+  static Future<Map<String, dynamic>> addFeedItem({
+    required String horseId,
+    required String stableId,
+    required String timeOfDay,
+    required String item,
+    String? amount,
+    String? note,
+  }) =>
+      _db.from('feed_items').insert({
+        'horse_id': horseId,
+        'stable_id': stableId,
+        'time_of_day': timeOfDay,
+        'item': item,
+        if (amount != null && amount.isNotEmpty) 'amount': amount,
+        if (note != null && note.isNotEmpty) 'note': note,
+      }).select().single();
+
   // ---- Notices (the board) --------------------------------------------
   static Future<List<Map<String, dynamic>>> notices(String stableId) => _db
       .from('notices')

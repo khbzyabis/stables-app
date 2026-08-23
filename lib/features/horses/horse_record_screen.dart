@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../data/horse_detail_data.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
@@ -17,8 +16,8 @@ import 'setups_screen.dart';
 import 'tack_box_screen.dart';
 import 'training_screen.dart';
 
-/// Screen 32 — a horse's record, filled in. The hub that links to health,
-/// progress, training, setups, tack, feed and documents.
+/// Screen 32 — a horse's record. The hub for one real horse; its links carry
+/// the horse to Health, Training and Feed (which load that horse's data).
 class HorseRecordScreen extends StatelessWidget {
   const HorseRecordScreen({super.key});
   static const route = '/horse-record';
@@ -26,21 +25,26 @@ class HorseRecordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppL10n.of(context);
-    final links = <RecordLink>[
-      RecordLink(HealthScreen.route, l10n.sectionHealth,
-          'Farrier Thursday · last note 11 Aug'),
-      RecordLink(ProgressScreen.route, l10n.howItIsGoing,
-          'Three months of work, side by side'),
-      RecordLink(TrainingScreen.route, l10n.sectionTraining,
-          '4 sessions in the last fortnight'),
-      RecordLink(SetupsScreen.route, l10n.setups,
-          'Flatwork, jumping, hacking, lunging'),
-      RecordLink(
-          TackBoxScreen.route, l10n.tack, "From Ahmad's tack box · 9 items"),
-      RecordLink(
-          FeedChartScreen.route, l10n.feedChart, 'Three feeds · no alfalfa'),
-      RecordLink(DocumentsScreen.route, l10n.documents,
-          'Passport, insurance, vaccinations'),
+    final horse =
+        (ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?) ??
+            const {};
+    final name = (horse['name'] as String?) ?? 'Horse';
+    final well = (horse['status'] as String?) != 'watch';
+
+    final facts = <(String, String)>[
+      for (final k in ['breed', 'age', 'height', 'sex'])
+        if ((horse[k] as String?)?.isNotEmpty == true)
+          (k[0].toUpperCase() + k.substring(1), horse[k] as String),
+    ];
+
+    final links = <(String, String, String)>[
+      (HealthScreen.route, l10n.sectionHealth, 'Vet, farrier and vaccination notes'),
+      (TrainingScreen.route, l10n.sectionTraining, 'Sessions and how they went'),
+      (FeedChartScreen.route, l10n.feedChart, 'What goes in the bucket'),
+      (ProgressScreen.route, l10n.howItIsGoing, 'Work over time'),
+      (SetupsScreen.route, l10n.setups, 'Tack per activity'),
+      (TackBoxScreen.route, l10n.tack, 'The kit'),
+      (DocumentsScreen.route, l10n.documents, 'Passport, insurance, vaccinations'),
     ];
 
     return Stack(
@@ -72,11 +76,13 @@ class HorseRecordScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Kiki', style: AppText.heading(36, height: 1)),
-                          const SizedBox(height: 8),
-                          Text('Gelding · 9 years · 16.1 hh',
-                              style:
-                                  AppText.body(15, color: AppColors.ink(0.6))),
+                          Text(name, style: AppText.heading(36, height: 1)),
+                          if ((horse['box'] as String?)?.isNotEmpty == true) ...[
+                            const SizedBox(height: 8),
+                            Text('Box ${horse['box']}',
+                                style: AppText.body(15,
+                                    color: AppColors.ink(0.6))),
+                          ],
                         ],
                       ),
                     ),
@@ -85,42 +91,59 @@ class HorseRecordScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 Row(
                   children: [
-                    AppTag(l10n.statusWell, tone: TagTone.sage),
-                    const SizedBox(width: 8),
-                    const AppTag('Box 7', tone: TagTone.neutral),
-                    const SizedBox(width: 8),
-                    const AppTag('Ahmad', tone: TagTone.neutral),
+                    AppTag(well ? l10n.statusWell : l10n.statusWatch,
+                        tone: well ? TagTone.sage : TagTone.accent),
                   ],
                 ),
-                const SizedBox(height: 30),
-                Wrap(
-                  spacing: 34,
-                  runSpacing: 24,
-                  children: const [
-                    _Fact(label: 'Breed', value: 'Arabian cross'),
-                    _Fact(label: 'Farrier', value: 'Thursday'),
-                    _Fact(label: 'Last ridden', value: 'Yesterday'),
-                  ],
-                ),
+                if (facts.isNotEmpty) ...[
+                  const SizedBox(height: 30),
+                  Wrap(
+                    spacing: 34,
+                    runSpacing: 24,
+                    children: [
+                      for (final (label, value) in facts)
+                        _Fact(label: label, value: value),
+                    ],
+                  ),
+                ],
                 const SizedBox(height: 24),
                 const Hairline(),
-                for (final l in links) ...[
-                  _RecordRow(link: l),
+                for (final (route, label, meta) in links) ...[
+                  InkWell(
+                    onTap: () =>
+                        Navigator.of(context).pushNamed(route, arguments: horse),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 19),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(label, style: AppText.heading(20)),
+                                const SizedBox(height: 4),
+                                Text(meta,
+                                    style: AppText.body(15,
+                                        color: AppColors.ink(0.55))),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text('›',
+                              style:
+                                  AppText.body(19, color: AppColors.ink(0.4))),
+                        ],
+                      ),
+                    ),
+                  ),
                   const Hairline(),
                 ],
                 const SizedBox(height: 28),
                 GestureDetector(
-                  onTap: () =>
-                      Navigator.of(context).pushNamed(EditHorseScreen.route),
+                  onTap: () => Navigator.of(context)
+                      .pushNamed(EditHorseScreen.route, arguments: horse),
                   child: Text(l10n.editDetails,
                       style: AppText.heading(16, color: AppColors.accent700)),
-                ),
-                const SizedBox(height: 12),
-                GestureDetector(
-                  onTap: () =>
-                      Navigator.of(context).pushNamed(EditHorseScreen.route),
-                  child: Text(l10n.moveHorse,
-                      style: AppText.body(16, color: AppColors.ink(0.55))),
                 ),
               ],
             ),
@@ -145,39 +168,6 @@ class _Fact extends StatelessWidget {
         const SizedBox(height: 5),
         Text(value, style: AppText.body(17)),
       ],
-    );
-  }
-}
-
-class _RecordRow extends StatelessWidget {
-  const _RecordRow({required this.link});
-  final RecordLink link;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => Navigator.of(context).pushNamed(link.route),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 19),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(link.label, style: AppText.heading(20)),
-                  const SizedBox(height: 4),
-                  Text(link.meta,
-                      style: AppText.body(15, color: AppColors.ink(0.55))),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text('›',
-                style: AppText.body(19, color: AppColors.ink(0.4))),
-          ],
-        ),
-      ),
     );
   }
 }
