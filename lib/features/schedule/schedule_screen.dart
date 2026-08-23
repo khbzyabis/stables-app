@@ -8,6 +8,7 @@ import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/app_tag.dart';
 import '../../widgets/hairline.dart';
+import '../auth/back_link.dart';
 import 'add_activity_screen.dart';
 import 'edit_activity_screen.dart';
 import 'month_screen.dart';
@@ -51,6 +52,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const BackLink(label: 'Stable'),
+                  const SizedBox(height: 14),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
