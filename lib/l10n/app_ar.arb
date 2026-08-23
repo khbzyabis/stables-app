@@ -322,5 +322,9 @@
   "saveLocation": "حفظ الموقع",
   "directions": "الاتجاهات",
   "stableSettings": "إعدادات الإسطبل",
-  "yourProfile": "ملفك الشخصي"
+  "yourProfile": "ملفك الشخصي",
+  "shows": "العروض",
+  "pickAClass": "اختر فئة",
+  "seeReceipt": "عرض الإيصال",
+  "backToMarket": "العودة إلى المتجر"
 }

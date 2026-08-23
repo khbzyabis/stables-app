@@ -9,7 +9,7 @@ import '../../widgets/app_button.dart';
 import '../../widgets/hairline.dart';
 import '../../widgets/photo_placeholder.dart';
 import '../auth/back_link.dart';
-import 'order_screen.dart';
+import 'paid_screen.dart';
 
 /// Screen 50 — Basket and checkout. Grouped by seller; each seller's delivery
 /// is separate and separately priced — deliveries are never merged. You pay the
@@ -64,7 +64,7 @@ class _BasketScreenState extends State<BasketScreen> {
               minHeight: 56,
               fontSize: 17,
               onPressed: () =>
-                  Navigator.of(context).pushNamed(OrderScreen.route),
+                  Navigator.of(context).pushNamed(PaidScreen.route),
             ),
             const SizedBox(height: 16),
             Text(l10n.basketTerms,

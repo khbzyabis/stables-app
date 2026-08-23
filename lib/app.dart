@@ -36,6 +36,10 @@ import 'features/settings/report_problem_screen.dart';
 import 'features/settings/set_location_screen.dart';
 import 'features/settings/stable_language_screen.dart';
 import 'features/settings/stable_settings_screen.dart';
+import 'features/shows/show_screen.dart';
+import 'features/shows/shows_screen.dart';
+import 'features/shows/start_list_screen.dart';
+import 'features/market/paid_screen.dart';
 import 'features/schedule/add_activity_screen.dart';
 import 'features/schedule/month_screen.dart';
 import 'features/schedule/schedule_screen.dart';
@@ -155,6 +159,10 @@ class _MyStablesAppState extends State<MyStablesApp> {
                 HelpScreen.route: (_) => const HelpScreen(),
                 ReportProblemScreen.route: (_) => const ReportProblemScreen(),
                 SetLocationScreen.route: (_) => const SetLocationScreen(),
+                ShowsScreen.route: (_) => const ShowsScreen(),
+                ShowScreen.route: (_) => const ShowScreen(),
+                StartListScreen.route: (_) => const StartListScreen(),
+                PaidScreen.route: (_) => const PaidScreen(),
                 ScheduleScreen.route: (_) => const ScheduleScreen(),
                 MonthScreen.route: (_) => const MonthScreen(),
                 AddActivityScreen.route: (_) => const AddActivityScreen(),

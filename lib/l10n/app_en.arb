@@ -338,5 +338,9 @@
   "saveLocation": "Save location",
   "directions": "Directions",
   "stableSettings": "Stable settings",
-  "yourProfile": "Your profile"
+  "yourProfile": "Your profile",
+  "shows": "Shows",
+  "pickAClass": "Pick a class",
+  "seeReceipt": "See the receipt",
+  "backToMarket": "Back to the market"
 }

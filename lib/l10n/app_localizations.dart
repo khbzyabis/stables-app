@@ -1976,6 +1976,30 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Your profile'**
   String get yourProfile;
+
+  /// No description provided for @shows.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows'**
+  String get shows;
+
+  /// No description provided for @pickAClass.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a class'**
+  String get pickAClass;
+
+  /// No description provided for @seeReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'See the receipt'**
+  String get seeReceipt;
+
+  /// No description provided for @backToMarket.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to the market'**
+  String get backToMarket;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

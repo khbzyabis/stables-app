@@ -979,4 +979,16 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get yourProfile => 'ملفك الشخصي';
+
+  @override
+  String get shows => 'العروض';
+
+  @override
+  String get pickAClass => 'اختر فئة';
+
+  @override
+  String get seeReceipt => 'عرض الإيصال';
+
+  @override
+  String get backToMarket => 'العودة إلى المتجر';
 }

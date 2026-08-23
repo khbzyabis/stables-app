@@ -22,6 +22,7 @@ import '../settings/contacts_screen.dart';
 import '../settings/help_screen.dart';
 import '../settings/profile_screen.dart';
 import '../settings/stable_settings_screen.dart';
+import '../shows/shows_screen.dart';
 import '../market/market_screen.dart';
 import '../market/payments_screen.dart';
 import '../people/approvals_screen.dart';
@@ -473,6 +474,12 @@ class _YouTab extends StatelessWidget {
           title: l10n.notices,
           subtitle: 'From My Stables — shows, updates and adverts',
           onTap: () => Navigator.of(context).pushNamed(BoardScreen.route),
+        ),
+        const Hairline(),
+        _NavRow(
+          title: l10n.shows,
+          subtitle: 'Entries, start lists and results',
+          onTap: () => Navigator.of(context).pushNamed(ShowsScreen.route),
         ),
         const Hairline(),
         const SizedBox(height: 30),

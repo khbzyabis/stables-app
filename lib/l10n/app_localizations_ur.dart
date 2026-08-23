@@ -990,4 +990,16 @@ class AppL10nUr extends AppL10n {
 
   @override
   String get yourProfile => 'Your profile';
+
+  @override
+  String get shows => 'Shows';
+
+  @override
+  String get pickAClass => 'Pick a class';
+
+  @override
+  String get seeReceipt => 'See the receipt';
+
+  @override
+  String get backToMarket => 'Back to the market';
 }
