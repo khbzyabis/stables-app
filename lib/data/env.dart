@@ -15,6 +15,16 @@ class Env {
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93eXpncWVtam1lZGx3YXNsaHp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0MTI5MTYsImV4cCI6MjEwMjk4ODkxNn0.7MohNsJ3oArF93UEyf6KOLZBYMoFVBYaq1AEW1qJh4s',
   );
 
+  /// Sentry DSN for crash/error reporting. Empty by default → Sentry is off
+  /// and the app runs normally. Paste the DSN here (or pass --dart-define
+  /// SENTRY_DSN=...) to turn it on.
+  static const sentryDsn = String.fromEnvironment(
+    'SENTRY_DSN',
+    defaultValue: '',
+  );
+
+  static bool get sentryEnabled => sentryDsn.isNotEmpty;
+
   static bool get isConfigured =>
       supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
 }
