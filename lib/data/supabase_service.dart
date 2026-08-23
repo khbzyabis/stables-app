@@ -1,0 +1,128 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+/// Thin wrapper over the Supabase client — auth plus the read/write calls the
+/// app needs. Row Level Security on the database enforces that a person only
+/// ever sees data for stables they belong to; `created_by` / `user_id` are
+/// filled in by database defaults (`auth.uid()`), so the client never sets them.
+class SupabaseService {
+  static SupabaseClient get _db => Supabase.instance.client;
+
+  /// The client if Supabase has been initialized, else null. Lets the app and
+  /// its widget tests run even before (or without) initialization.
+  static SupabaseClient? get _clientOrNull {
+    try {
+      return Supabase.instance.client;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  // ---- Auth ------------------------------------------------------------
+  static User? get currentUser => _clientOrNull?.auth.currentUser;
+  static bool get isSignedIn => currentUser != null;
+  static String get displayName =>
+      (currentUser?.userMetadata?['name'] as String?)?.trim().isNotEmpty == true
+          ? currentUser!.userMetadata!['name'] as String
+          : (currentUser?.email?.split('@').first ?? 'You');
+
+  static Stream<AuthState> get authChanges =>
+      _clientOrNull?.auth.onAuthStateChange ?? const Stream.empty();
+
+  static Future<AuthResponse> signUp({
+    required String email,
+    required String password,
+    required String name,
+  }) =>
+      _db.auth.signUp(email: email, password: password, data: {'name': name});
+
+  static Future<AuthResponse> signIn({
+    required String email,
+    required String password,
+  }) =>
+      _db.auth.signInWithPassword(email: email, password: password);
+
+  static Future<void> resendConfirmation(String email) =>
+      _db.auth.resend(type: OtpType.signup, email: email);
+
+  static Future<void> signOut() => _db.auth.signOut();
+
+  // ---- Stables ---------------------------------------------------------
+  /// The stables the current person belongs to, each with their role.
+  static Future<List<Map<String, dynamic>>> myStables() async {
+    final rows = await _db
+        .from('memberships')
+        .select('role, stables(*)')
+        .order('created_at');
+    return rows
+        .where((r) => r['stables'] != null)
+        .map<Map<String, dynamic>>((r) => {
+              ...Map<String, dynamic>.from(r['stables'] as Map),
+              'role': r['role'],
+            })
+        .toList();
+  }
+
+  /// Create a stable and make the creator its first admin member.
+  static Future<Map<String, dynamic>> createStable(
+      {required String name, String? city}) async {
+    final stable = await _db
+        .from('stables')
+        .insert({'name': name, if (city != null && city.isNotEmpty) 'city': city})
+        .select()
+        .single();
+    await _db
+        .from('memberships')
+        .insert({'stable_id': stable['id'], 'role': 'Admin'});
+    return stable;
+  }
+
+  // ---- Horses ----------------------------------------------------------
+  static Future<List<Map<String, dynamic>>> horses(String stableId) => _db
+      .from('horses')
+      .select()
+      .eq('stable_id', stableId)
+      .order('created_at');
+
+  static Future<Map<String, dynamic>> addHorse({
+    required String stableId,
+    required String name,
+    String? age,
+    String? breed,
+    String? sex,
+    String? height,
+    String? box,
+    String? notes,
+  }) =>
+      _db.from('horses').insert({
+        'stable_id': stableId,
+        'name': name,
+        if (age != null && age.isNotEmpty) 'age': age,
+        if (breed != null && breed.isNotEmpty) 'breed': breed,
+        if (sex != null && sex.isNotEmpty) 'sex': sex,
+        if (height != null && height.isNotEmpty) 'height': height,
+        if (box != null && box.isNotEmpty) 'box': box,
+        if (notes != null && notes.isNotEmpty) 'notes': notes,
+      }).select().single();
+
+  // ---- Notices (the board) --------------------------------------------
+  static Future<List<Map<String, dynamic>>> notices(String stableId) => _db
+      .from('notices')
+      .select()
+      .eq('stable_id', stableId)
+      .order('pinned', ascending: false)
+      .order('created_at', ascending: false);
+
+  static Future<Map<String, dynamic>> postNotice({
+    required String stableId,
+    required String body,
+    String? title,
+    bool pinned = false,
+  }) =>
+      _db.from('notices').insert({
+        'stable_id': stableId,
+        'body': body,
+        if (title != null && title.isNotEmpty) 'title': title,
+        'pinned': pinned,
+        'author_name': displayName,
+      }).select().single();
+}

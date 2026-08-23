@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../data/stable_store.dart';
+import '../../data/session.dart';
+import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
-import '../../models/horse.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
@@ -52,11 +52,16 @@ class _AddHorseScreenState extends State<AddHorseScreen> {
       _detailControllers.putIfAbsent(key, TextEditingController.new);
 
   Future<void> _save() async {
-    final store = StableScope.of(context);
+    final stableId = SessionScope.of(context).activeStableId;
     final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
     final name = _name.text.trim();
     if (name.isEmpty || _saving) return;
+    if (stableId == null) {
+      messenger.showSnackBar(const SnackBar(
+          content: Text('Create a stable first, then add horses to it.')));
+      return;
+    }
     String? v(String k) {
       final t = _detailControllers[k]?.text.trim();
       return (t == null || t.isEmpty) ? null : t;
@@ -64,18 +69,16 @@ class _AddHorseScreenState extends State<AddHorseScreen> {
 
     setState(() => _saving = true);
     try {
-      await store.addHorse(Horse(
-        id: store.nextId(),
+      await SupabaseService.addHorse(
+        stableId: stableId,
         name: name,
-        status: HorseStatus.well,
-        addedToday: true,
         age: v('age'),
         breed: v('breed'),
         sex: v('sex'),
         height: v('height'),
         box: v('box'),
         notes: v('notes'),
-      ));
+      );
       navigator.pop();
     } catch (e) {
       if (mounted) setState(() => _saving = false);

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../data/comms_data.dart';
+import '../../data/session.dart';
+import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
@@ -22,6 +24,40 @@ class _PostNoticeScreenState extends State<PostNoticeScreen> {
   String _audience = 'Everyone';
   bool _pin = false;
   bool _ask = false;
+  bool _busy = false;
+  final _body = TextEditingController();
+
+  @override
+  void dispose() {
+    _body.dispose();
+    super.dispose();
+  }
+
+  Future<void> _post() async {
+    final stableId = SessionScope.of(context).activeStableId;
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    final body = _body.text.trim();
+    if (body.isEmpty) {
+      messenger.showSnackBar(
+          const SnackBar(content: Text('Write the notice first.')));
+      return;
+    }
+    if (stableId == null) {
+      messenger.showSnackBar(const SnackBar(
+          content: Text('Create a stable first, then post to it.')));
+      return;
+    }
+    setState(() => _busy = true);
+    try {
+      await SupabaseService.postNotice(
+          stableId: stableId, body: body, pinned: _pin);
+      navigator.pop();
+    } catch (e) {
+      if (mounted) setState(() => _busy = false);
+      messenger.showSnackBar(SnackBar(content: Text('Could not post: $e')));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +83,7 @@ class _PostNoticeScreenState extends State<PostNoticeScreen> {
                 borderRadius: BorderRadius.circular(22),
               ),
               child: TextField(
+                controller: _body,
                 maxLines: 4,
                 cursorColor: AppColors.accent,
                 style: AppText.body(17, height: 1.5),
@@ -89,8 +126,8 @@ class _PostNoticeScreenState extends State<PostNoticeScreen> {
             const Hairline(),
             const SizedBox(height: 34),
             AppButton(
-              label: l10n.postNotice,
-              onPressed: () => Navigator.of(context).maybePop(),
+              label: _busy ? 'Posting…' : l10n.postNotice,
+              onPressed: _busy ? null : _post,
             ),
           ],
         ),

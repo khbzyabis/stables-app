@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../../l10n/app_localizations.dart';
+import '../../data/supabase_service.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/app_screen.dart';
 import '../../widgets/step_progress.dart';
 import 'back_link.dart';
-import 'create_stable_screen.dart';
+import 'sign_in_screen.dart';
 
-/// Screen 04 — Verify. Six-digit SMS code, one box per digit, resend
-/// countdown. Digits, times and money stay left-to-right even in RTL.
+/// Screen 04 — Confirm your email. After sign-up Supabase sends a confirmation
+/// link; the person opens it, then comes back and signs in.
 class VerifyScreen extends StatefulWidget {
   const VerifyScreen({super.key});
   static const route = '/verify';
@@ -20,94 +20,91 @@ class VerifyScreen extends StatefulWidget {
 }
 
 class _VerifyScreenState extends State<VerifyScreen> {
-  // Prototype shows "417" entered with the cursor on the 4th box.
-  final _digits = ['4', '1', '7', '', '', ''];
-  final _activeIndex = 3;
+  bool _resending = false;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppL10n.of(context);
-    const phone = '+971 50 123 4567';
+    final email =
+        ModalRoute.of(context)?.settings.arguments as String? ?? 'your email';
     return AppScreen(
       scrollable: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          BackLink(label: l10n.back),
+          const BackLink(label: 'Back'),
           const SizedBox(height: 28),
-          Text(l10n.checkYourPhone, style: AppText.heading(42, height: 1)),
-          const SizedBox(height: 12),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 280),
-            child: Text(
-              l10n.codeSentTo(phone),
-              style: AppText.body(17, height: 1.5, color: AppColors.ink(0.65)),
-            ),
+          Text('Check your email', style: AppText.heading(42, height: 1)),
+          const SizedBox(height: 14),
+          Text(
+            'We sent a confirmation link to $email. Open it to confirm your '
+            'account, then come back and sign in.',
+            style: AppText.body(17, height: 1.5, color: AppColors.ink(0.65)),
           ),
           const SizedBox(height: 38),
           const StepProgress(total: 3, current: 2),
-          const SizedBox(height: 52),
-          // Digits box row — always LTR.
-          Directionality(
-            textDirection: TextDirection.ltr,
+          const SizedBox(height: 44),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+            decoration: BoxDecoration(
+              color: AppColors.neutral100,
+              borderRadius: BorderRadius.circular(22),
+            ),
             child: Row(
               children: [
-                for (var i = 0; i < 6; i++) ...[
-                  Expanded(
-                    child: _DigitBox(
-                      value: _digits[i],
-                      active: i == _activeIndex,
-                    ),
+                Container(
+                  width: 44,
+                  height: 44,
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                      color: AppColors.accent200, shape: BoxShape.circle),
+                  child: const Icon(Icons.mark_email_unread_outlined,
+                      size: 22, color: AppColors.accent700),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    'The link opens in your browser and confirms this email. '
+                    'It can take a minute to arrive — check spam too.',
+                    style: AppText.body(14,
+                        height: 1.45, color: AppColors.ink(0.6)),
                   ),
-                  if (i != 5) const SizedBox(width: 10),
-                ],
+                ),
               ],
-            ),
-          ),
-          const SizedBox(height: 28),
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: Text(
-              l10n.resendIn('0:42'),
-              style: AppText.body(15, color: AppColors.accent700),
             ),
           ),
           const SizedBox(height: 40),
           AppButton(
-            label: l10n.verify,
-            onPressed: () =>
-                Navigator.of(context).pushNamed(CreateStableScreen.route),
+            label: 'I have confirmed — sign in',
+            onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
+              SignInScreen.route,
+              (r) => false,
+            ),
+          ),
+          const SizedBox(height: 18),
+          Center(
+            child: GestureDetector(
+              onTap: _resending
+                  ? null
+                  : () async {
+                      final messenger = ScaffoldMessenger.of(context);
+                      setState(() => _resending = true);
+                      try {
+                        await SupabaseService.resendConfirmation(email);
+                        messenger.showSnackBar(
+                          const SnackBar(content: Text('Confirmation resent.')),
+                        );
+                      } catch (_) {
+                      } finally {
+                        if (mounted) setState(() => _resending = false);
+                      }
+                    },
+              child: Text(
+                _resending ? 'Resending…' : 'Resend the email',
+                style: AppText.body(15, color: AppColors.accent700),
+              ),
+            ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _DigitBox extends StatelessWidget {
-  const _DigitBox({required this.value, required this.active});
-  final String value;
-  final bool active;
-
-  @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1,
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.neutral100,
-          borderRadius: BorderRadius.circular(22),
-          border: active
-              ? Border.all(color: AppColors.accent, width: 2)
-              : null,
-        ),
-        alignment: Alignment.center,
-        child: active && value.isEmpty
-            ? Container(width: 2, height: 30, color: AppColors.accent)
-            : Text(
-                value,
-                style: AppText.heading(30),
-              ),
       ),
     );
   }

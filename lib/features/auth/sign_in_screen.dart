@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../data/session.dart';
+import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
@@ -21,11 +23,12 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  final _email = TextEditingController(text: 'ahmad@serc.ae');
-  final _password = TextEditingController(text: 'hayloft-1994');
+  final _email = TextEditingController();
+  final _password = TextEditingController();
   bool _revealed = false;
+  bool _busy = false;
 
-  // Feature-style flags; both social auth and the invite option are on here.
+  // Social auth is not wired yet; the invite option is on.
   static const _showSocialAuth = true;
   static const _showInviteOption = true;
 
@@ -36,11 +39,47 @@ class _SignInScreenState extends State<SignInScreen> {
     super.dispose();
   }
 
-  void _signIn() {
-    Navigator.of(context).pushNamedAndRemoveUntil(
-      HomeScreen.route,
-      (r) => false,
-    );
+  Future<void> _signIn() async {
+    final email = _email.text.trim();
+    final password = _password.text;
+    if (email.isEmpty || password.isEmpty) {
+      _toast('Enter your email and password.');
+      return;
+    }
+    final session = SessionScope.of(context);
+    final nav = Navigator.of(context);
+    setState(() => _busy = true);
+    try {
+      await SupabaseService.signIn(email: email, password: password);
+      await session.refresh();
+      if (!mounted) return;
+      // No stable yet → send them to create one; otherwise straight home.
+      nav.pushNamedAndRemoveUntil(
+        session.hasStable ? HomeScreen.route : CreateStableScreen.route,
+        (r) => false,
+      );
+    } catch (e) {
+      _toast(_friendly(e));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  void _socialSoon() =>
+      _toast('Apple and Google sign-in are coming soon. Use email for now.');
+
+  void _toast(String m) => ScaffoldMessenger.of(context)
+      .showSnackBar(SnackBar(content: Text(m)));
+
+  String _friendly(Object e) {
+    final s = e.toString();
+    if (s.contains('Email not confirmed')) {
+      return 'Please confirm your email first — check your inbox for the link.';
+    }
+    if (s.contains('Invalid login')) {
+      return 'Wrong email or password.';
+    }
+    return 'Could not sign in: $s';
   }
 
   @override
@@ -81,7 +120,9 @@ class _SignInScreenState extends State<SignInScreen> {
             child: _LinkText(l10n.forgotPassword, onTap: () {}),
           ),
           const SizedBox(height: 40),
-          AppButton(label: l10n.signIn, onPressed: _signIn),
+          AppButton(
+              label: _busy ? 'Signing in…' : l10n.signIn,
+              onPressed: _busy ? null : _signIn),
           const SizedBox(height: 34),
           _OrDivider(label: l10n.orDivider),
           const SizedBox(height: 26),
@@ -92,7 +133,7 @@ class _SignInScreenState extends State<SignInScreen> {
               minHeight: 54,
               fontSize: 16,
               icon: const Icon(Icons.apple, size: 20),
-              onPressed: _signIn,
+              onPressed: _socialSoon,
             ),
             const SizedBox(height: 12),
             AppButton(
@@ -101,7 +142,7 @@ class _SignInScreenState extends State<SignInScreen> {
               minHeight: 54,
               fontSize: 16,
               icon: const _GoogleGlyph(),
-              onPressed: _signIn,
+              onPressed: _socialSoon,
             ),
           ],
           const SizedBox(height: 40),

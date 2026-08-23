@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
@@ -21,10 +22,11 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final _name = TextEditingController(text: 'Ahmad');
+  final _name = TextEditingController();
   final _email = TextEditingController();
   final _phone = TextEditingController();
   final _password = TextEditingController();
+  bool _busy = false;
 
   @override
   void dispose() {
@@ -33,6 +35,38 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _phone.dispose();
     _password.dispose();
     super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final email = _email.text.trim();
+    final password = _password.text;
+    final name = _name.text.trim();
+    if (name.isEmpty || email.isEmpty || password.length < 6) {
+      _toast('Enter your name, email, and a password of at least 6 characters.');
+      return;
+    }
+    setState(() => _busy = true);
+    try {
+      await SupabaseService.signUp(
+          email: email, password: password, name: name);
+      if (!mounted) return;
+      Navigator.of(context).pushNamed(VerifyScreen.route, arguments: email);
+    } catch (e) {
+      _toast(_friendly(e));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  void _toast(String m) => ScaffoldMessenger.of(context)
+      .showSnackBar(SnackBar(content: Text(m)));
+
+  String _friendly(Object e) {
+    final s = e.toString();
+    if (s.contains('already registered') || s.contains('already been')) {
+      return 'That email already has an account. Try signing in instead.';
+    }
+    return 'Could not sign up: $s';
   }
 
   @override
@@ -76,9 +110,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
           const SizedBox(height: 40),
           AppButton(
-            label: l10n.sendMeCode,
-            onPressed: () =>
-                Navigator.of(context).pushNamed(VerifyScreen.route),
+            label: _busy ? 'Creating your account…' : l10n.createAnAccount,
+            onPressed: _busy ? null : _submit,
           ),
           const SizedBox(height: 18),
           _TermsNotice(l10n: l10n),

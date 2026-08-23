@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../app_state.dart';
-import '../../data/stable_store.dart';
+import '../../data/session.dart';
+import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
-import '../../models/horse.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_tag.dart';
@@ -12,11 +12,8 @@ import '../../widgets/bottom_tab_bar.dart';
 import '../../widgets/hairline.dart';
 import '../../widgets/photo_placeholder.dart';
 import '../horses/add_horse_screen.dart';
-import '../horses/horse_profile_screen.dart';
-import '../horses/horse_record_screen.dart';
 import '../horses/tack_box_screen.dart';
 import '../board/board_screen.dart';
-import '../board/noticeboard_screen.dart';
 import '../board/post_notice_screen.dart';
 import '../settings/contacts_screen.dart';
 import '../settings/help_screen.dart';
@@ -47,6 +44,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   AppTab _tab = AppTab.horses;
 
+  @override
+  void initState() {
+    super.initState();
+    // Load the person's stables the first time home opens.
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => SessionScope.of(context).refresh());
+  }
+
   String _titleFor(AppL10n l10n) => switch (_tab) {
         AppTab.horses => l10n.titleMyHorses,
         AppTab.board => l10n.titleNoticeboard,
@@ -57,58 +62,65 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppL10n.of(context);
-    final store = StableScope.of(context);
+    final session = SessionScope.of(context);
     final day = DateFormat.EEEE(Localizations.localeOf(context).toString())
         .format(DateTime.now());
+    final initial = SupabaseService.displayName.characters.first.toUpperCase();
 
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
         bottom: false,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.fromLTRB(32, 20, 32, 0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.stableAndDay(store.stableName, day),
-                          style: AppText.eyebrow(color: AppColors.accent700),
+        child: AnimatedBuilder(
+          animation: session,
+          builder: (context, _) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Header
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(32, 20, 32, 0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.stableAndDay(session.activeStableName, day),
+                              style:
+                                  AppText.eyebrow(color: AppColors.accent700),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(_titleFor(l10n),
+                                style: AppText.heading(40, height: 1)),
+                          ],
                         ),
-                        const SizedBox(height: 10),
-                        Text(_titleFor(l10n),
-                            style: AppText.heading(40, height: 1)),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 22),
+                      _Avatar(initial: initial),
+                    ],
                   ),
-                  const SizedBox(height: 22),
-                  const _Avatar(initial: 'A'),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(32, 24, 32, 0),
-                child: switch (_tab) {
-                  AppTab.horses => _HorsesTab(store: store),
-                  AppTab.board => const _BoardTab(),
-                  AppTab.stable => const _StableTab(),
-                  AppTab.you => const _YouTab(),
-                },
-              ),
-            ),
-            BottomTabBar(
-              current: _tab,
-              onChanged: (t) => setState(() => _tab = t),
-            ),
-          ],
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(32, 24, 32, 0),
+                    child: switch (_tab) {
+                      AppTab.horses => _HorsesTab(stableId: session.activeStableId),
+                      AppTab.board => _BoardTab(stableId: session.activeStableId),
+                      AppTab.stable => const _StableTab(),
+                      AppTab.you => const _YouTab(),
+                    },
+                  ),
+                ),
+                BottomTabBar(
+                  current: _tab,
+                  onChanged: (t) => setState(() => _tab = t),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -135,144 +147,231 @@ class _Avatar extends StatelessWidget {
   }
 }
 
-class _HorsesTab extends StatelessWidget {
-  const _HorsesTab({required this.store});
-  final StableStore store;
+class _HorsesTab extends StatefulWidget {
+  const _HorsesTab({required this.stableId});
+  final String? stableId;
+
+  @override
+  State<_HorsesTab> createState() => _HorsesTabState();
+}
+
+class _HorsesTabState extends State<_HorsesTab> {
+  late Future<List<Map<String, dynamic>>> _future = _load();
+
+  Future<List<Map<String, dynamic>>> _load() async {
+    final id = widget.stableId;
+    if (id == null) return const [];
+    return SupabaseService.horses(id);
+  }
+
+  void _reload() => setState(() => _future = _load());
+
+  @override
+  void didUpdateWidget(covariant _HorsesTab old) {
+    super.didUpdateWidget(old);
+    if (old.stableId != widget.stableId) _reload();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppL10n.of(context);
-
-    if (store.status == LoadStatus.loading) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.only(top: 60),
-          child: CircularProgressIndicator(
-            color: AppColors.accent,
-            strokeWidth: 2.4,
-          ),
+    if (widget.stableId == null) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 26),
+        child: Text(
+          'Create a stable first (under You → My stables), then add horses to it.',
+          style: AppText.body(16, height: 1.5, color: AppColors.ink(0.6)),
         ),
       );
     }
-    if (store.status == LoadStatus.error) {
-      return _ErrorState(message: store.error, onRetry: store.load);
-    }
-
-    return ListView(
-      padding: EdgeInsets.zero,
-      children: [
-        const Hairline(),
-        for (final horse in store.horses) ...[
-          _HorseRow(horse: horse),
-          const Hairline(),
-        ],
-        const SizedBox(height: 26),
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: _TextAction(
-            label: '+ ${l10n.addAHorse}',
-            onTap: () => Navigator.of(context).pushNamed(AddHorseScreen.route),
-          ),
-        ),
-        const SizedBox(height: 20),
-      ],
-    );
-  }
-}
-
-class _HorseRow extends StatelessWidget {
-  const _HorseRow({required this.horse});
-  final Horse horse;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppL10n.of(context);
-    final well = horse.status == HorseStatus.well;
-    return InkWell(
-      // A horse with a filled-in record opens the record hub; a freshly
-      // added one opens its honest empty profile.
-      onTap: () => Navigator.of(context).pushNamed(
-        horse.hasDetails ? HorseRecordScreen.route : HorseProfileScreen.route,
-        arguments: horse.id,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Row(
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: _future,
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.only(top: 60),
+              child: CircularProgressIndicator(
+                  color: AppColors.accent, strokeWidth: 2.4),
+            ),
+          );
+        }
+        if (snap.hasError) {
+          return _ErrorState(message: snap.error.toString(), onRetry: () async => _reload());
+        }
+        final horses = snap.data ?? const [];
+        return ListView(
+          padding: EdgeInsets.zero,
           children: [
-            const PhotoPlaceholder(size: 66),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(horse.name, style: AppText.heading(23, height: 1.1)),
-                  if (horse.statusLine.isNotEmpty) ...[
-                    const SizedBox(height: 4),
-                    Text(horse.statusLine,
-                        style: AppText.body(15, color: AppColors.ink(0.6))),
-                  ],
-                ],
+            const Hairline(),
+            if (horses.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 26),
+                child: Text(
+                  'No horses yet. Add your first one below — it saves to this stable and everyone in it can see it.',
+                  style:
+                      AppText.body(16, height: 1.5, color: AppColors.ink(0.6)),
+                ),
+              ),
+            for (final h in horses) ...[
+              _RealHorseRow(horse: h),
+              const Hairline(),
+            ],
+            const SizedBox(height: 26),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: _TextAction(
+                label: '+ ${l10n.addAHorse}',
+                onTap: () async {
+                  await Navigator.of(context).pushNamed(AddHorseScreen.route);
+                  _reload();
+                },
               ),
             ),
-            const SizedBox(width: 12),
-            AppTag(
-              well ? l10n.statusWell : l10n.statusWatch,
-              tone: well ? TagTone.sage : TagTone.accent,
-            ),
+            const SizedBox(height: 20),
           ],
-        ),
+        );
+      },
+    );
+  }
+}
+
+class _RealHorseRow extends StatelessWidget {
+  const _RealHorseRow({required this.horse});
+  final Map<String, dynamic> horse;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
+    final well = (horse['status'] as String?) != 'watch';
+    final bits = <String>[
+      for (final k in ['breed', 'age'])
+        if ((horse[k] as String?)?.isNotEmpty == true) horse[k] as String,
+      if ((horse['box'] as String?)?.isNotEmpty == true) 'Box ${horse['box']}',
+    ];
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Row(
+        children: [
+          const PhotoPlaceholder(size: 66),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text((horse['name'] as String?) ?? 'Horse',
+                    style: AppText.heading(23, height: 1.1)),
+                if (bits.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(bits.join(' · '),
+                      style: AppText.body(15, color: AppColors.ink(0.6))),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          AppTag(well ? l10n.statusWell : l10n.statusWatch,
+              tone: well ? TagTone.sage : TagTone.neutral),
+        ],
       ),
     );
   }
 }
 
-class _BoardTab extends StatelessWidget {
-  const _BoardTab();
+class _BoardTab extends StatefulWidget {
+  const _BoardTab({required this.stableId});
+  final String? stableId;
+
+  @override
+  State<_BoardTab> createState() => _BoardTabState();
+}
+
+class _BoardTabState extends State<_BoardTab> {
+  late Future<List<Map<String, dynamic>>> _future = _load();
+
+  Future<List<Map<String, dynamic>>> _load() async {
+    final id = widget.stableId;
+    if (id == null) return const [];
+    return SupabaseService.notices(id);
+  }
+
+  void _reload() => setState(() => _future = _load());
+
+  @override
+  void didUpdateWidget(covariant _BoardTab old) {
+    super.didUpdateWidget(old);
+    if (old.stableId != widget.stableId) _reload();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppL10n.of(context);
-    // Sample notices (content, not chrome — server data in production).
-    return ListView(
-      padding: EdgeInsets.zero,
-      children: [
-        const Hairline(),
-        _Notice(
-          meta: 'Pinned · Layal, stable manager',
-          metaColor: AppColors.accent700,
-          title: 'Arena closed Friday morning',
-          body: 'Surface being levelled from 8 until noon. Turnout as normal.',
+    if (widget.stableId == null) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 26),
+        child: Text(
+          'Create a stable first, then post notices the whole stable can see.',
+          style: AppText.body(16, height: 1.5, color: AppColors.ink(0.6)),
         ),
-        const Hairline(),
-        _Notice(
-          meta: '2 hours ago · Toni',
-          body: 'Anyone lost a navy headcollar? It is on the tack room hook.',
-        ),
-        const Hairline(),
-        _Notice(
-          meta: 'Yesterday · Layal',
-          body: 'Hay delivery Wednesday — please keep the top gateway clear.',
-        ),
-        const Hairline(),
-        const SizedBox(height: 26),
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: _TextAction(
-            label: '+ ${l10n.postANotice}',
-            onTap: () =>
-                Navigator.of(context).pushNamed(PostNoticeScreen.route),
-          ),
-        ),
-        const SizedBox(height: 14),
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: _TextAction(
-            label: l10n.titleNoticeboard,
-            onTap: () =>
-                Navigator.of(context).pushNamed(NoticeboardScreen.route),
-          ),
-        ),
-      ],
+      );
+    }
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: _future,
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.only(top: 60),
+              child: CircularProgressIndicator(
+                  color: AppColors.accent, strokeWidth: 2.4),
+            ),
+          );
+        }
+        if (snap.hasError) {
+          return _ErrorState(message: snap.error.toString(), onRetry: () async => _reload());
+        }
+        final notices = snap.data ?? const [];
+        return ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const Hairline(),
+            if (notices.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 26),
+                child: Text(
+                  'Nothing on the board yet. Post the first notice — everyone in the stable will see it.',
+                  style:
+                      AppText.body(16, height: 1.5, color: AppColors.ink(0.6)),
+                ),
+              ),
+            for (final n in notices) ...[
+              _Notice(
+                meta: [
+                  if (n['pinned'] == true) 'Pinned',
+                  (n['author_name'] as String?) ?? 'Someone',
+                ].join(' · '),
+                metaColor:
+                    n['pinned'] == true ? AppColors.accent700 : null,
+                title: n['title'] as String?,
+                body: (n['body'] as String?) ?? '',
+              ),
+              const Hairline(),
+            ],
+            const SizedBox(height: 26),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: _TextAction(
+                label: '+ ${l10n.postANotice}',
+                onTap: () async {
+                  await Navigator.of(context).pushNamed(PostNoticeScreen.route);
+                  _reload();
+                },
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
+        );
+      },
     );
   }
 }

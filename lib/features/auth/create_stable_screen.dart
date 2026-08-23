@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../data/session.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
@@ -26,14 +27,48 @@ class CreateStableScreen extends StatefulWidget {
 
 class _CreateStableScreenState extends State<CreateStableScreen> {
   _Setup _setup = _Setup.create;
-  final _stableName = TextEditingController(text: 'Serc');
+  final _stableName = TextEditingController();
   final _inviteCode = TextEditingController();
+  bool _busy = false;
 
   @override
   void dispose() {
     _stableName.dispose();
     _inviteCode.dispose();
     super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (_setup == _Setup.join) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text(
+            'Joining by code is coming soon. For now, ask a stable admin to '
+            'invite you.'),
+      ));
+      return;
+    }
+    final name = _stableName.text.trim();
+    if (name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Give your stable a name.')),
+      );
+      return;
+    }
+    setState(() => _busy = true);
+    try {
+      await SessionScope.of(context).createStable(name, null);
+      if (!mounted) return;
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(HomeScreen.route, (r) => false);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not create the stable: $e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
   }
 
   @override
@@ -84,11 +119,10 @@ class _CreateStableScreenState extends State<CreateStableScreen> {
             ),
           const SizedBox(height: 40),
           AppButton(
-            label: isCreate ? l10n.createStableCta : l10n.joinStableCta,
-            onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
-              HomeScreen.route,
-              (r) => false,
-            ),
+            label: _busy
+                ? 'Creating…'
+                : (isCreate ? l10n.createStableCta : l10n.joinStableCta),
+            onPressed: _busy ? null : _submit,
           ),
           const SizedBox(height: 16),
           Text(

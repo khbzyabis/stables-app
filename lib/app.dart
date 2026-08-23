@@ -5,7 +5,9 @@ import 'api/api_client.dart';
 import 'api/api_config.dart';
 import 'api/horses_api.dart';
 import 'app_state.dart';
+import 'data/session.dart';
 import 'data/stable_store.dart';
+import 'data/supabase_service.dart';
 import 'features/auth/create_stable_screen.dart';
 import 'features/auth/sign_in_screen.dart';
 import 'features/auth/sign_up_screen.dart';
@@ -81,6 +83,7 @@ class MyStablesApp extends StatefulWidget {
 
 class _MyStablesAppState extends State<MyStablesApp> {
   final _localeController = LocaleController();
+  final _session = AppSession();
   // Talk to the real API when one is configured (dart-define API_BASE_URL);
   // otherwise run offline with local sample data.
   final _stableStore = StableStore(
@@ -90,6 +93,16 @@ class _MyStablesAppState extends State<MyStablesApp> {
   @override
   void initState() {
     super.initState();
+    // Keep the session in step with Supabase auth: load stables on sign-in,
+    // clear them on sign-out.
+    if (SupabaseService.isSignedIn) _session.refresh();
+    SupabaseService.authChanges.listen((state) {
+      if (state.session != null) {
+        _session.refresh();
+      } else {
+        _session.clear();
+      }
+    });
     // On first launch, honour the device language if it is one we support.
     // A person can still change it in-app; that choice then wins.
     final deviceLocales = WidgetsBinding.instance.platformDispatcher.locales;
@@ -108,6 +121,7 @@ class _MyStablesAppState extends State<MyStablesApp> {
   @override
   void dispose() {
     _localeController.dispose();
+    _session.dispose();
     _stableStore.dispose();
     super.dispose();
   }
@@ -116,7 +130,9 @@ class _MyStablesAppState extends State<MyStablesApp> {
   Widget build(BuildContext context) {
     return LocaleScope(
       controller: _localeController,
-      child: StableScope(
+      child: SessionScope(
+        session: _session,
+        child: StableScope(
         store: _stableStore,
         child: AnimatedBuilder(
           animation: _localeController,
@@ -133,7 +149,9 @@ class _MyStablesAppState extends State<MyStablesApp> {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-              initialRoute: SplashScreen.route,
+              initialRoute: SupabaseService.isSignedIn
+                  ? HomeScreen.route
+                  : SplashScreen.route,
               routes: {
                 SplashScreen.route: (_) => const SplashScreen(),
                 SignInScreen.route: (_) => const SignInScreen(),
@@ -202,6 +220,7 @@ class _MyStablesAppState extends State<MyStablesApp> {
             );
           },
         ),
+      ),
       ),
     );
   }
