@@ -155,6 +155,62 @@ class SupabaseService {
         if (notes != null && notes.isNotEmpty) 'notes': notes,
       }).select().single();
 
+  // ---- Schedule activities --------------------------------------------
+  static Future<List<Map<String, dynamic>>> activities(String stableId) => _db
+      .from('activities')
+      .select()
+      .eq('stable_id', stableId)
+      .order('on_date')
+      .order('at_time');
+
+  static Future<Map<String, dynamic>> addActivity({
+    required String stableId,
+    required String title,
+    required String kind,
+    required String onDate, // ISO yyyy-MM-dd
+    String? atTime,
+    String? duration,
+    String? who,
+    String? note,
+  }) =>
+      _db.from('activities').insert({
+        'stable_id': stableId,
+        'title': title,
+        'kind': kind,
+        'on_date': onDate,
+        if (atTime != null && atTime.isNotEmpty) 'at_time': atTime,
+        if (duration != null && duration.isNotEmpty) 'duration': duration,
+        if (who != null && who.isNotEmpty) 'who': who,
+        if (note != null && note.isNotEmpty) 'note': note,
+      }).select().single();
+
+  // ---- Tasks -----------------------------------------------------------
+  static Future<List<Map<String, dynamic>>> tasks(String stableId) => _db
+      .from('tasks')
+      .select()
+      .eq('stable_id', stableId)
+      .order('created_at');
+
+  static Future<Map<String, dynamic>> addTask({
+    required String stableId,
+    required String title,
+    String? assignee,
+    String? due,
+    String? note,
+  }) =>
+      _db.from('tasks').insert({
+        'stable_id': stableId,
+        'title': title,
+        if (assignee != null && assignee.isNotEmpty) 'assignee': assignee,
+        if (due != null && due.isNotEmpty) 'due': due,
+        if (note != null && note.isNotEmpty) 'note': note,
+      }).select().single();
+
+  static Future<void> setTaskDone(String id, bool done) => _db
+      .from('tasks')
+      .update({'done': done, 'done_by': done ? currentUser?.id : null})
+      .eq('id', id);
+
   // ---- Notices (the board) --------------------------------------------
   static Future<List<Map<String, dynamic>>> notices(String stableId) => _db
       .from('notices')

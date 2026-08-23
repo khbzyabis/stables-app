@@ -28,7 +28,6 @@ import '../people/people_screen.dart';
 import '../schedule/schedule_screen.dart';
 import '../transport/request_transport_screen.dart';
 import '../tasks/groom_day_screen.dart';
-import '../tasks/task_progress_screen.dart';
 
 /// Screen 06 — Home. Leads with My horses; a four-tab bar switches to the
 /// noticeboard, the stable, and you. Home leads with horses because that is
@@ -432,12 +431,6 @@ class _StableTab extends StatelessWidget {
         _NavRow(
           title: l10n.openTasks,
           subtitle: l10n.tasksSub,
-          onTap: () => Navigator.of(context).pushNamed(TaskProgressScreen.route),
-        ),
-        const Hairline(),
-        _NavRow(
-          title: l10n.yourTasks,
-          subtitle: l10n.ticksVisible,
           onTap: () => Navigator.of(context).pushNamed(GroomDayScreen.route),
         ),
         const Hairline(),

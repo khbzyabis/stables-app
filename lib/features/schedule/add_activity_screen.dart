@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-import '../../data/stable_store.dart';
+import '../../data/session.dart';
+import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/schedule.dart';
 import '../../theme/app_theme.dart';
@@ -9,8 +11,8 @@ import '../../widgets/app_button.dart';
 import '../../widgets/app_field.dart';
 import '../auth/back_link.dart';
 
-/// Screen 18 — Add activity. Activity first, then which horse, time, repeat and
-/// an optional note. Two taps to save.
+/// Screen 18 — Add activity. Kind, which horse, the day, time and a note.
+/// Saves to the stable's schedule so everyone sees it.
 class AddActivityScreen extends StatefulWidget {
   const AddActivityScreen({super.key});
   static const route = '/schedule/add';
@@ -22,10 +24,18 @@ class AddActivityScreen extends StatefulWidget {
 class _AddActivityScreenState extends State<AddActivityScreen> {
   EventKind _kind = EventKind.riding;
   String? _horse;
-  int _repeat = 0;
+  DateTime _date = DateTime.now();
+  bool _busy = false;
   final _starts = TextEditingController(text: '17:00');
   final _forDur = TextEditingController(text: '45 min');
   final _note = TextEditingController();
+  late final Future<List<Map<String, dynamic>>> _horsesFuture = _loadHorses();
+
+  Future<List<Map<String, dynamic>>> _loadHorses() async {
+    final id = SessionScope.of(context).activeStableId;
+    if (id == null) return const [];
+    return SupabaseService.horses(id);
+  }
 
   @override
   void dispose() {
@@ -35,17 +45,48 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
     super.dispose();
   }
 
+  Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _date,
+      firstDate: DateTime(now.year - 1),
+      lastDate: DateTime(now.year + 2),
+    );
+    if (picked != null) setState(() => _date = picked);
+  }
+
+  Future<void> _save() async {
+    final stableId = SessionScope.of(context).activeStableId;
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    if (stableId == null) {
+      messenger.showSnackBar(
+          const SnackBar(content: Text('Create a stable first.')));
+      return;
+    }
+    setState(() => _busy = true);
+    try {
+      await SupabaseService.addActivity(
+        stableId: stableId,
+        title: _kind.label,
+        kind: _kind.name,
+        onDate: DateFormat('yyyy-MM-dd').format(_date),
+        atTime: _starts.text.trim(),
+        duration: _forDur.text.trim(),
+        who: _horse,
+        note: _note.text.trim(),
+      );
+      navigator.pop();
+    } catch (e) {
+      if (mounted) setState(() => _busy = false);
+      messenger.showSnackBar(SnackBar(content: Text('Could not save: $e')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppL10n.of(context);
-    final horses = StableScope.of(context).horses;
-    final repeats = [
-      l10n.repeatOnce,
-      l10n.repeatDaily,
-      l10n.repeatWeekly,
-      l10n.repeatWeekdays,
-    ];
-
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
@@ -72,40 +113,63 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
             const SizedBox(height: 36),
             Text(l10n.whichHorse.toUpperCase(), style: AppText.eyebrow()),
             const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final h in horses)
-                  _Chip(
-                    label: h.name,
-                    selected: h.name == _horse,
-                    onTap: () => setState(() => _horse = h.name),
-                  ),
-              ],
+            FutureBuilder<List<Map<String, dynamic>>>(
+              future: _horsesFuture,
+              builder: (context, snap) {
+                final horses = snap.data ?? const [];
+                if (horses.isEmpty) {
+                  return Text('No horses yet — add one first, or leave blank.',
+                      style: AppText.body(14, color: AppColors.ink(0.5)));
+                }
+                return Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final h in horses)
+                      _Chip(
+                        label: (h['name'] as String?) ?? 'Horse',
+                        selected: h['name'] == _horse,
+                        onTap: () =>
+                            setState(() => _horse = h['name'] as String?),
+                      ),
+                  ],
+                );
+              },
             ),
             const SizedBox(height: 34),
+            Text(l10n.fieldDay.toUpperCase(), style: AppText.eyebrow()),
+            const SizedBox(height: 12),
+            InkWell(
+              onTap: _pickDate,
+              borderRadius: BorderRadius.circular(AppRadius.pill),
+              child: Container(
+                constraints: const BoxConstraints(minHeight: 56),
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                decoration: BoxDecoration(
+                  color: AppColors.neutral100,
+                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: Text(DateFormat('EEEE d MMMM').format(_date),
+                            style: AppText.body(17))),
+                    Icon(Icons.calendar_today_outlined,
+                        size: 18, color: AppColors.ink(0.5)),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: AppField(label: l10n.starts, controller: _starts)),
+                Expanded(
+                    child: AppField(label: l10n.starts, controller: _starts)),
                 const SizedBox(width: 14),
-                Expanded(child: AppField(label: l10n.forDuration, controller: _forDur)),
-              ],
-            ),
-            const SizedBox(height: 30),
-            Text(l10n.repeats.toUpperCase(), style: AppText.eyebrow()),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (var i = 0; i < repeats.length; i++)
-                  _Chip(
-                    label: repeats[i],
-                    selected: i == _repeat,
-                    onTap: () => setState(() => _repeat = i),
-                  ),
+                Expanded(
+                    child:
+                        AppField(label: l10n.forDuration, controller: _forDur)),
               ],
             ),
             const SizedBox(height: 30),
@@ -116,10 +180,10 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
             ),
             const SizedBox(height: 36),
             AppButton(
-              label: l10n.addToSchedule,
+              label: _busy ? 'Saving…' : l10n.addToSchedule,
               minHeight: 56,
               fontSize: 17,
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: _busy ? null : _save,
             ),
           ],
         ),

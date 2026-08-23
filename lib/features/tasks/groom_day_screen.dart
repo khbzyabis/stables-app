@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../../data/tasks_data.dart';
+import '../../data/session.dart';
+import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
-import '../../models/task.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/hairline.dart';
-import 'kit_screen.dart';
+import '../auth/back_link.dart';
+import 'assign_task_screen.dart';
 
-/// Screen 29 — Groom's day. The day's tasks; tick them done. Ticks work
-/// offline (held locally and synced when signal returns) and, when online,
-/// are visible to admins straight away.
+/// Screen 29 — the stable's tasks. Tick one done and it saves for everyone;
+/// anyone can add a task. Ticks persist to the database immediately.
 class GroomDayScreen extends StatefulWidget {
   const GroomDayScreen({super.key});
   static const route = '/tasks';
@@ -20,57 +20,112 @@ class GroomDayScreen extends StatefulWidget {
 }
 
 class _GroomDayScreenState extends State<GroomDayScreen> {
-  final Set<String> _done = {...TasksData.initiallyDone};
+  late Future<List<Map<String, dynamic>>> _future = _load();
+  final _pending = <String>{}; // ids mid-toggle
 
-  void _toggle(String id) => setState(() {
-        _done.contains(id) ? _done.remove(id) : _done.add(id);
-      });
+  Future<List<Map<String, dynamic>>> _load() async {
+    final id = SessionScope.of(context).activeStableId;
+    if (id == null) return const [];
+    return SupabaseService.tasks(id);
+  }
+
+  void _reload() => setState(() => _future = _load());
+
+  Future<void> _toggle(Map<String, dynamic> task) async {
+    final id = task['id'] as String;
+    final next = !(task['done'] == true);
+    setState(() {
+      task['done'] = next; // optimistic
+      _pending.add(id);
+    });
+    try {
+      await SupabaseService.setTaskDone(id, next);
+    } catch (e) {
+      setState(() => task['done'] = !next); // revert
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Could not save: $e')));
+      }
+    } finally {
+      if (mounted) setState(() => _pending.remove(id));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppL10n.of(context);
-    final tasks = TasksData.groomDay;
-    final doneCount = tasks.where((t) => _done.contains(t.id)).length;
-    final fraction = tasks.isEmpty ? 0.0 : doneCount / tasks.length;
-
+    final session = SessionScope.of(context);
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
         bottom: false,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(32, 20, 32, 40),
-          children: [
-            Text('Rasil · Groom · Tuesday',
-                style: AppText.eyebrow(color: AppColors.accent700)),
-            const SizedBox(height: 10),
-            Text(l10n.yourTasks, style: AppText.heading(40, height: 1)),
-            const SizedBox(height: 10),
-            Text(
-              l10n.taskProgress(doneCount, tasks.length, tasks.length - doneCount),
-              style: AppText.body(17, color: AppColors.ink(0.65)),
-            ),
-            const SizedBox(height: 22),
-            _ProgressBar(fraction: fraction),
-            const SizedBox(height: 30),
-            const Hairline(),
-            for (final t in tasks) ...[
-              _TaskRow(
-                task: t,
-                done: _done.contains(t.id),
-                onToggle: () => _toggle(t.id),
-              ),
-              const Hairline(),
-            ],
-            const SizedBox(height: 24),
-            GestureDetector(
-              onTap: () => Navigator.of(context).pushNamed(KitScreen.route),
-              child: Text("See today's kit for Kiki",
-                  style: AppText.body(16, color: AppColors.accent700)),
-            ),
-            const SizedBox(height: 16),
-            Text(l10n.ticksVisible,
-                style: AppText.body(15, height: 1.5, color: AppColors.ink(0.55))),
-          ],
+        child: FutureBuilder<List<Map<String, dynamic>>>(
+          future: _future,
+          builder: (context, snap) {
+            final tasks = snap.data ?? const [];
+            final doneCount = tasks.where((t) => t['done'] == true).length;
+            final fraction = tasks.isEmpty ? 0.0 : doneCount / tasks.length;
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(32, 20, 32, 40),
+              children: [
+                const BackLink(label: 'Stable'),
+                const SizedBox(height: 14),
+                Text(session.activeStableName.toUpperCase(),
+                    style: AppText.eyebrow(color: AppColors.accent700)),
+                const SizedBox(height: 10),
+                Text(l10n.yourTasks, style: AppText.heading(40, height: 1)),
+                const SizedBox(height: 10),
+                if (snap.connectionState == ConnectionState.waiting)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 40),
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                else ...[
+                  Text(
+                    l10n.taskProgress(
+                        doneCount, tasks.length, tasks.length - doneCount),
+                    style: AppText.body(17, color: AppColors.ink(0.65)),
+                  ),
+                  const SizedBox(height: 22),
+                  _ProgressBar(fraction: fraction),
+                  const SizedBox(height: 30),
+                  const Hairline(),
+                  if (tasks.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 24),
+                      child: Text(
+                        'No tasks yet. Add one below — whoever it is for can tick it off, and everyone sees it update.',
+                        style: AppText.body(16,
+                            height: 1.5, color: AppColors.ink(0.6)),
+                      ),
+                    ),
+                  for (final t in tasks) ...[
+                    _TaskRow(
+                      task: t,
+                      busy: _pending.contains(t['id']),
+                      onToggle: () => _toggle(t),
+                    ),
+                    const Hairline(),
+                  ],
+                  const SizedBox(height: 24),
+                  GestureDetector(
+                    onTap: () async {
+                      await Navigator.of(context)
+                          .pushNamed(AssignTaskScreen.route);
+                      _reload();
+                    },
+                    child: Text('+ ${l10n.newTask}',
+                        style:
+                            AppText.heading(17, color: AppColors.accent700)),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(l10n.ticksVisible,
+                      style: AppText.body(15,
+                          height: 1.5, color: AppColors.ink(0.55))),
+                ],
+              ],
+            );
+          },
         ),
       ),
     );
@@ -100,47 +155,51 @@ class _ProgressBar extends StatelessWidget {
 
 class _TaskRow extends StatelessWidget {
   const _TaskRow(
-      {required this.task, required this.done, required this.onToggle});
-  final StableTask task;
-  final bool done;
+      {required this.task, required this.busy, required this.onToggle});
+  final Map<String, dynamic> task;
+  final bool busy;
   final VoidCallback onToggle;
 
   @override
   Widget build(BuildContext context) {
+    final done = task['done'] == true;
+    final meta = <String>[
+      if ((task['assignee'] as String?)?.isNotEmpty == true)
+        task['assignee'] as String,
+      if ((task['due'] as String?)?.isNotEmpty == true) task['due'] as String,
+    ].join(' · ');
+    final note = task['note'] as String?;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 18),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _Checkbox(done: done, onTap: onToggle),
+          _Checkbox(done: done, onTap: busy ? () {} : onToggle),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  task.title,
+                  (task['title'] as String?) ?? '',
                   style: AppText.body(17, height: 1.25).copyWith(
                     decoration: done ? TextDecoration.lineThrough : null,
                     color: done ? AppColors.ink(0.45) : AppColors.text,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(task.meta,
-                    style: AppText.body(14, height: 1.4, color: AppColors.ink(0.55))),
-                if (task.hasNote) ...[
+                if (meta.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(meta,
+                      style: AppText.body(14,
+                          height: 1.4, color: AppColors.ink(0.55))),
+                ],
+                if (note != null && note.isNotEmpty && !done) ...[
                   const SizedBox(height: 6),
-                  Text(task.note,
+                  Text(note,
                       style: AppText.body(14, color: AppColors.accent700)),
                 ],
               ],
             ),
-          ),
-          const SizedBox(width: 12),
-          Padding(
-            padding: const EdgeInsets.only(top: 3),
-            child: Text(task.time,
-                style: AppText.body(14, color: AppColors.ink(0.45))),
           ),
         ],
       ),
@@ -169,9 +228,8 @@ class _Checkbox extends StatelessWidget {
             width: 1.5,
           ),
         ),
-        child: done
-            ? const Icon(Icons.check, size: 17, color: AppColors.bg)
-            : null,
+        child:
+            done ? const Icon(Icons.check, size: 17, color: AppColors.bg) : null,
       ),
     );
   }
