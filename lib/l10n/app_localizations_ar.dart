@@ -886,4 +886,97 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get doneLabel => 'تم';
+
+  @override
+  String get post => 'نشر';
+
+  @override
+  String get read => 'مقروء';
+
+  @override
+  String get markRead => 'وضع علامة مقروء';
+
+  @override
+  String get replies => 'ردود';
+
+  @override
+  String get newNotice => 'إعلان جديد';
+
+  @override
+  String get notice => 'الإعلان';
+
+  @override
+  String get whoSeesIt => 'من يراه';
+
+  @override
+  String get pinToTop => 'تثبيت في الأعلى';
+
+  @override
+  String get askConfirmRead => 'اطلب من الأشخاص تأكيد قراءته';
+
+  @override
+  String get postNotice => 'نشر الإعلان';
+
+  @override
+  String get notices => 'الإعلانات';
+
+  @override
+  String get pinned => 'مثبّت';
+
+  @override
+  String get contacts => 'جهات الاتصال';
+
+  @override
+  String get addContact => 'إضافة جهة اتصال';
+
+  @override
+  String get leaveStable => 'مغادرة هذا الإسطبل';
+
+  @override
+  String get leave => 'مغادرة';
+
+  @override
+  String get stay => 'البقاء';
+
+  @override
+  String get youHaveLeft => 'لقد غادرت';
+
+  @override
+  String get backToMyStables => 'العودة إلى إسطبلاتي';
+
+  @override
+  String get signOut => 'تسجيل الخروج';
+
+  @override
+  String get deleteAccount => 'حذف حسابي';
+
+  @override
+  String get stableLanguage => 'لغة الإسطبل';
+
+  @override
+  String get help => 'المساعدة';
+
+  @override
+  String get whatHappened => 'ماذا حدث';
+
+  @override
+  String get send => 'إرسال';
+
+  @override
+  String get sent => 'أُرسِل';
+
+  @override
+  String get whereIsStable => 'أين يقع الإسطبل؟';
+
+  @override
+  String get saveLocation => 'حفظ الموقع';
+
+  @override
+  String get directions => 'الاتجاهات';
+
+  @override
+  String get stableSettings => 'إعدادات الإسطبل';
+
+  @override
+  String get yourProfile => 'ملفك الشخصي';
 }

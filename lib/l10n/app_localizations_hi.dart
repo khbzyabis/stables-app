@@ -897,4 +897,97 @@ class AppL10nHi extends AppL10n {
 
   @override
   String get doneLabel => 'Done';
+
+  @override
+  String get post => 'Post';
+
+  @override
+  String get read => 'Read';
+
+  @override
+  String get markRead => 'Mark read';
+
+  @override
+  String get replies => 'replies';
+
+  @override
+  String get newNotice => 'New notice';
+
+  @override
+  String get notice => 'Notice';
+
+  @override
+  String get whoSeesIt => 'Who sees it';
+
+  @override
+  String get pinToTop => 'Pin to the top';
+
+  @override
+  String get askConfirmRead => 'Ask people to confirm they read it';
+
+  @override
+  String get postNotice => 'Post notice';
+
+  @override
+  String get notices => 'Notices';
+
+  @override
+  String get pinned => 'Pinned';
+
+  @override
+  String get contacts => 'Contacts';
+
+  @override
+  String get addContact => 'Add a contact';
+
+  @override
+  String get leaveStable => 'Leave this stable';
+
+  @override
+  String get leave => 'Leave';
+
+  @override
+  String get stay => 'Stay';
+
+  @override
+  String get youHaveLeft => 'You have left';
+
+  @override
+  String get backToMyStables => 'Back to my stables';
+
+  @override
+  String get signOut => 'Sign out';
+
+  @override
+  String get deleteAccount => 'Delete my account';
+
+  @override
+  String get stableLanguage => 'Stable language';
+
+  @override
+  String get help => 'Help';
+
+  @override
+  String get whatHappened => 'What happened';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get sent => 'Sent';
+
+  @override
+  String get whereIsStable => 'Where is the stable?';
+
+  @override
+  String get saveLocation => 'Save location';
+
+  @override
+  String get directions => 'Directions';
+
+  @override
+  String get stableSettings => 'Stable settings';
+
+  @override
+  String get yourProfile => 'Your profile';
 }

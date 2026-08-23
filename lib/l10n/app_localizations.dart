@@ -1790,6 +1790,192 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Done'**
   String get doneLabel;
+
+  /// No description provided for @post.
+  ///
+  /// In en, this message translates to:
+  /// **'Post'**
+  String get post;
+
+  /// No description provided for @read.
+  ///
+  /// In en, this message translates to:
+  /// **'Read'**
+  String get read;
+
+  /// No description provided for @markRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark read'**
+  String get markRead;
+
+  /// No description provided for @replies.
+  ///
+  /// In en, this message translates to:
+  /// **'replies'**
+  String get replies;
+
+  /// No description provided for @newNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'New notice'**
+  String get newNotice;
+
+  /// No description provided for @notice.
+  ///
+  /// In en, this message translates to:
+  /// **'Notice'**
+  String get notice;
+
+  /// No description provided for @whoSeesIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Who sees it'**
+  String get whoSeesIt;
+
+  /// No description provided for @pinToTop.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin to the top'**
+  String get pinToTop;
+
+  /// No description provided for @askConfirmRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask people to confirm they read it'**
+  String get askConfirmRead;
+
+  /// No description provided for @postNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Post notice'**
+  String get postNotice;
+
+  /// No description provided for @notices.
+  ///
+  /// In en, this message translates to:
+  /// **'Notices'**
+  String get notices;
+
+  /// No description provided for @pinned.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned'**
+  String get pinned;
+
+  /// No description provided for @contacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Contacts'**
+  String get contacts;
+
+  /// No description provided for @addContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a contact'**
+  String get addContact;
+
+  /// No description provided for @leaveStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave this stable'**
+  String get leaveStable;
+
+  /// No description provided for @leave.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get leave;
+
+  /// No description provided for @stay.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay'**
+  String get stay;
+
+  /// No description provided for @youHaveLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'You have left'**
+  String get youHaveLeft;
+
+  /// No description provided for @backToMyStables.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to my stables'**
+  String get backToMyStables;
+
+  /// No description provided for @signOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get signOut;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my account'**
+  String get deleteAccount;
+
+  /// No description provided for @stableLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Stable language'**
+  String get stableLanguage;
+
+  /// No description provided for @help.
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get help;
+
+  /// No description provided for @whatHappened.
+  ///
+  /// In en, this message translates to:
+  /// **'What happened'**
+  String get whatHappened;
+
+  /// No description provided for @send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
+
+  /// No description provided for @sent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get sent;
+
+  /// No description provided for @whereIsStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Where is the stable?'**
+  String get whereIsStable;
+
+  /// No description provided for @saveLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Save location'**
+  String get saveLocation;
+
+  /// No description provided for @directions.
+  ///
+  /// In en, this message translates to:
+  /// **'Directions'**
+  String get directions;
+
+  /// No description provided for @stableSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Stable settings'**
+  String get stableSettings;
+
+  /// No description provided for @yourProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile'**
+  String get yourProfile;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

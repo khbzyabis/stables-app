@@ -15,6 +15,13 @@ import '../horses/add_horse_screen.dart';
 import '../horses/horse_profile_screen.dart';
 import '../horses/horse_record_screen.dart';
 import '../horses/tack_box_screen.dart';
+import '../board/board_screen.dart';
+import '../board/noticeboard_screen.dart';
+import '../board/post_notice_screen.dart';
+import '../settings/contacts_screen.dart';
+import '../settings/help_screen.dart';
+import '../settings/profile_screen.dart';
+import '../settings/stable_settings_screen.dart';
 import '../market/market_screen.dart';
 import '../market/payments_screen.dart';
 import '../people/approvals_screen.dart';
@@ -249,7 +256,20 @@ class _BoardTab extends StatelessWidget {
         const SizedBox(height: 26),
         Align(
           alignment: AlignmentDirectional.centerStart,
-          child: _TextAction(label: '+ ${l10n.postANotice}', onTap: () {}),
+          child: _TextAction(
+            label: '+ ${l10n.postANotice}',
+            onTap: () =>
+                Navigator.of(context).pushNamed(PostNoticeScreen.route),
+          ),
+        ),
+        const SizedBox(height: 14),
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: _TextAction(
+            label: l10n.titleNoticeboard,
+            onTap: () =>
+                Navigator.of(context).pushNamed(NoticeboardScreen.route),
+          ),
         ),
       ],
     );
@@ -346,11 +366,19 @@ class _StableTab extends StatelessWidget {
           onTap: () => Navigator.of(context).pushNamed(ApprovalsScreen.route),
         ),
         const Hairline(),
-        const SizedBox(height: 26),
-        AppTag(l10n.comingSoon.toUpperCase(), tone: TagTone.neutral),
-        const SizedBox(height: 12),
-        Text(l10n.stableTabHint,
-            style: AppText.body(16, height: 1.5, color: AppColors.ink(0.6))),
+        _NavRow(
+          title: l10n.contacts,
+          subtitle: 'Farrier, vet, dentist, feed merchant',
+          onTap: () => Navigator.of(context).pushNamed(ContactsScreen.route),
+        ),
+        const Hairline(),
+        _NavRow(
+          title: l10n.stableSettings,
+          subtitle: 'Dubai · 14 horses · 6 people',
+          onTap: () =>
+              Navigator.of(context).pushNamed(StableSettingsScreen.route),
+        ),
+        const Hairline(),
       ],
     );
   }
@@ -412,6 +440,12 @@ class _YouTab extends StatelessWidget {
       children: [
         const Hairline(),
         _NavRow(
+          title: l10n.yourProfile,
+          subtitle: 'ahmad@serc.ae',
+          onTap: () => Navigator.of(context).pushNamed(ProfileScreen.route),
+        ),
+        const Hairline(),
+        _NavRow(
           title: l10n.myStables,
           subtitle: l10n.rolePerStable,
           onTap: () => Navigator.of(context).pushNamed(MyStablesScreen.route),
@@ -427,6 +461,18 @@ class _YouTab extends StatelessWidget {
           title: l10n.payments,
           subtitle: l10n.paymentsSub,
           onTap: () => Navigator.of(context).pushNamed(PaymentsScreen.route),
+        ),
+        const Hairline(),
+        _NavRow(
+          title: l10n.help,
+          subtitle: 'Answers, or tell us what is wrong',
+          onTap: () => Navigator.of(context).pushNamed(HelpScreen.route),
+        ),
+        const Hairline(),
+        _NavRow(
+          title: l10n.notices,
+          subtitle: 'From My Stables — shows, updates and adverts',
+          onTap: () => Navigator.of(context).pushNamed(BoardScreen.route),
         ),
         const Hairline(),
         const SizedBox(height: 30),
