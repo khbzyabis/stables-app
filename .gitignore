@@ -46,3 +46,7 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# transfer artifacts (never commit)
+*.bundle
+*.zip
