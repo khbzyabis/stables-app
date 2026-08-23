@@ -384,6 +384,36 @@ class SupabaseService {
   static Future<String> documentUrl(String storagePath) =>
       _db.storage.from(_docsBucket).createSignedUrl(storagePath, 3600);
 
+  // ---- Transport requests ---------------------------------------------
+  static Future<List<Map<String, dynamic>>> transportRequests(
+          String stableId) =>
+      _db
+          .from('transport_requests')
+          .select()
+          .eq('stable_id', stableId)
+          .order('created_at', ascending: false);
+
+  static Future<Map<String, dynamic>> addTransportRequest({
+    required String stableId,
+    String? reason,
+    required String from,
+    required String to,
+    String? onDay,
+    String? thereBy,
+    required List<String> horses,
+    required List<String> needs,
+  }) =>
+      _db.from('transport_requests').insert({
+        'stable_id': stableId,
+        if (reason != null && reason.isNotEmpty) 'reason': reason,
+        'from_loc': from,
+        'to_loc': to,
+        if (onDay != null && onDay.isNotEmpty) 'on_day': onDay,
+        if (thereBy != null && thereBy.isNotEmpty) 'there_by': thereBy,
+        'horses': horses,
+        'needs': needs,
+      }).select().single();
+
   // ---- Notices (the board) --------------------------------------------
   static Future<List<Map<String, dynamic>>> notices(String stableId) => _db
       .from('notices')

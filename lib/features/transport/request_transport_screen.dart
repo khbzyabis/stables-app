@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../data/stable_store.dart';
+import '../../data/session.dart';
+import '../../data/supabase_service.dart';
 import '../../data/transport_data.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/transport.dart';
@@ -26,10 +27,27 @@ class _RequestTransportScreenState extends State<RequestTransportScreen> {
   int _why = 0;
   final Set<String> _horses = {'Kiki'};
   final Set<int> _needs = {0, 2};
-  final _from = TextEditingController(text: 'Serc · Al Qudra Rd');
-  final _to = TextEditingController(text: 'Al Qudra Arena');
-  final _day = TextEditingController(text: 'Sat 29 Aug');
-  final _by = TextEditingController(text: '07:30');
+  final _from = TextEditingController();
+  final _to = TextEditingController();
+  final _day = TextEditingController();
+  final _by = TextEditingController();
+  bool _busy = false;
+  Future<List<Map<String, dynamic>>>? _horsesFuture;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _from.text = _from.text.isEmpty
+        ? SessionScope.of(context).activeStableName
+        : _from.text;
+    _horsesFuture ??= _loadHorses();
+  }
+
+  Future<List<Map<String, dynamic>>> _loadHorses() async {
+    final id = SessionScope.of(context).activeStableId;
+    if (id == null) return const [];
+    return SupabaseService.horses(id);
+  }
 
   @override
   void dispose() {
@@ -40,11 +58,45 @@ class _RequestTransportScreenState extends State<RequestTransportScreen> {
     super.dispose();
   }
 
+  Future<void> _submit() async {
+    final stableId = SessionScope.of(context).activeStableId;
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    if (stableId == null) {
+      messenger.showSnackBar(
+          const SnackBar(content: Text('Create a stable first.')));
+      return;
+    }
+    if (_from.text.trim().isEmpty || _to.text.trim().isEmpty) {
+      messenger.showSnackBar(
+          const SnackBar(content: Text('Add a from and to.')));
+      return;
+    }
+    setState(() => _busy = true);
+    try {
+      await SupabaseService.addTransportRequest(
+        stableId: stableId,
+        reason: TransportData.reasons[_why].label,
+        from: _from.text.trim(),
+        to: _to.text.trim(),
+        onDay: _day.text.trim(),
+        thereBy: _by.text.trim(),
+        horses: _horses.toList(),
+        needs: [
+          for (final i in _needs) TransportData.needs[i].label,
+        ],
+      );
+      navigator.pushReplacementNamed(TransportQuotesScreen.route);
+    } catch (e) {
+      if (mounted) setState(() => _busy = false);
+      messenger.showSnackBar(SnackBar(content: Text('Could not save: $e')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppL10n.of(context);
     final reasons = TransportData.reasons;
-    final horses = StableScope.of(context).horses;
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -89,21 +141,32 @@ class _RequestTransportScreenState extends State<RequestTransportScreen> {
             const SizedBox(height: 24),
             Text(l10n.whichHorses.toUpperCase(), style: AppText.eyebrow()),
             const SizedBox(height: 11),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final h in horses)
-                  _Chip(
-                    label: h.name,
-                    selected: _horses.contains(h.name),
-                    onTap: () => setState(() {
-                      _horses.contains(h.name)
-                          ? _horses.remove(h.name)
-                          : _horses.add(h.name);
-                    }),
-                  ),
-              ],
+            FutureBuilder<List<Map<String, dynamic>>>(
+              future: _horsesFuture,
+              builder: (context, snap) {
+                final horses = snap.data ?? const [];
+                if (horses.isEmpty) {
+                  return Text('No horses yet — add one first.',
+                      style: AppText.body(14, color: AppColors.ink(0.5)));
+                }
+                return Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final h in horses)
+                      _Chip(
+                        label: (h['name'] as String?) ?? 'Horse',
+                        selected: _horses.contains(h['name']),
+                        onTap: () => setState(() {
+                          final n = h['name'] as String;
+                          _horses.contains(n)
+                              ? _horses.remove(n)
+                              : _horses.add(n);
+                        }),
+                      ),
+                  ],
+                );
+              },
             ),
             const SizedBox(height: 24),
             Text(l10n.whatToKnow.toUpperCase(), style: AppText.eyebrow()),
@@ -121,14 +184,13 @@ class _RequestTransportScreenState extends State<RequestTransportScreen> {
             ],
             const SizedBox(height: 24),
             AppButton(
-              label: 'Ask 4 companies · ${_horses.length} '
-                  '${_horses.length == 1 ? "horse" : "horses"}',
+              label: _busy
+                  ? 'Sending…'
+                  : 'Request transport · ${_horses.length} '
+                      '${_horses.length == 1 ? "horse" : "horses"}',
               minHeight: 56,
               fontSize: 17,
-              onPressed: _horses.isEmpty
-                  ? null
-                  : () => Navigator.of(context)
-                      .pushNamed(TransportQuotesScreen.route),
+              onPressed: (_horses.isEmpty || _busy) ? null : _submit,
             ),
             const SizedBox(height: 14),
             Text(reasons[_why].note,
