@@ -13,6 +13,8 @@ import '../../widgets/hairline.dart';
 import '../../widgets/photo_placeholder.dart';
 import '../horses/add_horse_screen.dart';
 import '../horses/horse_profile_screen.dart';
+import '../horses/horse_record_screen.dart';
+import '../horses/tack_box_screen.dart';
 import '../market/market_screen.dart';
 import '../market/payments_screen.dart';
 import '../people/approvals_screen.dart';
@@ -179,8 +181,12 @@ class _HorseRow extends StatelessWidget {
     final l10n = AppL10n.of(context);
     final well = horse.status == HorseStatus.well;
     return InkWell(
-      onTap: () => Navigator.of(context)
-          .pushNamed(HorseProfileScreen.route, arguments: horse.id),
+      // A horse with a filled-in record opens the record hub; a freshly
+      // added one opens its honest empty profile.
+      onTap: () => Navigator.of(context).pushNamed(
+        horse.hasDetails ? HorseRecordScreen.route : HorseProfileScreen.route,
+        arguments: horse.id,
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Row(
@@ -409,6 +415,12 @@ class _YouTab extends StatelessWidget {
           title: l10n.myStables,
           subtitle: l10n.rolePerStable,
           onTap: () => Navigator.of(context).pushNamed(MyStablesScreen.route),
+        ),
+        const Hairline(),
+        _NavRow(
+          title: l10n.tackBox,
+          subtitle: '9 items across 7 groups',
+          onTap: () => Navigator.of(context).pushNamed(TackBoxScreen.route),
         ),
         const Hairline(),
         _NavRow(

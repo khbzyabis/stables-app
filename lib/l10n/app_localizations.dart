@@ -1514,6 +1514,282 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'नेपाली'**
   String get langNepali;
+
+  /// No description provided for @detailName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get detailName;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @change.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get change;
+
+  /// No description provided for @history.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get history;
+
+  /// No description provided for @editDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit details'**
+  String get editDetails;
+
+  /// No description provided for @moveHorse.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to another stable'**
+  String get moveHorse;
+
+  /// No description provided for @tack.
+  ///
+  /// In en, this message translates to:
+  /// **'Tack'**
+  String get tack;
+
+  /// No description provided for @setups.
+  ///
+  /// In en, this message translates to:
+  /// **'Setups'**
+  String get setups;
+
+  /// No description provided for @feedChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Feed chart'**
+  String get feedChart;
+
+  /// No description provided for @documents.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get documents;
+
+  /// No description provided for @tackBox.
+  ///
+  /// In en, this message translates to:
+  /// **'Tack box'**
+  String get tackBox;
+
+  /// No description provided for @addItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Add item'**
+  String get addItem;
+
+  /// No description provided for @newItem.
+  ///
+  /// In en, this message translates to:
+  /// **'New item'**
+  String get newItem;
+
+  /// No description provided for @group.
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get group;
+
+  /// No description provided for @nameIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Name it'**
+  String get nameIt;
+
+  /// No description provided for @addPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a photo'**
+  String get addPhoto;
+
+  /// No description provided for @howItIsGoing.
+  ///
+  /// In en, this message translates to:
+  /// **'How it is going'**
+  String get howItIsGoing;
+
+  /// No description provided for @logHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Log health'**
+  String get logHealth;
+
+  /// No description provided for @logSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Log a session'**
+  String get logSession;
+
+  /// No description provided for @editHorse.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit horse'**
+  String get editHorse;
+
+  /// No description provided for @changePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Change photo'**
+  String get changePhoto;
+
+  /// No description provided for @whichStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Which stable'**
+  String get whichStable;
+
+  /// No description provided for @askStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask the stable'**
+  String get askStable;
+
+  /// No description provided for @keepHer.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep her here'**
+  String get keepHer;
+
+  /// No description provided for @waitingBothAdmins.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting on both admins'**
+  String get waitingBothAdmins;
+
+  /// No description provided for @moveSentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Both admins have to agree. Until they do, she stays here and nothing changes.'**
+  String get moveSentBody;
+
+  /// No description provided for @buildSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Build a horse\'s setup'**
+  String get buildSetup;
+
+  /// No description provided for @edited.
+  ///
+  /// In en, this message translates to:
+  /// **'Edited'**
+  String get edited;
+
+  /// No description provided for @theDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get theDefault;
+
+  /// No description provided for @undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undo;
+
+  /// No description provided for @makeDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Make this the default'**
+  String get makeDefault;
+
+  /// No description provided for @seeWhatChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'See what changed last time'**
+  String get seeWhatChanged;
+
+  /// No description provided for @addDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a document'**
+  String get addDocument;
+
+  /// No description provided for @editChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit chart'**
+  String get editChart;
+
+  /// No description provided for @tackBoxIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything in here can be named on a schedule, so the groom tacks up the right kit.'**
+  String get tackBoxIntro;
+
+  /// No description provided for @setupsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick an activity and the usual kit for it fills in.'**
+  String get setupsIntro;
+
+  /// No description provided for @setupDirtyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'You have changed this from the default. Make it the new default, or undo.'**
+  String get setupDirtyNote;
+
+  /// No description provided for @saveToTackBox.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to tack box'**
+  String get saveToTackBox;
+
+  /// No description provided for @setupChangedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Kiki\'s flatwork kit was not the default'**
+  String get setupChangedTitle;
+
+  /// No description provided for @setupChangedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Toni changed two things during the session. Keep the default, or make his version the new one.'**
+  String get setupChangedBody;
+
+  /// No description provided for @makeFlatworkDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Make this the flatwork default'**
+  String get makeFlatworkDefault;
+
+  /// No description provided for @keepOldDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the old default'**
+  String get keepOldDefault;
+
+  /// No description provided for @nowTheDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Now the default'**
+  String get nowTheDefault;
+
+  /// No description provided for @keptOldDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept the old default'**
+  String get keptOldDefault;
+
+  /// No description provided for @backToSetups.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to setups'**
+  String get backToSetups;
+
+  /// No description provided for @doneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get doneLabel;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

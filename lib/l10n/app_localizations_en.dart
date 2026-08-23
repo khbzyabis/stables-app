@@ -754,4 +754,147 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get langNepali => 'नेपाली';
+
+  @override
+  String get detailName => 'Name';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get change => 'Change';
+
+  @override
+  String get history => 'History';
+
+  @override
+  String get editDetails => 'Edit details';
+
+  @override
+  String get moveHorse => 'Move to another stable';
+
+  @override
+  String get tack => 'Tack';
+
+  @override
+  String get setups => 'Setups';
+
+  @override
+  String get feedChart => 'Feed chart';
+
+  @override
+  String get documents => 'Documents';
+
+  @override
+  String get tackBox => 'Tack box';
+
+  @override
+  String get addItem => 'Add item';
+
+  @override
+  String get newItem => 'New item';
+
+  @override
+  String get group => 'Group';
+
+  @override
+  String get nameIt => 'Name it';
+
+  @override
+  String get addPhoto => 'Add a photo';
+
+  @override
+  String get howItIsGoing => 'How it is going';
+
+  @override
+  String get logHealth => 'Log health';
+
+  @override
+  String get logSession => 'Log a session';
+
+  @override
+  String get editHorse => 'Edit horse';
+
+  @override
+  String get changePhoto => 'Change photo';
+
+  @override
+  String get whichStable => 'Which stable';
+
+  @override
+  String get askStable => 'Ask the stable';
+
+  @override
+  String get keepHer => 'Keep her here';
+
+  @override
+  String get waitingBothAdmins => 'Waiting on both admins';
+
+  @override
+  String get moveSentBody =>
+      'Both admins have to agree. Until they do, she stays here and nothing changes.';
+
+  @override
+  String get buildSetup => 'Build a horse\'s setup';
+
+  @override
+  String get edited => 'Edited';
+
+  @override
+  String get theDefault => 'Default';
+
+  @override
+  String get undo => 'Undo';
+
+  @override
+  String get makeDefault => 'Make this the default';
+
+  @override
+  String get seeWhatChanged => 'See what changed last time';
+
+  @override
+  String get addDocument => 'Add a document';
+
+  @override
+  String get editChart => 'Edit chart';
+
+  @override
+  String get tackBoxIntro =>
+      'Everything in here can be named on a schedule, so the groom tacks up the right kit.';
+
+  @override
+  String get setupsIntro =>
+      'Pick an activity and the usual kit for it fills in.';
+
+  @override
+  String get setupDirtyNote =>
+      'You have changed this from the default. Make it the new default, or undo.';
+
+  @override
+  String get saveToTackBox => 'Save to tack box';
+
+  @override
+  String get setupChangedTitle => 'Kiki\'s flatwork kit was not the default';
+
+  @override
+  String get setupChangedBody =>
+      'Toni changed two things during the session. Keep the default, or make his version the new one.';
+
+  @override
+  String get makeFlatworkDefault => 'Make this the flatwork default';
+
+  @override
+  String get keepOldDefault => 'Keep the old default';
+
+  @override
+  String get nowTheDefault => 'Now the default';
+
+  @override
+  String get keptOldDefault => 'Kept the old default';
+
+  @override
+  String get backToSetups => 'Back to setups';
+
+  @override
+  String get doneLabel => 'Done';
 }

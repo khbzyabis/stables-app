@@ -744,4 +744,146 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get langNepali => 'नेपाली';
+
+  @override
+  String get detailName => 'الاسم';
+
+  @override
+  String get save => 'حفظ';
+
+  @override
+  String get change => 'تغيير';
+
+  @override
+  String get history => 'السجل';
+
+  @override
+  String get editDetails => 'تعديل التفاصيل';
+
+  @override
+  String get moveHorse => 'النقل إلى إسطبل آخر';
+
+  @override
+  String get tack => 'العدّة';
+
+  @override
+  String get setups => 'التجهيزات';
+
+  @override
+  String get feedChart => 'جدول التغذية';
+
+  @override
+  String get documents => 'المستندات';
+
+  @override
+  String get tackBox => 'صندوق العدّة';
+
+  @override
+  String get addItem => 'إضافة عنصر';
+
+  @override
+  String get newItem => 'عنصر جديد';
+
+  @override
+  String get group => 'المجموعة';
+
+  @override
+  String get nameIt => 'التسمية';
+
+  @override
+  String get addPhoto => 'إضافة صورة';
+
+  @override
+  String get howItIsGoing => 'كيف تسير الأمور';
+
+  @override
+  String get logHealth => 'تسجيل الصحة';
+
+  @override
+  String get logSession => 'تسجيل جلسة';
+
+  @override
+  String get editHorse => 'تعديل الحصان';
+
+  @override
+  String get changePhoto => 'تغيير الصورة';
+
+  @override
+  String get whichStable => 'أي إسطبل';
+
+  @override
+  String get askStable => 'اطلب من الإسطبل';
+
+  @override
+  String get keepHer => 'أبقِها هنا';
+
+  @override
+  String get waitingBothAdmins => 'بانتظار موافقة المشرفَين';
+
+  @override
+  String get moveSentBody =>
+      'يجب أن يوافق المشرفان معًا. حتى ذلك الحين تبقى هنا ولا يتغير شيء.';
+
+  @override
+  String get buildSetup => 'إنشاء تجهيزة للحصان';
+
+  @override
+  String get edited => 'مُعدّل';
+
+  @override
+  String get theDefault => 'الافتراضي';
+
+  @override
+  String get undo => 'تراجع';
+
+  @override
+  String get makeDefault => 'اجعله الافتراضي';
+
+  @override
+  String get seeWhatChanged => 'شاهد ما تغيّر آخر مرة';
+
+  @override
+  String get addDocument => 'إضافة مستند';
+
+  @override
+  String get editChart => 'تعديل الجدول';
+
+  @override
+  String get tackBoxIntro =>
+      'كل ما هنا يمكن تسميته في جدول، حتى يجهّز السائس العدّة الصحيحة.';
+
+  @override
+  String get setupsIntro => 'اختر نشاطًا فتُملأ العدّة المعتادة له تلقائيًا.';
+
+  @override
+  String get setupDirtyNote =>
+      'لقد غيّرت هذا عن الافتراضي. اجعله الافتراضي الجديد أو تراجع.';
+
+  @override
+  String get saveToTackBox => 'حفظ في صندوق العدّة';
+
+  @override
+  String get setupChangedTitle => 'عدّة كيكي للتدريب المسطّح لم تكن الافتراضية';
+
+  @override
+  String get setupChangedBody =>
+      'غيّر توني شيئين أثناء الجلسة. أبقِ الافتراضي أو اجعل نسخته الجديدة هي الافتراضية.';
+
+  @override
+  String get makeFlatworkDefault => 'اجعلها افتراضية التدريب المسطّح';
+
+  @override
+  String get keepOldDefault => 'أبقِ الافتراضي القديم';
+
+  @override
+  String get nowTheDefault => 'أصبحت الافتراضية';
+
+  @override
+  String get keptOldDefault => 'تم الإبقاء على الافتراضي القديم';
+
+  @override
+  String get backToSetups => 'العودة إلى التجهيزات';
+
+  @override
+  String get doneLabel => 'تم';
 }

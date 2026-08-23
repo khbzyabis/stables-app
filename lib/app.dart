@@ -13,7 +13,18 @@ import 'features/auth/splash_screen.dart';
 import 'features/auth/verify_screen.dart';
 import 'features/home/home_screen.dart';
 import 'features/horses/add_horse_screen.dart';
+import 'features/horses/add_tack_item_screen.dart';
+import 'features/horses/documents_screen.dart';
+import 'features/horses/edit_horse_screen.dart';
+import 'features/horses/feed_chart_screen.dart';
+import 'features/horses/health_screen.dart';
 import 'features/horses/horse_profile_screen.dart';
+import 'features/horses/horse_record_screen.dart';
+import 'features/horses/progress_screen.dart';
+import 'features/horses/setup_changed_screen.dart';
+import 'features/horses/setups_screen.dart';
+import 'features/horses/tack_box_screen.dart';
+import 'features/horses/training_screen.dart';
 import 'features/schedule/add_activity_screen.dart';
 import 'features/schedule/month_screen.dart';
 import 'features/schedule/schedule_screen.dart';
@@ -111,6 +122,17 @@ class _MyStablesAppState extends State<MyStablesApp> {
                 HomeScreen.route: (_) => const HomeScreen(),
                 AddHorseScreen.route: (_) => const AddHorseScreen(),
                 HorseProfileScreen.route: (_) => const HorseProfileScreen(),
+                HorseRecordScreen.route: (_) => const HorseRecordScreen(),
+                TackBoxScreen.route: (_) => const TackBoxScreen(),
+                AddTackItemScreen.route: (_) => const AddTackItemScreen(),
+                SetupsScreen.route: (_) => const SetupsScreen(),
+                SetupChangedScreen.route: (_) => const SetupChangedScreen(),
+                HealthScreen.route: (_) => const HealthScreen(),
+                TrainingScreen.route: (_) => const TrainingScreen(),
+                FeedChartScreen.route: (_) => const FeedChartScreen(),
+                DocumentsScreen.route: (_) => const DocumentsScreen(),
+                ProgressScreen.route: (_) => const ProgressScreen(),
+                EditHorseScreen.route: (_) => const EditHorseScreen(),
                 ScheduleScreen.route: (_) => const ScheduleScreen(),
                 MonthScreen.route: (_) => const MonthScreen(),
                 AddActivityScreen.route: (_) => const AddActivityScreen(),
