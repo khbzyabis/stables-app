@@ -284,6 +284,47 @@ class SupabaseService {
         if (note != null && note.isNotEmpty) 'note': note,
       }).select().single();
 
+  // ---- Tack box & setups ----------------------------------------------
+  static Future<List<Map<String, dynamic>>> tackItems(String stableId) => _db
+      .from('tack_items')
+      .select()
+      .eq('stable_id', stableId)
+      .order('group_name')
+      .order('created_at');
+
+  static Future<Map<String, dynamic>> addTackItem({
+    required String stableId,
+    required String group,
+    required String name,
+    String? note,
+  }) =>
+      _db.from('tack_items').insert({
+        'stable_id': stableId,
+        'group_name': group,
+        'name': name,
+        if (note != null && note.isNotEmpty) 'note': note,
+      }).select().single();
+
+  static Future<List<Map<String, dynamic>>> horseSetups(String horseId) => _db
+      .from('horse_setups')
+      .select()
+      .eq('horse_id', horseId);
+
+  /// Create or update the setup for a horse + activity.
+  static Future<void> saveSetup({
+    required String horseId,
+    required String stableId,
+    required String activity,
+    required Map<String, String> slots,
+  }) =>
+      _db.from('horse_setups').upsert({
+        'horse_id': horseId,
+        'stable_id': stableId,
+        'activity': activity,
+        'slots': slots,
+        'updated_at': DateTime.now().toUtc().toIso8601String(),
+      }, onConflict: 'horse_id,activity');
+
   // ---- Notices (the board) --------------------------------------------
   static Future<List<Map<String, dynamic>>> notices(String stableId) => _db
       .from('notices')

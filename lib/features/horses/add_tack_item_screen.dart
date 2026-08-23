@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../data/horse_detail_data.dart';
+import '../../data/session.dart';
+import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
@@ -20,6 +22,46 @@ class AddTackItemScreen extends StatefulWidget {
 
 class _AddTackItemScreenState extends State<AddTackItemScreen> {
   String _group = 'Nosebands';
+  bool _busy = false;
+  final _name = TextEditingController();
+  final _note = TextEditingController();
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _note.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    final stableId = SessionScope.of(context).activeStableId;
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    final name = _name.text.trim();
+    if (name.isEmpty) {
+      messenger.showSnackBar(
+          const SnackBar(content: Text('Name the item.')));
+      return;
+    }
+    if (stableId == null) {
+      messenger.showSnackBar(
+          const SnackBar(content: Text('Create a stable first.')));
+      return;
+    }
+    setState(() => _busy = true);
+    try {
+      await SupabaseService.addTackItem(
+        stableId: stableId,
+        group: _group,
+        name: name,
+        note: _note.text.trim(),
+      );
+      navigator.pop();
+    } catch (e) {
+      if (mounted) setState(() => _busy = false);
+      messenger.showSnackBar(SnackBar(content: Text('Could not save: $e')));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +93,10 @@ class _AddTackItemScreenState extends State<AddTackItemScreen> {
               ],
             ),
             const SizedBox(height: 30),
-            AppField(label: l10n.nameIt, hintText: 'Grackle noseband'),
+            AppField(
+                label: l10n.nameIt,
+                controller: _name,
+                hintText: 'Grackle noseband'),
             const SizedBox(height: 28),
             Row(
               children: [
@@ -84,11 +129,13 @@ class _AddTackItemScreenState extends State<AddTackItemScreen> {
             ),
             const SizedBox(height: 28),
             AppField(
-                label: l10n.noteIfAny, hintText: 'Size, colour, where it hangs'),
+                label: l10n.noteIfAny,
+                controller: _note,
+                hintText: 'Size, colour, where it hangs'),
             const SizedBox(height: 34),
             AppButton(
-              label: l10n.saveToTackBox,
-              onPressed: () => Navigator.of(context).maybePop(),
+              label: _busy ? 'Saving…' : l10n.saveToTackBox,
+              onPressed: _busy ? null : _save,
             ),
           ],
         ),

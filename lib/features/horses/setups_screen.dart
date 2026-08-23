@@ -1,135 +1,195 @@
 import 'package:flutter/material.dart';
 
-import '../../data/horse_detail_data.dart';
-import '../../l10n/app_localizations.dart';
+import '../../data/supabase_service.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/app_tag.dart';
 import '../../widgets/hairline.dart';
 import '../auth/back_link.dart';
-import 'setup_changed_screen.dart';
 
-/// Screen 22 — a horse's setups, one per activity. Pick an activity and its
-/// usual kit fills in; change a slot and the app offers to make it the default.
+/// Screen 22 — a horse's setups, one per activity. Slots are filled from the
+/// stable's tack box; save makes the choice the default for that activity.
 class SetupsScreen extends StatefulWidget {
   const SetupsScreen({super.key});
   static const route = '/setups';
+
+  static const activities = ['Flatwork', 'Jumping', 'Hacking', 'Lunging'];
+  static const slots = <(String, String, String)>[
+    ('bridle', 'Bridle', 'Bridles'),
+    ('noseband', 'Noseband', 'Nosebands'),
+    ('bit', 'Bit', 'Bits'),
+    ('reins', 'Reins', 'Reins'),
+    ('saddle', 'Saddle', 'Saddles and girths'),
+    ('boots', 'Boots', 'Boots and bandages'),
+  ];
 
   @override
   State<SetupsScreen> createState() => _SetupsScreenState();
 }
 
 class _SetupsScreenState extends State<SetupsScreen> {
+  Map<String, dynamic> _horse = const {};
+  Future<void>? _future;
+
   String _activity = 'Flatwork';
   String? _openSlot;
-  late Map<String, String> _values = _defaultsFor(_activity);
+  bool _busy = false;
 
-  Map<String, String> _defaultsFor(String a) =>
-      Map<String, String>.from(HorseDetailData.setupDefaults[a]!);
+  // group name -> list of tack item names
+  final Map<String, List<String>> _tackByGroup = {};
+  // activity -> saved slots
+  final Map<String, Map<String, String>> _saved = {};
+  // current editing values for the selected activity
+  Map<String, String> _values = {};
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _horse = (ModalRoute.of(context)?.settings.arguments
+            as Map<String, dynamic>?) ??
+        const {};
+    _future ??= _load();
+  }
+
+  Future<void> _load() async {
+    final stableId = _horse['stable_id'] as String?;
+    final horseId = _horse['id'] as String?;
+    if (stableId == null || horseId == null) return;
+    final tack = await SupabaseService.tackItems(stableId);
+    _tackByGroup.clear();
+    for (final t in tack) {
+      (_tackByGroup[t['group_name'] as String? ?? 'Other'] ??= [])
+          .add(t['name'] as String? ?? '');
+    }
+    final setups = await SupabaseService.horseSetups(horseId);
+    _saved.clear();
+    for (final s in setups) {
+      final slots = (s['slots'] as Map?)?.map(
+              (k, v) => MapEntry(k.toString(), v.toString())) ??
+          <String, String>{};
+      _saved[s['activity'] as String] = slots;
+    }
+    _values = Map<String, String>.from(_saved[_activity] ?? {});
+  }
 
   bool get _dirty {
-    final def = HorseDetailData.setupDefaults[_activity]!;
-    return _values.entries.any((e) => def[e.key] != e.value);
+    final saved = _saved[_activity] ?? const {};
+    if (_values.length != saved.length) return true;
+    for (final e in _values.entries) {
+      if (saved[e.key] != e.value) return true;
+    }
+    return false;
   }
 
   void _pickActivity(String a) => setState(() {
         _activity = a;
-        _values = _defaultsFor(a);
+        _values = Map<String, String>.from(_saved[a] ?? {});
         _openSlot = null;
       });
 
+  Future<void> _save() async {
+    final stableId = _horse['stable_id'] as String?;
+    final horseId = _horse['id'] as String?;
+    if (stableId == null || horseId == null) return;
+    setState(() => _busy = true);
+    try {
+      await SupabaseService.saveSetup(
+        horseId: horseId,
+        stableId: stableId,
+        activity: _activity,
+        slots: _values,
+      );
+      setState(() => _saved[_activity] = Map<String, String>.from(_values));
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Could not save: $e')));
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final l10n = AppL10n.of(context);
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
         bottom: false,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(32, 84, 32, 44),
-          children: [
-            const BackLink(label: 'Kiki'),
-            const SizedBox(height: 20),
-            Text(l10n.setups, style: AppText.heading(40, height: 1)),
-            const SizedBox(height: 12),
-            Text(l10n.setupsIntro,
-                style: AppText.body(17, height: 1.5, color: AppColors.ink(0.65))),
-            const SizedBox(height: 26),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
+        child: FutureBuilder<void>(
+          future: _future,
+          builder: (context, snap) {
+            if (snap.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final noTack = _tackByGroup.isEmpty;
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(32, 84, 32, 44),
               children: [
-                for (final a in HorseDetailData.activities)
-                  _Chip(
-                    label: a,
-                    selected: a == _activity,
-                    onTap: () => _pickActivity(a),
+                BackLink(label: (_horse['name'] as String?) ?? 'Horse'),
+                const SizedBox(height: 20),
+                Text('Setups', style: AppText.heading(40, height: 1)),
+                const SizedBox(height: 12),
+                Text('Pick an activity and set the kit for it. Fills from the tack box.',
+                    style: AppText.body(17,
+                        height: 1.5, color: AppColors.ink(0.65))),
+                const SizedBox(height: 26),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final a in SetupsScreen.activities)
+                      _Chip(
+                        label: a,
+                        selected: a == _activity,
+                        onTap: () => _pickActivity(a),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 22),
+                if (noTack)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                        'Add tack to the tack box first — then you can pick it for each slot here.',
+                        style: AppText.body(15,
+                            height: 1.5, color: AppColors.ink(0.6))),
                   ),
-              ],
-            ),
-            const SizedBox(height: 26),
-            Row(
-              children: [
-                AppTag(_dirty ? l10n.edited : l10n.theDefault,
-                    tone: _dirty ? TagTone.accent : TagTone.sage),
-                const SizedBox(width: 10),
-                Text(HorseDetailData.setupUsedNotes[_activity]!,
-                    style: AppText.body(14, color: AppColors.ink(0.5))),
-              ],
-            ),
-            const SizedBox(height: 14),
-            const Hairline(),
-            for (final slot in HorseDetailData.slots) ...[
-              _SlotTile(
-                slot: slot,
-                value: _values[slot.key]!,
-                open: _openSlot == slot.key,
-                onToggle: () => setState(() =>
-                    _openSlot = _openSlot == slot.key ? null : slot.key),
-                onPick: (v) => setState(() {
-                  _values[slot.key] = v;
-                  _openSlot = null;
-                }),
-              ),
-              const Hairline(),
-            ],
-            const SizedBox(height: 24),
-            if (_dirty) ...[
-              Text(l10n.setupDirtyNote,
-                  style:
-                      AppText.body(16, height: 1.5, color: AppColors.ink(0.7))),
-              const SizedBox(height: 14),
-              Row(
-                children: [
-                  AppButton(
-                    label: l10n.makeDefault,
-                    block: false,
-                    minHeight: 50,
-                    fontSize: 16,
-                    onPressed: () =>
-                        setState(() => _values = _defaultsFor(_activity)),
+                Row(
+                  children: [
+                    AppTag(_saved.containsKey(_activity) ? 'Saved' : 'Not set',
+                        tone: _saved.containsKey(_activity)
+                            ? TagTone.sage
+                            : TagTone.neutral),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                const Hairline(),
+                for (final (key, label, group) in SetupsScreen.slots) ...[
+                  _SlotTile(
+                    label: label,
+                    value: _values[key] ?? '—',
+                    open: _openSlot == key,
+                    options: [..._tackByGroup[group] ?? const [], 'None'],
+                    onToggle: () =>
+                        setState(() => _openSlot = _openSlot == key ? null : key),
+                    onPick: (v) => setState(() {
+                      _values[key] = v;
+                      _openSlot = null;
+                    }),
                   ),
-                  const SizedBox(width: 10),
-                  AppButton(
-                    label: l10n.undo,
-                    variant: AppButtonVariant.secondary,
-                    block: false,
-                    minHeight: 50,
-                    fontSize: 16,
-                    onPressed: () =>
-                        setState(() => _values = _defaultsFor(_activity)),
-                  ),
+                  const Hairline(),
                 ],
-              ),
-            ] else
-              GestureDetector(
-                onTap: () =>
-                    Navigator.of(context).pushNamed(SetupChangedScreen.route),
-                child: Text(l10n.seeWhatChanged,
-                    style: AppText.body(16, color: AppColors.accent700)),
-              ),
-          ],
+                const SizedBox(height: 22),
+                if (_dirty)
+                  AppButton(
+                    label: _busy ? 'Saving…' : 'Make this the default',
+                    onPressed: _busy ? null : _save,
+                  ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -138,21 +198,22 @@ class _SetupsScreenState extends State<SetupsScreen> {
 
 class _SlotTile extends StatelessWidget {
   const _SlotTile({
-    required this.slot,
+    required this.label,
     required this.value,
     required this.open,
+    required this.options,
     required this.onToggle,
     required this.onPick,
   });
-  final SetupSlot slot;
+  final String label;
   final String value;
   final bool open;
+  final List<String> options;
   final VoidCallback onToggle;
   final ValueChanged<String> onPick;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppL10n.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -163,12 +224,11 @@ class _SlotTile extends StatelessWidget {
             child: Row(
               children: [
                 SizedBox(
-                  width: 96,
-                  child: Text(slot.label.toUpperCase(),
-                      style: AppText.eyebrow()),
-                ),
+                    width: 96,
+                    child:
+                        Text(label.toUpperCase(), style: AppText.eyebrow())),
                 Expanded(child: Text(value, style: AppText.body(17))),
-                Text(open ? l10n.doneLabel : l10n.change,
+                Text(open ? 'Done' : 'Change',
                     style: AppText.body(15, color: AppColors.accent700)),
               ],
             ),
@@ -181,7 +241,7 @@ class _SlotTile extends StatelessWidget {
               spacing: 8,
               runSpacing: 8,
               children: [
-                for (final o in slot.options)
+                for (final o in options)
                   _Chip(
                     label: o,
                     selected: o == value,
