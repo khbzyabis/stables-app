@@ -76,6 +76,57 @@ class SupabaseService {
     return stable;
   }
 
+  // ---- Members & invites ----------------------------------------------
+  /// Everyone in a stable, with their role and display name.
+  static Future<List<Map<String, dynamic>>> members(String stableId) async {
+    final rows = await _db
+        .from('memberships')
+        .select('role, user_id')
+        .eq('stable_id', stableId)
+        .order('created_at');
+    final ids = rows.map((r) => r['user_id'] as String).toList();
+    final profiles = ids.isEmpty
+        ? const <Map<String, dynamic>>[]
+        : await _db.from('profiles').select('id, name, email').inFilter('id', ids);
+    final byId = {for (final p in profiles) p['id'] as String: p};
+    return rows.map<Map<String, dynamic>>((r) {
+      final p = byId[r['user_id']];
+      final name = (p?['name'] as String?)?.trim();
+      final email = p?['email'] as String?;
+      return {
+        'user_id': r['user_id'],
+        'role': r['role'],
+        'name': (name != null && name.isNotEmpty)
+            ? name
+            : (email?.split('@').first ?? 'Member'),
+        'email': email,
+        'is_me': r['user_id'] == currentUser?.id,
+      };
+    }).toList();
+  }
+
+  /// Create a shareable invite for a stable and return its code.
+  static Future<String> createInvite({
+    required String stableId,
+    required String role,
+    required String code,
+  }) async {
+    await _db.from('invites').insert({
+      'stable_id': stableId,
+      'role': role,
+      'code': code.toUpperCase(),
+    });
+    return code.toUpperCase();
+  }
+
+  /// Join a stable using an invite code. Returns the stable row.
+  static Future<Map<String, dynamic>> redeemInvite(String code) async {
+    final row = await _db.rpc('redeem_invite', params: {'invite_code': code});
+    // rpc returns the stable record (a single row).
+    if (row is List && row.isNotEmpty) return Map<String, dynamic>.from(row.first);
+    return Map<String, dynamic>.from(row as Map);
+  }
+
   // ---- Horses ----------------------------------------------------------
   static Future<List<Map<String, dynamic>>> horses(String stableId) => _db
       .from('horses')

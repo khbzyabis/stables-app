@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../data/session.dart';
+import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
@@ -39,30 +40,49 @@ class _CreateStableScreenState extends State<CreateStableScreen> {
   }
 
   Future<void> _submit() async {
+    final session = SessionScope.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
     if (_setup == _Setup.join) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text(
-            'Joining by code is coming soon. For now, ask a stable admin to '
-            'invite you.'),
-      ));
+      final code = _inviteCode.text.trim();
+      if (code.isEmpty) {
+        messenger.showSnackBar(
+            const SnackBar(content: Text('Enter the invite code.')));
+        return;
+      }
+      setState(() => _busy = true);
+      try {
+        final stable = await SupabaseService.redeemInvite(code);
+        await session.refresh();
+        session.setActive(stable['id'] as String);
+        if (!mounted) return;
+        navigator.pushNamedAndRemoveUntil(HomeScreen.route, (r) => false);
+      } catch (e) {
+        if (mounted) {
+          messenger.showSnackBar(SnackBar(content: Text(_clean(e))));
+        }
+      } finally {
+        if (mounted) setState(() => _busy = false);
+      }
       return;
     }
+
     final name = _stableName.text.trim();
     if (name.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         const SnackBar(content: Text('Give your stable a name.')),
       );
       return;
     }
     setState(() => _busy = true);
     try {
-      await SessionScope.of(context).createStable(name, null);
+      await session.createStable(name, null);
       if (!mounted) return;
-      Navigator.of(context)
-          .pushNamedAndRemoveUntil(HomeScreen.route, (r) => false);
+      navigator.pushNamedAndRemoveUntil(HomeScreen.route, (r) => false);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        messenger.showSnackBar(
           SnackBar(content: Text('Could not create the stable: $e')),
         );
       }
@@ -70,6 +90,9 @@ class _CreateStableScreenState extends State<CreateStableScreen> {
       if (mounted) setState(() => _busy = false);
     }
   }
+
+  String _clean(Object e) =>
+      e.toString().replaceFirst('PostgrestException(message: ', '').split(',').first;
 
   @override
   Widget build(BuildContext context) {
