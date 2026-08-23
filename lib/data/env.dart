@@ -20,7 +20,8 @@ class Env {
   /// SENTRY_DSN=...) to turn it on.
   static const sentryDsn = String.fromEnvironment(
     'SENTRY_DSN',
-    defaultValue: '',
+    defaultValue:
+        'https://beda0658f93be374d4bfdf7bc813f39b@o4511960564957184.ingest.de.sentry.io/4511960964333648',
   );
 
   static bool get sentryEnabled => sentryDsn.isNotEmpty;
