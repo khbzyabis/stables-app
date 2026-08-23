@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../data/errors.dart';
 
 import '../../data/session.dart';
 import '../../data/supabase_service.dart';
@@ -41,6 +42,7 @@ class _GroomDayScreenState extends State<GroomDayScreen> {
     try {
       await SupabaseService.setTaskDone(id, next);
     } catch (e) {
+      AppErrors.report(e);
       setState(() => task['done'] = !next); // revert
       if (mounted) {
         ScaffoldMessenger.of(context)

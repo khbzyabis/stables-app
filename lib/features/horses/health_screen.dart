@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../data/errors.dart';
 
 import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
@@ -79,6 +80,7 @@ class _HealthScreenState extends State<HealthScreen> {
       );
       _reload();
     } catch (e) {
+      AppErrors.report(e);
       if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Could not save: $e')));

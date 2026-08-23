@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import '../../data/errors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/supabase_service.dart';
@@ -67,6 +68,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       );
       _reload();
     } catch (e) {
+      AppErrors.report(e);
       messenger.showSnackBar(SnackBar(content: Text('Upload failed: $e')));
     } finally {
       if (mounted) setState(() => _uploading = false);
@@ -79,6 +81,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       final url = await SupabaseService.documentUrl(path);
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     } catch (e) {
+      AppErrors.report(e);
       messenger.showSnackBar(SnackBar(content: Text('Could not open: $e')));
     }
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../data/errors.dart';
 
 import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
@@ -70,6 +71,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
       );
       _reload();
     } catch (e) {
+      AppErrors.report(e);
       if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Could not save: $e')));

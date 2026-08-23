@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../data/errors.dart';
 
 import '../../data/supabase_service.dart';
 import '../../theme/app_theme.dart';
@@ -102,6 +103,7 @@ class _SetupsScreenState extends State<SetupsScreen> {
       );
       setState(() => _saved[_activity] = Map<String, String>.from(_values));
     } catch (e) {
+      AppErrors.report(e);
       if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Could not save: $e')));

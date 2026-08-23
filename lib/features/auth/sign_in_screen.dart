@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../data/errors.dart';
 
 import '../../data/session.dart';
 import '../../data/supabase_service.dart';
@@ -59,6 +60,7 @@ class _SignInScreenState extends State<SignInScreen> {
         (r) => false,
       );
     } catch (e) {
+      AppErrors.report(e);
       _toast(_friendly(e));
     } finally {
       if (mounted) setState(() => _busy = false);

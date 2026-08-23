@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../data/errors.dart';
 
 import '../../data/session.dart';
 import '../../data/supabase_service.dart';
@@ -59,6 +60,7 @@ class _CreateStableScreenState extends State<CreateStableScreen> {
         if (!mounted) return;
         navigator.pushNamedAndRemoveUntil(HomeScreen.route, (r) => false);
       } catch (e) {
+      AppErrors.report(e);
         if (mounted) {
           messenger.showSnackBar(SnackBar(content: Text(_clean(e))));
         }
@@ -81,6 +83,7 @@ class _CreateStableScreenState extends State<CreateStableScreen> {
       if (!mounted) return;
       navigator.pushNamedAndRemoveUntil(HomeScreen.route, (r) => false);
     } catch (e) {
+      AppErrors.report(e);
       if (mounted) {
         messenger.showSnackBar(
           SnackBar(content: Text('Could not create the stable: $e')),

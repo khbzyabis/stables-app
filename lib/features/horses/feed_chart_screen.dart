@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../data/errors.dart';
 
 import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
@@ -65,6 +66,7 @@ class _FeedChartScreenState extends State<FeedChartScreen> {
       setState(() => _time = result['time'] ?? _time);
       _reload();
     } catch (e) {
+      AppErrors.report(e);
       if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Could not save: $e')));

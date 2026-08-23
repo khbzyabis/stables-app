@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../data/errors.dart';
 
 import '../../data/session.dart';
 import '../../data/supabase_service.dart';
@@ -61,6 +62,7 @@ class _AssignTaskScreenState extends State<AssignTaskScreen> {
       );
       navigator.pop();
     } catch (e) {
+      AppErrors.report(e);
       if (mounted) setState(() => _busy = false);
       messenger.showSnackBar(SnackBar(content: Text('Could not save: $e')));
     }

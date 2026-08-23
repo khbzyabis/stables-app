@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../data/errors.dart';
 
 import '../../data/comms_data.dart';
 import '../../data/session.dart';
@@ -54,6 +55,7 @@ class _PostNoticeScreenState extends State<PostNoticeScreen> {
           stableId: stableId, body: body, pinned: _pin);
       navigator.pop();
     } catch (e) {
+      AppErrors.report(e);
       if (mounted) setState(() => _busy = false);
       messenger.showSnackBar(SnackBar(content: Text('Could not post: $e')));
     }

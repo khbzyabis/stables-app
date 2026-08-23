@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../data/errors.dart';
 import 'package:intl/intl.dart';
 
 import '../../data/session.dart';
@@ -79,6 +80,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
       );
       navigator.pop();
     } catch (e) {
+      AppErrors.report(e);
       if (mounted) setState(() => _busy = false);
       messenger.showSnackBar(SnackBar(content: Text('Could not save: $e')));
     }

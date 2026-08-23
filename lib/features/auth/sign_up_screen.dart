@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../data/errors.dart';
 
 import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
@@ -52,6 +53,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (!mounted) return;
       Navigator.of(context).pushNamed(VerifyScreen.route, arguments: email);
     } catch (e) {
+      AppErrors.report(e);
       _toast(_friendly(e));
     } finally {
       if (mounted) setState(() => _busy = false);

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import '../../data/errors.dart';
 import 'package:flutter/services.dart';
 
 import '../../data/people_data.dart';
@@ -50,6 +51,7 @@ class _InviteScreenState extends State<InviteScreen> {
           stableId: stableId, role: _role, code: code);
       setState(() => _code = code);
     } catch (e) {
+      AppErrors.report(e);
       messenger.showSnackBar(SnackBar(content: Text('Could not create: $e')));
     } finally {
       if (mounted) setState(() => _busy = false);

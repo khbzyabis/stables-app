@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../data/errors.dart';
 
 import '../../data/session.dart';
 import '../../data/supabase_service.dart';
@@ -88,6 +89,7 @@ class _RequestTransportScreenState extends State<RequestTransportScreen> {
       );
       navigator.pushReplacementNamed(TransportQuotesScreen.route);
     } catch (e) {
+      AppErrors.report(e);
       if (mounted) setState(() => _busy = false);
       messenger.showSnackBar(SnackBar(content: Text('Could not save: $e')));
     }

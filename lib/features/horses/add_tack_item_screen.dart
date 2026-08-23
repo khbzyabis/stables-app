@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../data/errors.dart';
 
 import '../../data/horse_detail_data.dart';
 import '../../data/session.dart';
@@ -58,6 +59,7 @@ class _AddTackItemScreenState extends State<AddTackItemScreen> {
       );
       navigator.pop();
     } catch (e) {
+      AppErrors.report(e);
       if (mounted) setState(() => _busy = false);
       messenger.showSnackBar(SnackBar(content: Text('Could not save: $e')));
     }

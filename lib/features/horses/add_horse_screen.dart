@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../data/errors.dart';
 
 import '../../data/session.dart';
 import '../../data/supabase_service.dart';
@@ -81,6 +82,7 @@ class _AddHorseScreenState extends State<AddHorseScreen> {
       );
       navigator.pop();
     } catch (e) {
+      AppErrors.report(e);
       if (mounted) setState(() => _saving = false);
       messenger.showSnackBar(
         SnackBar(content: Text("Couldn't save — $e")),
