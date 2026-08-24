@@ -127,8 +127,9 @@ begin
   select coalesce(require_approval, false) into needs_ok
   from public.stable_features where stable_id = inv.stable_id;
 
-  new_role := case when inv.role in ('Rider', '') or inv.role is null
-                   then 'groom' else lower(inv.role) end;
+  -- Store exactly the role the invite carries (lowercased); default to groom
+  -- only when the invite has no role at all.
+  new_role := coalesce(nullif(lower(trim(inv.role)), ''), 'groom');
   new_status := case when coalesce(needs_ok, false) then 'pending' else 'active' end;
 
   insert into public.memberships (stable_id, user_id, role, status)

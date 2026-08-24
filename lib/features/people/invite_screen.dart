@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import '../../data/errors.dart';
 import 'package:flutter/services.dart';
 
-import '../../data/people_data.dart';
 import '../../data/session.dart';
 import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
@@ -25,9 +24,12 @@ class InviteScreen extends StatefulWidget {
 }
 
 class _InviteScreenState extends State<InviteScreen> {
-  String _role = 'Rider';
+  String _role = 'groom';
   String? _code;
   bool _busy = false;
+
+  String _cap(String s) =>
+      s.isEmpty ? s : s[0].toUpperCase() + s.substring(1);
 
   String _makeCode() {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -83,7 +85,7 @@ class _InviteScreenState extends State<InviteScreen> {
               spacing: 8,
               runSpacing: 8,
               children: [
-                for (final r in PeopleData.roles)
+                for (final r in SupabaseService.invitableRoles)
                   GestureDetector(
                     onTap: () => setState(() {
                       _role = r;
@@ -99,7 +101,7 @@ class _InviteScreenState extends State<InviteScreen> {
                             color:
                                 r == _role ? AppColors.accent : AppColors.divider),
                       ),
-                      child: Text(r,
+                      child: Text(_cap(r),
                           style: AppText.body(14,
                               color: r == _role ? AppColors.bg : AppColors.text)),
                     ),
@@ -114,7 +116,7 @@ class _InviteScreenState extends State<InviteScreen> {
               ),
               const SizedBox(height: 14),
               Text(
-                'The code carries the $_role role. Share it with the person you '
+                'The code carries the ${_cap(_role)} role. Share it with the person you '
                 'want to join — they enter it when they sign in.',
                 style: AppText.body(15, height: 1.5, color: AppColors.ink(0.6)),
               ),

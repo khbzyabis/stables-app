@@ -67,9 +67,38 @@ class _CreateStableScreenState extends State<CreateStableScreen> {
       try {
         final stable = await SupabaseService.redeemInvite(code);
         await session.refresh();
-        session.setActive(stable['id'] as String);
+        final joinedId = stable['id'] as String?;
+        final isActive =
+            joinedId != null && session.stables.any((s) => s['id'] == joinedId);
         if (!mounted) return;
-        navigator.pushNamedAndRemoveUntil(HomeScreen.route, (r) => false);
+        if (isActive) {
+          session.setActive(joinedId);
+          navigator.pushNamedAndRemoveUntil(HomeScreen.route, (r) => false);
+        } else {
+          // Joined but pending an admin's approval — the stable stays hidden
+          // until then, so tell them clearly instead of dropping to create.
+          await showDialog<void>(
+            context: context,
+            builder: (_) => AlertDialog(
+              backgroundColor: AppColors.bg,
+              title: Text('Request sent', style: AppText.heading(22)),
+              content: Text(
+                'You\'ve asked to join ${stable['name'] ?? 'the stable'}. '
+                'An owner or manager needs to approve you — it will appear '
+                'here once they do.',
+                style: AppText.body(16, height: 1.5),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('OK',
+                      style:
+                          AppText.heading(16, color: AppColors.accent700)),
+                ),
+              ],
+            ),
+          );
+        }
       } catch (e) {
       AppErrors.report(e);
         if (mounted) {

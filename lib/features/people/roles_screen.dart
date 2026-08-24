@@ -42,6 +42,13 @@ class RolesScreen extends StatelessWidget {
       'Daily care notes and tasks for every horse. No admin screens.',
     ),
     (
+      'Rider',
+      'Their horses',
+      TagTone.neutral,
+      'Rides and logs training for the horses they’re assigned. Reads the '
+          'schedule and noticeboard.',
+    ),
+    (
       'Viewer',
       'Read only',
       TagTone.neutral,

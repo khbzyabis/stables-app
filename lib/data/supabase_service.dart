@@ -124,8 +124,24 @@ class SupabaseService {
     }).toList();
   }
 
-  /// The five roles a member can hold, lightest to fullest access.
-  static const roles = <String>['viewer', 'groom', 'vet', 'manager', 'owner'];
+  /// The roles a member can hold, lightest to fullest access.
+  static const roles = <String>[
+    'viewer',
+    'rider',
+    'groom',
+    'vet',
+    'manager',
+    'owner',
+  ];
+
+  /// Roles you can invite someone in as (everything except owner).
+  static const invitableRoles = <String>[
+    'manager',
+    'vet',
+    'groom',
+    'rider',
+    'viewer',
+  ];
 
   /// Change a member's role. Only owners/managers can (enforced by RLS).
   static Future<void> updateMemberRole(String membershipId, String role) => _db
