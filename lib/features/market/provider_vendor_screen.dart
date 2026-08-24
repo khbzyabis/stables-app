@@ -9,6 +9,8 @@ import '../../widgets/app_button.dart';
 import '../../widgets/app_field.dart';
 import '../../widgets/app_tag.dart';
 import '../../widgets/hairline.dart';
+import '../../widgets/photo_placeholder.dart';
+import '../../widgets/photo_picker.dart';
 import '../auth/back_link.dart';
 
 /// Manage one shop: its products (add / in-stock / remove) and the orders that
@@ -236,6 +238,12 @@ class _ProductRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 14),
       child: Row(
         children: [
+          PhotoPlaceholder(
+              size: 48,
+              circle: false,
+              radius: 12,
+              url: product['image_url'] as String?),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -358,7 +366,19 @@ class _NewProductSheetState extends State<_NewProductSheet> {
   final _unit = TextEditingController();
   final _desc = TextEditingController();
   String _category = 'Feed';
+  String? _imageUrl;
+  bool _imageBusy = false;
   bool _saving = false;
+
+  Future<void> _pickPhoto() async {
+    setState(() => _imageBusy = true);
+    final url = await pickAndUploadPhoto(context, 'products');
+    if (!mounted) return;
+    setState(() {
+      _imageBusy = false;
+      if (url != null) _imageUrl = url;
+    });
+  }
 
   @override
   void dispose() {
@@ -385,6 +405,7 @@ class _NewProductSheetState extends State<_NewProductSheet> {
         category: _category,
         unit: _unit.text.trim(),
         description: _desc.text.trim(),
+        imageUrl: _imageUrl,
       );
       if (mounted) Navigator.of(context).pop(true);
     } catch (e) {
@@ -411,6 +432,15 @@ class _NewProductSheetState extends State<_NewProductSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('New product', style: AppText.heading(24)),
+          const SizedBox(height: 18),
+          PhotoField(
+            url: _imageUrl,
+            busy: _imageBusy,
+            onPick: _pickPhoto,
+            size: 64,
+            circle: false,
+            label: 'Add photo',
+          ),
           const SizedBox(height: 18),
           AppField(label: 'Name', controller: _name),
           const SizedBox(height: 16),

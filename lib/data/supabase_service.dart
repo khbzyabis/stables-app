@@ -243,6 +243,7 @@ class SupabaseService {
     String? height,
     String? box,
     String? notes,
+    String? photoUrl,
   }) =>
       _db.from('horses').insert({
         'stable_id': stableId,
@@ -253,6 +254,7 @@ class SupabaseService {
         if (height != null && height.isNotEmpty) 'height': height,
         if (box != null && box.isNotEmpty) 'box': box,
         if (notes != null && notes.isNotEmpty) 'notes': notes,
+        'photo_url': ?photoUrl,
       }).select().single().then((row) {
         Analytics.capture('horse_added', {'stable_id': stableId});
         return row;
@@ -269,6 +271,7 @@ class SupabaseService {
     String? box,
     String? notes,
     String? status,
+    String? photoUrl,
   }) =>
       _db.from('horses').update({
         'name': ?name,
@@ -279,6 +282,7 @@ class SupabaseService {
         'box': ?box,
         'notes': ?notes,
         'status': ?status,
+        'photo_url': ?photoUrl,
       }).eq('id', id).select().single();
 
   /// Remove a horse from the stable.
@@ -515,6 +519,23 @@ class SupabaseService {
   static Future<String> documentUrl(String storagePath) =>
       _db.storage.from(_docsBucket).createSignedUrl(storagePath, 3600);
 
+  // ---- Photos ----------------------------------------------------------
+  static const _photosBucket = 'photos';
+
+  /// Upload image bytes to the public photos bucket and return a public URL.
+  /// [folder] keeps things tidy (e.g. 'horses', 'products').
+  static Future<String> uploadPhoto({
+    required String folder,
+    required String fileName,
+    required Uint8List bytes,
+  }) async {
+    final safe = fileName.replaceAll(RegExp(r'[^A-Za-z0-9._-]'), '_');
+    final path = '$folder/${DateTime.now().microsecondsSinceEpoch}_$safe';
+    await _db.storage.from(_photosBucket).uploadBinary(path, bytes,
+        fileOptions: const FileOptions(upsert: false, contentType: 'image/*'));
+    return _db.storage.from(_photosBucket).getPublicUrl(path);
+  }
+
   // ---- Transport requests ---------------------------------------------
   static Future<List<Map<String, dynamic>>> transportRequests(
           String stableId) =>
@@ -687,6 +708,7 @@ class SupabaseService {
     required String category,
     String? unit,
     String? description,
+    String? imageUrl,
   }) =>
       _db.from('products').insert({
         'vendor_id': vendorId,
@@ -695,6 +717,7 @@ class SupabaseService {
         'category': category,
         'unit': ?unit,
         'description': ?description,
+        'image_url': ?imageUrl,
       }).select().single();
 
   static Future<void> setProductStock(String productId, bool inStock) => _db
@@ -717,4 +740,61 @@ class SupabaseService {
       .from('orders')
       .update({'status': status})
       .eq('id', orderId);
+
+  // ---- Shows ----------------------------------------------------------
+  static Future<List<Map<String, dynamic>>> shows(String stableId) => _db
+      .from('shows')
+      .select()
+      .eq('stable_id', stableId)
+      .order('on_date', ascending: true);
+
+  static Future<Map<String, dynamic>> addShow({
+    required String stableId,
+    required String name,
+    String? venue,
+    String? discipline,
+    String? onDate, // ISO yyyy-MM-dd
+    String? state,
+  }) =>
+      _db.from('shows').insert({
+        'stable_id': stableId,
+        'name': name,
+        'venue': ?venue,
+        'discipline': ?discipline,
+        'on_date': ?onDate,
+        'state': ?state,
+      }).select().single();
+
+  static Future<void> deleteShow(String id) =>
+      _db.from('shows').delete().eq('id', id);
+
+  /// Entries for a show, ordered as a start list (by time then created).
+  static Future<List<Map<String, dynamic>>> showEntries(String showId) => _db
+      .from('show_entries')
+      .select()
+      .eq('show_id', showId)
+      .order('at_time', ascending: true, nullsFirst: false)
+      .order('created_at');
+
+  static Future<Map<String, dynamic>> addShowEntry({
+    required String showId,
+    required String horseName,
+    String? horseId,
+    String? riderName,
+    String? className,
+    String? atTime,
+  }) =>
+      _db.from('show_entries').insert({
+        'show_id': showId,
+        'horse_name': horseName,
+        'horse_id': ?horseId,
+        'rider_name': ?riderName,
+        'class_name': ?className,
+        'at_time': ?atTime,
+      }).select().single();
+
+  static Future<void> withdrawEntry(String id) => _db
+      .from('show_entries')
+      .update({'status': 'withdrawn'})
+      .eq('id', id);
 }

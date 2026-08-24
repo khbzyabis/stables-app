@@ -215,7 +215,11 @@ class _ItemRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 16),
         child: Row(
           children: [
-            const PhotoPlaceholder(size: 64, circle: false, radius: 16),
+            PhotoPlaceholder(
+                size: 64,
+                circle: false,
+                radius: 16,
+                url: item['image_url'] as String?),
             const SizedBox(width: 15),
             Expanded(
               child: Column(

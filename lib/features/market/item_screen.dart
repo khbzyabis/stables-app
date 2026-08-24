@@ -72,7 +72,11 @@ class _ItemScreenState extends State<ItemScreen> {
             ),
             Container(
               margin: const EdgeInsets.fromLTRB(32, 18, 32, 0),
-              child: const PhotoPlaceholder(size: 230, circle: false, radius: 26),
+              child: PhotoPlaceholder(
+                  size: 230,
+                  circle: false,
+                  radius: 26,
+                  url: p['image_url'] as String?),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(32, 22, 32, 40),

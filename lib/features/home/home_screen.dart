@@ -265,7 +265,7 @@ class _RealHorseRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Row(
           children: [
-            const PhotoPlaceholder(size: 66),
+            PhotoPlaceholder(size: 66, url: horse['photo_url'] as String?),
             const SizedBox(width: 16),
             Expanded(
               child: Column(

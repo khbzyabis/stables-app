@@ -10,6 +10,7 @@ import '../../widgets/app_button.dart';
 import '../../widgets/app_field.dart';
 import '../../widgets/app_screen.dart';
 import '../../widgets/hairline.dart';
+import '../../widgets/photo_picker.dart';
 import '../auth/back_link.dart';
 
 /// Screen 07 — Add a horse. Deliberately minimal: a name is all that is
@@ -48,9 +49,21 @@ class _AddHorseScreenState extends State<AddHorseScreen> {
   }
 
   bool _saving = false;
+  String? _photoUrl;
+  bool _photoBusy = false;
 
   TextEditingController _controllerFor(String key) =>
       _detailControllers.putIfAbsent(key, TextEditingController.new);
+
+  Future<void> _pickPhoto() async {
+    setState(() => _photoBusy = true);
+    final url = await pickAndUploadPhoto(context, 'horses');
+    if (!mounted) return;
+    setState(() {
+      _photoBusy = false;
+      if (url != null) _photoUrl = url;
+    });
+  }
 
   Future<void> _save() async {
     final stableId = SessionScope.of(context).activeStableId;
@@ -79,6 +92,7 @@ class _AddHorseScreenState extends State<AddHorseScreen> {
         height: v('height'),
         box: v('box'),
         notes: v('notes'),
+        photoUrl: _photoUrl,
       );
       navigator.pop();
     } catch (e) {
@@ -108,7 +122,12 @@ class _AddHorseScreenState extends State<AddHorseScreen> {
                 style: AppText.body(17, height: 1.5, color: AppColors.ink(0.65))),
           ),
           const SizedBox(height: 34),
-          _PhotoRow(l10n: l10n),
+          PhotoField(
+            url: _photoUrl,
+            busy: _photoBusy,
+            onPick: _pickPhoto,
+            label: l10n.addAPhoto,
+          ),
           const SizedBox(height: 34),
           AppField(label: l10n.labelName, controller: _name, hintText: l10n.nameHint),
           const SizedBox(height: 40),
@@ -138,40 +157,6 @@ class _AddHorseScreenState extends State<AddHorseScreen> {
               style: AppText.body(14, height: 1.5, color: AppColors.ink(0.55))),
         ],
       ),
-    );
-  }
-}
-
-class _PhotoRow extends StatelessWidget {
-  const _PhotoRow({required this.l10n});
-  final AppL10n l10n;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 88,
-          height: 88,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: AppColors.accent2400, width: 2),
-          ),
-          child: const Icon(Icons.photo_camera_outlined,
-              color: AppColors.accent2700, size: 26),
-        ),
-        const SizedBox(width: 18),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(l10n.addAPhoto,
-                style: AppText.heading(17, color: AppColors.accent700)),
-            const SizedBox(height: 4),
-            Text(l10n.optional,
-                style: AppText.body(14, color: AppColors.ink(0.5))),
-          ],
-        ),
-      ],
     );
   }
 }

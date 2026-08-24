@@ -9,6 +9,7 @@ import '../../widgets/app_button.dart';
 import '../../widgets/app_field.dart';
 import '../../widgets/app_tag.dart';
 import '../../widgets/hairline.dart';
+import '../../widgets/photo_picker.dart';
 import '../auth/back_link.dart';
 
 /// Screen 63 — edit a real horse: change details, flag as one-to-watch, or
@@ -31,6 +32,8 @@ class _EditHorseScreenState extends State<EditHorseScreen> {
   late final TextEditingController _box;
   late final TextEditingController _notes;
   late bool _watch;
+  String? _photoUrl;
+  bool _photoBusy = false;
   bool _saving = false;
   bool _removing = false;
   bool _initialised = false;
@@ -52,6 +55,17 @@ class _EditHorseScreenState extends State<EditHorseScreen> {
     _box = TextEditingController(text: v('box'));
     _notes = TextEditingController(text: v('notes'));
     _watch = (_horse['status'] as String?) == 'watch';
+    _photoUrl = _horse['photo_url'] as String?;
+  }
+
+  Future<void> _pickPhoto() async {
+    setState(() => _photoBusy = true);
+    final url = await pickAndUploadPhoto(context, 'horses');
+    if (!mounted) return;
+    setState(() {
+      _photoBusy = false;
+      if (url != null) _photoUrl = url;
+    });
   }
 
   @override
@@ -88,6 +102,7 @@ class _EditHorseScreenState extends State<EditHorseScreen> {
         box: _box.text.trim(),
         notes: _notes.text.trim(),
         status: _watch ? 'watch' : 'well',
+        photoUrl: _photoUrl,
       );
       if (mounted) Navigator.of(context).pop(updated);
     } catch (e) {
@@ -154,6 +169,12 @@ class _EditHorseScreenState extends State<EditHorseScreen> {
             BackLink(label: _name.text.trim().isEmpty ? 'Horse' : _name.text.trim()),
             const SizedBox(height: 18),
             Text(l10n.editHorse, style: AppText.heading(34, height: 1.05)),
+            const SizedBox(height: 22),
+            PhotoField(
+              url: _photoUrl,
+              busy: _photoBusy,
+              onPick: _pickPhoto,
+            ),
             const SizedBox(height: 22),
             AppField(label: l10n.detailName, controller: _name),
             const SizedBox(height: 16),

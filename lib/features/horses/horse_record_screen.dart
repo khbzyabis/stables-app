@@ -94,7 +94,7 @@ class _HorseRecordScreenState extends State<HorseRecordScreen> {
                 const SizedBox(height: 22),
                 Row(
                   children: [
-                    const PhotoPlaceholder(size: 88),
+                    PhotoPlaceholder(size: 88, url: horse['photo_url'] as String?),
                     const SizedBox(width: 18),
                     Expanded(
                       child: Column(
