@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../data/people_data.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
@@ -8,18 +7,47 @@ import '../../widgets/app_tag.dart';
 import '../../widgets/hairline.dart';
 import '../auth/back_link.dart';
 
-/// Screen 15 — Role permissions. Admin and manager sit above the rest; the
-/// manager's permissions are the admin's to set.
-class RolesScreen extends StatefulWidget {
+/// Screen 15 — Role permissions. A plain-language legend of what each of the
+/// five roles can do. Owners and managers assign roles from the People screen.
+class RolesScreen extends StatelessWidget {
   const RolesScreen({super.key});
   static const route = '/people/roles';
 
-  @override
-  State<RolesScreen> createState() => _RolesScreenState();
-}
-
-class _RolesScreenState extends State<RolesScreen> {
-  final Set<int> _perms = {0, 2};
+  static const _roles = <(String, String, TagTone, String)>[
+    (
+      'Owner',
+      'Full control',
+      TagTone.accent,
+      'Everything — invites, roles, stable settings, feature toggles, and '
+          'closing the stable.',
+    ),
+    (
+      'Manager',
+      'Runs the day to day',
+      TagTone.sage,
+      'Manages people, horses, schedule, tasks and approvals. Cannot close the '
+          'stable or remove an owner.',
+    ),
+    (
+      'Vet',
+      'Health',
+      TagTone.sage,
+      'Reads every horse and keeps the health record. Sees the schedule and '
+          'noticeboard.',
+    ),
+    (
+      'Groom',
+      'Daily care',
+      TagTone.neutral,
+      'Daily care notes and tasks for every horse. No admin screens.',
+    ),
+    (
+      'Viewer',
+      'Read only',
+      TagTone.neutral,
+      'Reads horses, the schedule and the noticeboard. Makes no changes.',
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -35,60 +63,16 @@ class _RolesScreenState extends State<RolesScreen> {
             const SizedBox(height: 24),
             Text(l10n.roles, style: AppText.heading(42, height: 1)),
             const SizedBox(height: 12),
-            Text(l10n.rolesIntro,
+            Text(
+                'Five roles, lightest to fullest access. Owners and managers set '
+                "each person's role on the People screen.",
                 style: AppText.body(17, height: 1.5, color: AppColors.ink(0.65))),
             const SizedBox(height: 26),
             const Hairline(),
-            _RoleBlock(
-              title: 'Admin',
-              tag: l10n.fullControl,
-              tone: TagTone.accent,
-              body: 'Everything, including inviting other admins and closing the stable.',
-            ),
-            const Hairline(),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 22),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text('Manager', style: AppText.heading(21)),
-                      const SizedBox(width: 10),
-                      AppTag(l10n.youChoose, tone: TagTone.sage),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text('Runs the day to day. Pick what that includes.',
-                      style: AppText.body(16, height: 1.5, color: AppColors.ink(0.7))),
-                  const SizedBox(height: 16),
-                  for (var i = 0; i < PeopleData.managerPerms.length; i++)
-                    _PermRow(
-                      label: PeopleData.managerPerms[i],
-                      checked: _perms.contains(i),
-                      onToggle: () => setState(() {
-                        _perms.contains(i) ? _perms.remove(i) : _perms.add(i);
-                      }),
-                    ),
-                ],
-              ),
-            ),
-            const Hairline(),
-            _RoleBlock(
-              title: 'Trainer',
-              body: 'Logs training for assigned horses. Reads the noticeboard.',
-            ),
-            const Hairline(),
-            _RoleBlock(
-              title: 'Groom',
-              body: 'Daily care notes for every horse in the stable. No admin screens.',
-            ),
-            const Hairline(),
-            _RoleBlock(
-              title: 'Owner and rider',
-              body: 'Their own horses only, once approved. Riders can be assigned horses they do not own.',
-            ),
-            const Hairline(),
+            for (final (title, tag, tone, body) in _roles) ...[
+              _RoleBlock(title: title, tag: tag, tone: tone, body: body),
+              const Hairline(),
+            ],
           ],
         ),
       ),
@@ -97,7 +81,8 @@ class _RolesScreenState extends State<RolesScreen> {
 }
 
 class _RoleBlock extends StatelessWidget {
-  const _RoleBlock({required this.title, required this.body, this.tag, this.tone});
+  const _RoleBlock(
+      {required this.title, required this.body, this.tag, this.tone});
   final String title;
   final String body;
   final String? tag;
@@ -123,45 +108,6 @@ class _RoleBlock extends StatelessWidget {
           Text(body,
               style: AppText.body(16, height: 1.5, color: AppColors.ink(0.7))),
         ],
-      ),
-    );
-  }
-}
-
-class _PermRow extends StatelessWidget {
-  const _PermRow(
-      {required this.label, required this.checked, required this.onToggle});
-  final String label;
-  final bool checked;
-  final VoidCallback onToggle;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onToggle,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Row(
-          children: [
-            Container(
-              width: 24, height: 24,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: checked ? AppColors.accent2600 : Colors.transparent,
-                borderRadius: BorderRadius.circular(7),
-                border: Border.all(
-                  color: checked ? AppColors.accent2600 : AppColors.ink(0.35),
-                  width: 1.5,
-                ),
-              ),
-              child: checked
-                  ? const Icon(Icons.check, size: 16, color: AppColors.bg)
-                  : null,
-            ),
-            const SizedBox(width: 14),
-            Expanded(child: Text(label, style: AppText.body(16, height: 1.4))),
-          ],
-        ),
       ),
     );
   }

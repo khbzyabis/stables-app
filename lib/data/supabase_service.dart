@@ -84,7 +84,11 @@ class SupabaseService {
         .single();
     await _db
         .from('memberships')
-        .insert({'stable_id': stable['id'], 'role': 'Admin'});
+        .insert({'stable_id': stable['id'], 'role': 'owner'});
+    // Give the new stable a default (all-on) feature row. Best-effort.
+    try {
+      await _db.from('stable_features').insert({'stable_id': stable['id']});
+    } catch (_) {}
     Analytics.capture('stable_created', {'stable_id': stable['id'] as String});
     return stable;
   }
@@ -94,7 +98,7 @@ class SupabaseService {
   static Future<List<Map<String, dynamic>>> members(String stableId) async {
     final rows = await _db
         .from('memberships')
-        .select('role, user_id')
+        .select('id, role, status, user_id')
         .eq('stable_id', stableId)
         .order('created_at');
     final ids = rows.map((r) => r['user_id'] as String).toList();
@@ -107,8 +111,10 @@ class SupabaseService {
       final name = (p?['name'] as String?)?.trim();
       final email = p?['email'] as String?;
       return {
+        'membership_id': r['id'],
         'user_id': r['user_id'],
         'role': r['role'],
+        'status': (r['status'] as String?) ?? 'active',
         'name': (name != null && name.isNotEmpty)
             ? name
             : (email?.split('@').first ?? 'Member'),
@@ -116,6 +122,86 @@ class SupabaseService {
         'is_me': r['user_id'] == currentUser?.id,
       };
     }).toList();
+  }
+
+  /// The five roles a member can hold, lightest to fullest access.
+  static const roles = <String>['viewer', 'groom', 'vet', 'manager', 'owner'];
+
+  /// Change a member's role. Only owners/managers can (enforced by RLS).
+  static Future<void> updateMemberRole(String membershipId, String role) => _db
+      .from('memberships')
+      .update({'role': role})
+      .eq('id', membershipId);
+
+  /// Approve a pending join (set status active). Admin-only via RLS.
+  static Future<void> approveMember(String membershipId) => _db
+      .from('memberships')
+      .update({'status': 'active'})
+      .eq('id', membershipId);
+
+  /// Remove a member from a stable (or yourself). Admin-or-self via RLS.
+  static Future<void> removeMember(String membershipId) =>
+      _db.from('memberships').delete().eq('id', membershipId);
+
+  /// People waiting to be let into the stable (status = pending).
+  static Future<List<Map<String, dynamic>>> pendingMembers(
+      String stableId) async {
+    final all = await members(stableId);
+    return all.where((m) => m['status'] == 'pending').toList();
+  }
+
+  // ---- Feature toggles -------------------------------------------------
+  /// Which modules are on for a stable. Defaults everything on if no row yet.
+  static Future<Map<String, bool>> stableFeatures(String stableId) async {
+    final row = await _db
+        .from('stable_features')
+        .select()
+        .eq('stable_id', stableId)
+        .maybeSingle();
+    return {
+      'market': (row?['market'] as bool?) ?? true,
+      'transport': (row?['transport'] as bool?) ?? true,
+      'shows': (row?['shows'] as bool?) ?? true,
+      'require_approval': (row?['require_approval'] as bool?) ?? false,
+    };
+  }
+
+  /// Turn a feature on/off for a stable. Admin-only via RLS. Upserts the row.
+  static Future<void> setStableFeature(
+          String stableId, String feature, bool value) =>
+      _db.from('stable_features').upsert(
+        {'stable_id': stableId, feature: value, 'updated_at': _nowIso()},
+        onConflict: 'stable_id',
+      );
+
+  static String _nowIso() => DateTime.now().toUtc().toIso8601String();
+
+  // ---- Stable overview (dashboard counts) ------------------------------
+  /// A snapshot of a stable for the overview dashboard: how many horses and
+  /// people, how many tasks are still open, and who's waiting to join.
+  static Future<Map<String, int>> stableOverview(String stableId) async {
+    final results = await Future.wait([
+      _db.from('horses').select('id').eq('stable_id', stableId).count(),
+      _db.from('memberships').select('id').eq('stable_id', stableId).count(),
+      _db
+          .from('memberships')
+          .select('id')
+          .eq('stable_id', stableId)
+          .eq('status', 'pending')
+          .count(),
+      _db
+          .from('tasks')
+          .select('id')
+          .eq('stable_id', stableId)
+          .eq('done', false)
+          .count(),
+    ]);
+    return {
+      'horses': results[0].count,
+      'people': results[1].count,
+      'pending': results[2].count,
+      'open_tasks': results[3].count,
+    };
   }
 
   /// Create a shareable invite for a stable and return its code.

@@ -109,7 +109,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: switch (_tab) {
                       AppTab.horses => _HorsesTab(stableId: session.activeStableId),
                       AppTab.board => _BoardTab(stableId: session.activeStableId),
-                      AppTab.stable => const _StableTab(),
+                      AppTab.stable => _StableTab(
+                          stableId: session.activeStableId,
+                          role: session.activeStable?['role'] as String?,
+                          city: session.activeStable?['city'] as String?,
+                        ),
                       AppTab.you => const _YouTab(),
                     },
                   ),
@@ -415,69 +419,237 @@ class _Notice extends StatelessWidget {
   }
 }
 
-/// The Stable tab — the stable-wide views. The schedule is live; people,
-/// contacts and settings follow.
-class _StableTab extends StatelessWidget {
-  const _StableTab();
+/// The Stable tab — a live overview strip (real counts) above the stable-wide
+/// navigation. Modules the stable has turned off are hidden; owners/managers
+/// also see people-management rows.
+class _StableTab extends StatefulWidget {
+  const _StableTab({required this.stableId, this.role, this.city});
+  final String? stableId;
+  final String? role;
+  final String? city;
+
+  @override
+  State<_StableTab> createState() => _StableTabState();
+}
+
+class _StableTabState extends State<_StableTab> {
+  late Future<_StableSnapshot> _future = _load();
+
+  bool get _isAdmin => widget.role == 'owner' || widget.role == 'manager';
+
+  Future<_StableSnapshot> _load() async {
+    final id = widget.stableId;
+    if (id == null) return const _StableSnapshot.empty();
+    final results = await Future.wait([
+      SupabaseService.stableOverview(id),
+      SupabaseService.stableFeatures(id),
+    ]);
+    return _StableSnapshot(
+      counts: results[0] as Map<String, int>,
+      features: results[1] as Map<String, bool>,
+    );
+  }
+
+  void _reload() => setState(() => _future = _load());
+
+  @override
+  void didUpdateWidget(covariant _StableTab old) {
+    super.didUpdateWidget(old);
+    if (old.stableId != widget.stableId) _reload();
+  }
+
+  Future<void> _go(String route) async {
+    await Navigator.of(context).pushNamed(route);
+    _reload();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppL10n.of(context);
-    return ListView(
-      padding: EdgeInsets.zero,
-      children: [
-        const Hairline(),
-        _NavRow(
-          title: l10n.openSchedule,
-          subtitle: l10n.scheduleSub,
-          onTap: () => Navigator.of(context).pushNamed(ScheduleScreen.route),
+    if (widget.stableId == null) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 26),
+        child: Text(
+          'Create a stable first (under You → My stables) to see its overview.',
+          style: AppText.body(16, height: 1.5, color: AppColors.ink(0.6)),
         ),
-        const Hairline(),
-        _NavRow(
-          title: l10n.openTasks,
-          subtitle: l10n.tasksSub,
-          onTap: () => Navigator.of(context).pushNamed(GroomDayScreen.route),
+      );
+    }
+    return FutureBuilder<_StableSnapshot>(
+      future: _future,
+      builder: (context, snap) {
+        final data = snap.data ?? const _StableSnapshot.empty();
+        final c = data.counts;
+        final f = data.features;
+        final loading = snap.connectionState == ConnectionState.waiting;
+        final pending = c['pending'] ?? 0;
+        return ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            // Overview stat tiles.
+            Row(
+              children: [
+                _StatTile(
+                    label: 'Horses',
+                    value: loading ? '—' : '${c['horses'] ?? 0}'),
+                const SizedBox(width: 12),
+                _StatTile(
+                    label: 'People',
+                    value: loading ? '—' : '${c['people'] ?? 0}'),
+                const SizedBox(width: 12),
+                _StatTile(
+                    label: 'Open tasks',
+                    value: loading ? '—' : '${c['open_tasks'] ?? 0}'),
+              ],
+            ),
+            if (_isAdmin && pending > 0) ...[
+              const SizedBox(height: 12),
+              _PendingBanner(
+                count: pending,
+                onTap: () => _go(ApprovalsScreen.route),
+              ),
+            ],
+            const SizedBox(height: 20),
+            const Hairline(),
+            _NavRow(
+              title: l10n.openSchedule,
+              subtitle: l10n.scheduleSub,
+              onTap: () => _go(ScheduleScreen.route),
+            ),
+            const Hairline(),
+            _NavRow(
+              title: l10n.openTasks,
+              subtitle: l10n.tasksSub,
+              onTap: () => _go(GroomDayScreen.route),
+            ),
+            const Hairline(),
+            if (f['market'] ?? true) ...[
+              _NavRow(
+                title: l10n.market,
+                subtitle: l10n.marketSub,
+                onTap: () => _go(MarketScreen.route),
+              ),
+              const Hairline(),
+            ],
+            if (f['transport'] ?? true) ...[
+              _NavRow(
+                title: l10n.transport,
+                subtitle: l10n.transportSub,
+                onTap: () => _go(RequestTransportScreen.route),
+              ),
+              const Hairline(),
+            ],
+            _NavRow(
+              title: l10n.people,
+              subtitle: loading
+                  ? l10n.peopleNavSub
+                  : '${c['people'] ?? 0} in this stable',
+              onTap: () => _go(PeopleScreen.route),
+            ),
+            const Hairline(),
+            if (_isAdmin) ...[
+              _NavRow(
+                title: l10n.needsYou,
+                subtitle: pending > 0
+                    ? '$pending waiting to join'
+                    : l10n.nothingJoins,
+                onTap: () => _go(ApprovalsScreen.route),
+              ),
+              const Hairline(),
+            ],
+            _NavRow(
+              title: l10n.contacts,
+              subtitle: 'Farrier, vet, dentist, feed merchant',
+              onTap: () => _go(ContactsScreen.route),
+            ),
+            const Hairline(),
+            _NavRow(
+              title: l10n.stableSettings,
+              subtitle: loading
+                  ? '…'
+                  : [
+                      if ((widget.city ?? '').isNotEmpty) widget.city!,
+                      '${c['horses'] ?? 0} horses',
+                      '${c['people'] ?? 0} people',
+                    ].join(' · '),
+              onTap: () => _go(StableSettingsScreen.route),
+            ),
+            const Hairline(),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// The overview counts + feature flags for the active stable, loaded together.
+class _StableSnapshot {
+  const _StableSnapshot({required this.counts, required this.features});
+  const _StableSnapshot.empty()
+      : counts = const {},
+        features = const {};
+  final Map<String, int> counts;
+  final Map<String, bool> features;
+}
+
+class _StatTile extends StatelessWidget {
+  const _StatTile({required this.label, required this.value});
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
         ),
-        const Hairline(),
-        _NavRow(
-          title: l10n.market,
-          subtitle: l10n.marketSub,
-          onTap: () => Navigator.of(context).pushNamed(MarketScreen.route),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(value, style: AppText.heading(30, height: 1)),
+            const SizedBox(height: 4),
+            Text(label,
+                style: AppText.body(13, color: AppColors.ink(0.6))),
+          ],
         ),
-        const Hairline(),
-        _NavRow(
-          title: l10n.transport,
-          subtitle: l10n.transportSub,
-          onTap: () =>
-              Navigator.of(context).pushNamed(RequestTransportScreen.route),
+      ),
+    );
+  }
+}
+
+class _PendingBanner extends StatelessWidget {
+  const _PendingBanner({required this.count, required this.onTap});
+  final int count;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+        decoration: BoxDecoration(
+          color: AppColors.accent200,
+          borderRadius: BorderRadius.circular(16),
         ),
-        const Hairline(),
-        _NavRow(
-          title: l10n.people,
-          subtitle: l10n.peopleNavSub,
-          onTap: () => Navigator.of(context).pushNamed(PeopleScreen.route),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                count == 1
+                    ? '1 person is waiting to join'
+                    : '$count people are waiting to join',
+                style: AppText.heading(17, color: AppColors.accent900),
+              ),
+            ),
+            Icon(Icons.chevron_right, color: AppColors.accent900),
+          ],
         ),
-        const Hairline(),
-        _NavRow(
-          title: l10n.needsYou,
-          subtitle: l10n.nothingJoins,
-          onTap: () => Navigator.of(context).pushNamed(ApprovalsScreen.route),
-        ),
-        const Hairline(),
-        _NavRow(
-          title: l10n.contacts,
-          subtitle: 'Farrier, vet, dentist, feed merchant',
-          onTap: () => Navigator.of(context).pushNamed(ContactsScreen.route),
-        ),
-        const Hairline(),
-        _NavRow(
-          title: l10n.stableSettings,
-          subtitle: 'Dubai · 14 horses · 6 people',
-          onTap: () =>
-              Navigator.of(context).pushNamed(StableSettingsScreen.route),
-        ),
-        const Hairline(),
-      ],
+      ),
     );
   }
 }
@@ -539,7 +711,7 @@ class _YouTab extends StatelessWidget {
         const Hairline(),
         _NavRow(
           title: l10n.yourProfile,
-          subtitle: 'ahmad@serc.ae',
+          subtitle: SupabaseService.currentUser?.email ?? 'Your account',
           onTap: () => Navigator.of(context).pushNamed(ProfileScreen.route),
         ),
         const Hairline(),
