@@ -797,4 +797,64 @@ class SupabaseService {
       .from('show_entries')
       .update({'status': 'withdrawn'})
       .eq('id', id);
+
+  // ---- Operator / admin ----------------------------------------------
+  /// Is the current person a platform operator?
+  static Future<bool> isAppAdmin() async {
+    final id = currentUser?.id;
+    if (id == null) return false;
+    final row = await _db
+        .from('app_admins')
+        .select('user_id')
+        .eq('user_id', id)
+        .maybeSingle();
+    return row != null;
+  }
+
+  /// Active announcements for the "From My Stables" board (everyone reads).
+  static Future<List<Map<String, dynamic>>> announcements() => _db
+      .from('announcements')
+      .select()
+      .eq('active', true)
+      .order('pinned', ascending: false)
+      .order('created_at', ascending: false);
+
+  /// Every announcement (operator view, includes inactive).
+  static Future<List<Map<String, dynamic>>> allAnnouncements() => _db
+      .from('announcements')
+      .select()
+      .order('created_at', ascending: false);
+
+  static Future<Map<String, dynamic>> addAnnouncement({
+    required String title,
+    required String body,
+    String kind = 'Update',
+    bool pinned = false,
+  }) =>
+      _db.from('announcements').insert({
+        'title': title,
+        'body': body,
+        'kind': kind,
+        'pinned': pinned,
+      }).select().single();
+
+  static Future<void> setAnnouncementActive(String id, bool active) => _db
+      .from('announcements')
+      .update({'active': active})
+      .eq('id', id);
+
+  static Future<void> deleteAnnouncement(String id) =>
+      _db.from('announcements').delete().eq('id', id);
+
+  /// Vendors awaiting operator approval.
+  static Future<List<Map<String, dynamic>>> pendingVendors() => _db
+      .from('vendors')
+      .select()
+      .eq('approved', false)
+      .order('created_at');
+
+  static Future<void> setVendorApproved(String id, bool approved) => _db
+      .from('vendors')
+      .update({'approved': approved})
+      .eq('id', id);
 }

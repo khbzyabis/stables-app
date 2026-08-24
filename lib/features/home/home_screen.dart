@@ -24,6 +24,7 @@ import '../shows/shows_screen.dart';
 import '../market/market_screen.dart';
 import '../market/payments_screen.dart';
 import '../market/provider_screen.dart';
+import '../admin/admin_screen.dart';
 import '../people/approvals_screen.dart';
 import '../people/my_stables_screen.dart';
 import '../people/people_screen.dart';
@@ -694,8 +695,15 @@ class _NavRow extends StatelessWidget {
 }
 
 /// The "You" tab hosts the live language switcher for now.
-class _YouTab extends StatelessWidget {
+class _YouTab extends StatefulWidget {
   const _YouTab();
+
+  @override
+  State<_YouTab> createState() => _YouTabState();
+}
+
+class _YouTabState extends State<_YouTab> {
+  late final Future<bool> _isAdmin = SupabaseService.isAppAdmin();
 
   @override
   Widget build(BuildContext context) {
@@ -742,6 +750,23 @@ class _YouTab extends StatelessWidget {
           title: 'Sell on the market',
           subtitle: 'Run a shop — list products and take orders',
           onTap: () => Navigator.of(context).pushNamed(ProviderScreen.route),
+        ),
+        FutureBuilder<bool>(
+          future: _isAdmin,
+          builder: (context, snap) {
+            if (snap.data != true) return const SizedBox.shrink();
+            return Column(
+              children: [
+                const Hairline(),
+                _NavRow(
+                  title: 'Operator console',
+                  subtitle: 'Approve shops and post announcements',
+                  onTap: () =>
+                      Navigator.of(context).pushNamed(AdminScreen.route),
+                ),
+              ],
+            );
+          },
         ),
         const Hairline(),
         _NavRow(
