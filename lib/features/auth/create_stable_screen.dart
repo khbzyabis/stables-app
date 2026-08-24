@@ -14,6 +14,7 @@ import '../../widgets/hairline.dart';
 import '../../widgets/step_progress.dart';
 import '../home/home_screen.dart';
 import 'back_link.dart';
+import 'sign_in_screen.dart';
 
 enum _Setup { create, join }
 
@@ -44,6 +45,16 @@ class _CreateStableScreenState extends State<CreateStableScreen> {
     final session = SessionScope.of(context);
     final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
+
+    // Guard: creating/joining needs a live signed-in session. Without it the
+    // database (correctly) rejects the write, so send them to sign in first.
+    if (!SupabaseService.isSignedIn) {
+      messenger.showSnackBar(const SnackBar(
+          content: Text(
+              'Please sign in first — your session isn’t active yet.')));
+      navigator.pushNamedAndRemoveUntil(SignInScreen.route, (r) => false);
+      return;
+    }
 
     if (_setup == _Setup.join) {
       final code = _inviteCode.text.trim();
