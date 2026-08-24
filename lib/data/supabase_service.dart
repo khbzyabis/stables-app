@@ -258,6 +258,33 @@ class SupabaseService {
         return row;
       });
 
+  /// Update a horse's editable details and/or status. Only members can (RLS).
+  static Future<Map<String, dynamic>> updateHorse(
+    String id, {
+    String? name,
+    String? age,
+    String? breed,
+    String? sex,
+    String? height,
+    String? box,
+    String? notes,
+    String? status,
+  }) =>
+      _db.from('horses').update({
+        'name': ?name,
+        'age': ?age,
+        'breed': ?breed,
+        'sex': ?sex,
+        'height': ?height,
+        'box': ?box,
+        'notes': ?notes,
+        'status': ?status,
+      }).eq('id', id).select().single();
+
+  /// Remove a horse from the stable.
+  static Future<void> deleteHorse(String id) =>
+      _db.from('horses').delete().eq('id', id);
+
   // ---- Schedule activities --------------------------------------------
   static Future<List<Map<String, dynamic>>> activities(String stableId) => _db
       .from('activities')

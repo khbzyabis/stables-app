@@ -218,7 +218,7 @@ class _HorsesTabState extends State<_HorsesTab> {
                 ),
               ),
             for (final h in horses) ...[
-              _RealHorseRow(horse: h),
+              _RealHorseRow(horse: h, onReturn: _reload),
               const Hairline(),
             ],
             const SizedBox(height: 26),
@@ -241,8 +241,9 @@ class _HorsesTabState extends State<_HorsesTab> {
 }
 
 class _RealHorseRow extends StatelessWidget {
-  const _RealHorseRow({required this.horse});
+  const _RealHorseRow({required this.horse, required this.onReturn});
   final Map<String, dynamic> horse;
+  final VoidCallback onReturn;
 
   @override
   Widget build(BuildContext context) {
@@ -254,8 +255,11 @@ class _RealHorseRow extends StatelessWidget {
       if ((horse['box'] as String?)?.isNotEmpty == true) 'Box ${horse['box']}',
     ];
     return InkWell(
-      onTap: () => Navigator.of(context)
-          .pushNamed(HorseRecordScreen.route, arguments: horse),
+      onTap: () async {
+        await Navigator.of(context)
+            .pushNamed(HorseRecordScreen.route, arguments: horse);
+        onReturn();
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Row(

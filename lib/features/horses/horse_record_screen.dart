@@ -18,16 +18,40 @@ import 'training_screen.dart';
 
 /// Screen 32 — a horse's record. The hub for one real horse; its links carry
 /// the horse to Health, Training and Feed (which load that horse's data).
-class HorseRecordScreen extends StatelessWidget {
+class HorseRecordScreen extends StatefulWidget {
   const HorseRecordScreen({super.key});
   static const route = '/horse-record';
 
   @override
+  State<HorseRecordScreen> createState() => _HorseRecordScreenState();
+}
+
+class _HorseRecordScreenState extends State<HorseRecordScreen> {
+  Map<String, dynamic>? _horse;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _horse ??= (ModalRoute.of(context)?.settings.arguments
+            as Map<String, dynamic>?) ??
+        const {};
+  }
+
+  Future<void> _openEdit() async {
+    final result = await Navigator.of(context)
+        .pushNamed(EditHorseScreen.route, arguments: _horse);
+    if (!mounted) return;
+    if (result == 'removed') {
+      Navigator.of(context).pop('removed'); // back to the horses list
+    } else if (result is Map<String, dynamic>) {
+      setState(() => _horse = result);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppL10n.of(context);
-    final horse =
-        (ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?) ??
-            const {};
+    final horse = _horse ?? const {};
     final name = (horse['name'] as String?) ?? 'Horse';
     final well = (horse['status'] as String?) != 'watch';
 
@@ -140,8 +164,7 @@ class HorseRecordScreen extends StatelessWidget {
                 ],
                 const SizedBox(height: 28),
                 GestureDetector(
-                  onTap: () => Navigator.of(context)
-                      .pushNamed(EditHorseScreen.route, arguments: horse),
+                  onTap: _openEdit,
                   child: Text(l10n.editDetails,
                       style: AppText.heading(16, color: AppColors.accent700)),
                 ),

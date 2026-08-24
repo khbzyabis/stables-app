@@ -19,6 +19,7 @@ class AppField extends StatelessWidget {
     this.textStyle,
     this.autofocus = false,
     this.textAlign = TextAlign.start,
+    this.maxLines = 1,
   });
 
   final String label;
@@ -30,6 +31,7 @@ class AppField extends StatelessWidget {
   final TextStyle? textStyle;
   final bool autofocus;
   final TextAlign textAlign;
+  final int maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +50,7 @@ class AppField extends StatelessWidget {
               obscureText: obscureText,
               autofocus: autofocus,
               textAlign: textAlign,
+              maxLines: obscureText ? 1 : maxLines,
               cursorColor: AppColors.accent,
               style: textStyle ?? AppText.body(17, height: 1.2),
               decoration: InputDecoration(

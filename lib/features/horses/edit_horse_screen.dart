@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../data/horse_detail_data.dart';
+import '../../data/errors.dart';
+import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
@@ -10,10 +11,8 @@ import '../../widgets/app_tag.dart';
 import '../../widgets/hairline.dart';
 import '../auth/back_link.dart';
 
-enum _MoveState { idle, asking, sent }
-
-/// Screen 63 — edit a horse, and move her to another stable. Moving needs both
-/// admins to agree; until then nothing changes.
+/// Screen 63 — edit a real horse: change details, flag as one-to-watch, or
+/// remove it from the stable. Saves back to Supabase.
 class EditHorseScreen extends StatefulWidget {
   const EditHorseScreen({super.key});
   static const route = '/edit-horse';
@@ -23,21 +22,123 @@ class EditHorseScreen extends StatefulWidget {
 }
 
 class _EditHorseScreenState extends State<EditHorseScreen> {
-  _MoveState _move = _MoveState.idle;
-  final _name = TextEditingController(text: 'Kiki');
-  final _age = TextEditingController(text: '9');
-  final _height = TextEditingController(text: '16.1 hh');
-  final _box = TextEditingController(text: '7');
-  final _stable = TextEditingController(text: 'Al Marmoom Equestrian');
+  late final Map<String, dynamic> _horse;
+  late final TextEditingController _name;
+  late final TextEditingController _breed;
+  late final TextEditingController _age;
+  late final TextEditingController _sex;
+  late final TextEditingController _height;
+  late final TextEditingController _box;
+  late final TextEditingController _notes;
+  late bool _watch;
+  bool _saving = false;
+  bool _removing = false;
+  bool _initialised = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_initialised) return;
+    _initialised = true;
+    _horse = (ModalRoute.of(context)?.settings.arguments
+            as Map<String, dynamic>?) ??
+        const {};
+    String v(String k) => (_horse[k] as String?) ?? '';
+    _name = TextEditingController(text: v('name'));
+    _breed = TextEditingController(text: v('breed'));
+    _age = TextEditingController(text: v('age'));
+    _sex = TextEditingController(text: v('sex'));
+    _height = TextEditingController(text: v('height'));
+    _box = TextEditingController(text: v('box'));
+    _notes = TextEditingController(text: v('notes'));
+    _watch = (_horse['status'] as String?) == 'watch';
+  }
 
   @override
   void dispose() {
     _name.dispose();
+    _breed.dispose();
     _age.dispose();
+    _sex.dispose();
     _height.dispose();
     _box.dispose();
-    _stable.dispose();
+    _notes.dispose();
     super.dispose();
+  }
+
+  String? get _id => _horse['id'] as String?;
+
+  Future<void> _save() async {
+    final id = _id;
+    if (id == null) return;
+    if (_name.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('A name is needed.')));
+      return;
+    }
+    setState(() => _saving = true);
+    try {
+      final updated = await SupabaseService.updateHorse(
+        id,
+        name: _name.text.trim(),
+        breed: _breed.text.trim(),
+        age: _age.text.trim(),
+        sex: _sex.text.trim(),
+        height: _height.text.trim(),
+        box: _box.text.trim(),
+        notes: _notes.text.trim(),
+        status: _watch ? 'watch' : 'well',
+      );
+      if (mounted) Navigator.of(context).pop(updated);
+    } catch (e) {
+      AppErrors.report(e);
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Couldn't save: $e")));
+        setState(() => _saving = false);
+      }
+    }
+  }
+
+  Future<void> _remove() async {
+    final id = _id;
+    if (id == null) return;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: AppColors.bg,
+        title: Text('Remove ${_name.text.trim()}?',
+            style: AppText.heading(22)),
+        content: Text(
+            'This removes the horse and its record from the stable. This '
+            "can't be undone.",
+            style: AppText.body(16, height: 1.5)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('Keep', style: AppText.body(16)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text('Remove',
+                style: AppText.heading(16, color: AppColors.accent700)),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    setState(() => _removing = true);
+    try {
+      await SupabaseService.deleteHorse(id);
+      if (mounted) Navigator.of(context).pop('removed');
+    } catch (e) {
+      AppErrors.report(e);
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Couldn't remove: $e")));
+        setState(() => _removing = false);
+      }
+    }
   }
 
   @override
@@ -48,37 +149,25 @@ class _EditHorseScreenState extends State<EditHorseScreen> {
       body: SafeArea(
         bottom: false,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(32, 84, 32, 44),
+          padding: const EdgeInsets.fromLTRB(32, 18, 32, 44),
           children: [
-            const BackLink(label: 'Kiki'),
+            BackLink(label: _name.text.trim().isEmpty ? 'Horse' : _name.text.trim()),
             const SizedBox(height: 18),
             Text(l10n.editHorse, style: AppText.heading(34, height: 1.05)),
             const SizedBox(height: 22),
-            Row(
-              children: [
-                Container(
-                  width: 76,
-                  height: 76,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                      color: AppColors.neutral300, shape: BoxShape.circle),
-                  child: Text('PHOTO',
-                      style: AppText.body(10, color: AppColors.neutral700)),
-                ),
-                const SizedBox(width: 16),
-                GestureDetector(
-                  onTap: () {},
-                  child: Text(l10n.changePhoto,
-                      style: AppText.body(16, color: AppColors.accent700)),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
             AppField(label: l10n.detailName, controller: _name),
             const SizedBox(height: 16),
             Row(
               children: [
+                Expanded(child: AppField(label: 'Breed', controller: _breed)),
+                const SizedBox(width: 12),
                 Expanded(child: AppField(label: l10n.detailAge, controller: _age)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(child: AppField(label: 'Sex', controller: _sex)),
                 const SizedBox(width: 12),
                 Expanded(
                     child:
@@ -87,101 +176,82 @@ class _EditHorseScreenState extends State<EditHorseScreen> {
             ),
             const SizedBox(height: 16),
             AppField(label: l10n.detailBox, controller: _box),
+            const SizedBox(height: 16),
+            AppField(label: 'Notes', controller: _notes, maxLines: 3),
             const SizedBox(height: 24),
-            AppButton(label: l10n.save, onPressed: () {}),
+            // Status toggle.
+            Text('STATUS', style: AppText.eyebrow()),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                _StatusChip(
+                  label: l10n.statusWell,
+                  selected: !_watch,
+                  tone: TagTone.sage,
+                  onTap: () => setState(() => _watch = false),
+                ),
+                const SizedBox(width: 10),
+                _StatusChip(
+                  label: l10n.statusWatch,
+                  selected: _watch,
+                  tone: TagTone.accent,
+                  onTap: () => setState(() => _watch = true),
+                ),
+              ],
+            ),
+            const SizedBox(height: 26),
+            if (_saving)
+              const Center(child: CircularProgressIndicator())
+            else
+              AppButton(label: l10n.save, onPressed: _save),
             const SizedBox(height: 30),
             const Hairline(),
             const SizedBox(height: 22),
-            Text('Leaving Serc'.toUpperCase(),
-                style: AppText.eyebrow(color: AppColors.accent2700)),
-            const SizedBox(height: 12),
-            _buildMove(context, l10n),
+            if (_removing)
+              const Center(child: CircularProgressIndicator())
+            else
+              GestureDetector(
+                onTap: _remove,
+                child: Text('Remove from stable',
+                    style: AppText.body(16, color: AppColors.accent700)),
+              ),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildMove(BuildContext context, AppL10n l10n) {
-    switch (_move) {
-      case _MoveState.idle:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GestureDetector(
-              onTap: () => setState(() => _move = _MoveState.asking),
-              child: Text(l10n.moveHorse,
-                  style: AppText.body(16, color: AppColors.accent700)),
-            ),
-            const SizedBox(height: 14),
-            GestureDetector(
-              onTap: () {},
-              child: Text('Mark as sold or retired',
-                  style: AppText.body(15, color: AppColors.ink(0.55))),
-            ),
-          ],
-        );
-      case _MoveState.asking:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AppField(label: l10n.whichStable, controller: _stable),
-            const SizedBox(height: 18),
-            const Hairline(),
-            for (final (what, value) in HorseDetailData.moveEffects) ...[
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 13),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                        child: Text(what,
-                            style: AppText.body(16, height: 1.4))),
-                    const SizedBox(width: 14),
-                    Text(value,
-                        textAlign: TextAlign.right,
-                        style: AppText.body(15,
-                            color: value == 'Stay here'
-                                ? AppColors.accent700
-                                : AppColors.ink(0.6))),
-                  ],
-                ),
-              ),
-              const Hairline(),
-            ],
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                AppButton(
-                  label: l10n.askStable,
-                  block: false,
-                  minHeight: 52,
-                  fontSize: 16,
-                  onPressed: () => setState(() => _move = _MoveState.sent),
-                ),
-                const SizedBox(width: 10),
-                AppButton(
-                  label: l10n.keepHer,
-                  variant: AppButtonVariant.secondary,
-                  block: false,
-                  minHeight: 52,
-                  fontSize: 16,
-                  onPressed: () => setState(() => _move = _MoveState.idle),
-                ),
-              ],
-            ),
-          ],
-        );
-      case _MoveState.sent:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AppTag(l10n.waitingBothAdmins, tone: TagTone.accent),
-            const SizedBox(height: 14),
-            Text(l10n.moveSentBody,
-                style: AppText.body(16, height: 1.6, color: AppColors.ink(0.75))),
-          ],
-        );
-    }
+class _StatusChip extends StatelessWidget {
+  const _StatusChip({
+    required this.label,
+    required this.selected,
+    required this.tone,
+    required this.onTap,
+  });
+  final String label;
+  final bool selected;
+  final TagTone tone;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+        decoration: BoxDecoration(
+          color: selected ? AppColors.accent2300 : AppColors.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: selected ? AppColors.accent2600 : AppColors.divider,
+            width: 1.5,
+          ),
+        ),
+        child: Text(label,
+            style: AppText.heading(16,
+                weight: selected ? FontWeight.w700 : FontWeight.w500)),
+      ),
+    );
   }
 }
