@@ -81,7 +81,9 @@ create policy stables_insert on public.stables
 
 drop policy if exists stables_select on public.stables;
 create policy stables_select on public.stables
-  for select using (public.is_stable_member(id));
+  -- The creator can always read their stable (needed for the insert's
+  -- RETURNING step, before their membership row exists); members can too.
+  for select using (created_by = auth.uid() or public.is_stable_member(id));
 
 -- memberships: you can add yourself; you can see members of your stables.
 drop policy if exists memberships_insert on public.memberships;
