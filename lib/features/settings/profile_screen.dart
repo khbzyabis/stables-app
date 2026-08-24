@@ -7,6 +7,7 @@ import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/hairline.dart';
+import '../auth/back_link.dart';
 import '../auth/splash_screen.dart';
 
 /// Screen 37 — your profile. One account across every stable, with links to
@@ -36,8 +37,10 @@ class ProfileScreen extends StatelessWidget {
       body: SafeArea(
         bottom: false,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(32, 84, 32, 44),
+          padding: const EdgeInsets.fromLTRB(32, 18, 32, 44),
           children: [
+            const BackLink(label: 'You'),
+            const SizedBox(height: 24),
             Row(
               children: [
                 Container(
