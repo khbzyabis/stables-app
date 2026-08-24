@@ -167,23 +167,39 @@ class _CodeCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('$role invite'.toUpperCase(),
+          Text('${role.toUpperCase()} INVITE',
               style: AppText.eyebrow(color: AppColors.accent2800)),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(code, style: AppText.heading(30, letterSpacing: 2)),
-              GestureDetector(
-                onTap: () {
-                  Clipboard.setData(ClipboardData(text: code));
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Code copied.')));
-                },
-                child: Text('Copy',
-                    style: AppText.body(16, color: AppColors.accent700)),
+          const SizedBox(height: 12),
+          // Full-width and auto-scaling so the code always shows, even on a
+          // narrow phone. Selectable so it can be long-pressed to copy too.
+          SizedBox(
+            width: double.infinity,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: SelectableText(
+                code,
+                style: AppText.heading(34, letterSpacing: 3),
               ),
-            ],
+            ),
+          ),
+          const SizedBox(height: 14),
+          GestureDetector(
+            onTap: () {
+              Clipboard.setData(ClipboardData(text: code));
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Code copied.')));
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.copy_rounded,
+                    size: 17, color: AppColors.accent700),
+                const SizedBox(width: 7),
+                Text('Copy code',
+                    style: AppText.heading(15, color: AppColors.accent700)),
+              ],
+            ),
           ),
         ],
       ),
