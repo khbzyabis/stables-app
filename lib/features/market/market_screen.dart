@@ -7,6 +7,8 @@ import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
+import '../../widgets/app_button.dart';
+import '../../widgets/app_field.dart';
 import '../../widgets/hairline.dart';
 import '../../widgets/photo_placeholder.dart';
 import 'basket_screen.dart';
@@ -26,13 +28,33 @@ class _MarketScreenState extends State<MarketScreen> {
   String _cat = 'Feed';
   late Future<List<Map<String, dynamic>>> _future = _load();
 
-  Future<List<Map<String, dynamic>>> _load() => SupabaseService.marketProducts(_cat);
+  bool get _isServices => _cat == 'Services';
+
+  Future<List<Map<String, dynamic>>> _load() => _isServices
+      ? SupabaseService.vendorsOfKind('Services')
+      : SupabaseService.marketProducts(_cat);
 
   void _select(String c) {
     setState(() {
       _cat = c;
       _future = _load();
     });
+  }
+
+  Future<void> _requestQuote(Map<String, dynamic> vendor) async {
+    final stableId = SessionScope.of(context).activeStableId;
+    final ok = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.bg,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+      builder: (_) => _RequestQuoteSheet(vendor: vendor, stableId: stableId),
+    );
+    if (ok == true && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Request sent. Check My quotes for the reply.')));
+    }
   }
 
   @override
@@ -109,20 +131,30 @@ class _MarketScreenState extends State<MarketScreen> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 26),
                           child: Text(
-                            'Nothing in $_cat yet. Sellers add products from '
-                            '"Sell on the market" (under You). Anything they '
-                            'list shows up here.',
+                            _isServices
+                                ? 'No service providers yet. Farriers, vets and '
+                                    'physios who set up a Services shop appear here.'
+                                : 'Nothing in $_cat yet. Sellers add products from '
+                                    '"Sell on the market" (under You). Anything '
+                                    'they list shows up here.',
                             style: AppText.body(16,
                                 height: 1.5, color: AppColors.ink(0.6)),
                           ),
                         ),
-                      for (final item in items) ...[
-                        _ItemRow(
-                          item: item,
-                          onReturn: () => setState(() {}),
-                        ),
-                        const Hairline(),
-                      ],
+                      if (_isServices)
+                        for (final v in items) ...[
+                          _ServiceRow(
+                              vendor: v, onRequest: () => _requestQuote(v)),
+                          const Hairline(),
+                        ]
+                      else
+                        for (final item in items) ...[
+                          _ItemRow(
+                            item: item,
+                            onReturn: () => setState(() {}),
+                          ),
+                          const Hairline(),
+                        ],
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         child: Text(l10n.everyApproved,
@@ -247,6 +279,125 @@ class _ItemRow extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ServiceRow extends StatelessWidget {
+  const _ServiceRow({required this.vendor, required this.onRequest});
+  final Map<String, dynamic> vendor;
+  final VoidCallback onRequest;
+
+  @override
+  Widget build(BuildContext context) {
+    final bits = [
+      if ((vendor['city'] as String?)?.isNotEmpty == true) vendor['city'],
+      if ((vendor['about'] as String?)?.isNotEmpty == true) vendor['about'],
+    ].join(' · ');
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text((vendor['name'] as String?) ?? 'Provider',
+                    style: AppText.body(17, height: 1.3)),
+                if (bits.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(bits,
+                      style: AppText.body(14, color: AppColors.ink(0.55))),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          GestureDetector(
+            onTap: onRequest,
+            child: Text('Ask for a price',
+                style: AppText.heading(15, color: AppColors.accent700)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RequestQuoteSheet extends StatefulWidget {
+  const _RequestQuoteSheet({required this.vendor, required this.stableId});
+  final Map<String, dynamic> vendor;
+  final String? stableId;
+
+  @override
+  State<_RequestQuoteSheet> createState() => _RequestQuoteSheetState();
+}
+
+class _RequestQuoteSheetState extends State<_RequestQuoteSheet> {
+  final _subject = TextEditingController();
+  final _detail = TextEditingController();
+  bool _saving = false;
+
+  @override
+  void dispose() {
+    _subject.dispose();
+    _detail.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    if (_subject.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Say what you need a price for.')));
+      return;
+    }
+    setState(() => _saving = true);
+    try {
+      await SupabaseService.requestQuote(
+        kind: 'service',
+        vendorId: widget.vendor['id'] as String,
+        stableId: widget.stableId,
+        subject: _subject.text.trim(),
+        detail: _detail.text.trim(),
+      );
+      if (mounted) Navigator.of(context).pop(true);
+    } catch (e) {
+      AppErrors.report(e);
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Couldn't send: $e")));
+        setState(() => _saving = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 28,
+        right: 28,
+        top: 22,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 22,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Ask ${(widget.vendor['name'] as String?) ?? 'the provider'} for a price',
+              style: AppText.heading(22, height: 1.15)),
+          const SizedBox(height: 18),
+          AppField(label: 'What do you need?', controller: _subject),
+          const SizedBox(height: 16),
+          AppField(label: 'Details (optional)', controller: _detail, maxLines: 3),
+          const SizedBox(height: 22),
+          if (_saving)
+            const Center(child: CircularProgressIndicator())
+          else
+            AppButton(label: 'Send request', onPressed: _save),
+          const SizedBox(height: 8),
+        ],
       ),
     );
   }

@@ -202,7 +202,7 @@ class _NewVendorSheetState extends State<_NewVendorSheet> {
             spacing: 8,
             runSpacing: 8,
             children: [
-              for (final c in SupabaseService.marketCategories)
+              for (final c in SupabaseService.providerKinds)
                 GestureDetector(
                   onTap: () => setState(() => _kind = c),
                   child: Container(

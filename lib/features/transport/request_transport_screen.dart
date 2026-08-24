@@ -34,6 +34,8 @@ class _RequestTransportScreenState extends State<RequestTransportScreen> {
   final _by = TextEditingController();
   bool _busy = false;
   Future<List<Map<String, dynamic>>>? _horsesFuture;
+  Future<List<Map<String, dynamic>>>? _vendorsFuture;
+  String? _vendorId;
 
   @override
   void didChangeDependencies() {
@@ -42,6 +44,7 @@ class _RequestTransportScreenState extends State<RequestTransportScreen> {
         ? SessionScope.of(context).activeStableName
         : _from.text;
     _horsesFuture ??= _loadHorses();
+    _vendorsFuture ??= SupabaseService.vendorsOfKind('Transport');
   }
 
   Future<List<Map<String, dynamic>>> _loadHorses() async {
@@ -73,19 +76,28 @@ class _RequestTransportScreenState extends State<RequestTransportScreen> {
           const SnackBar(content: Text('Add a from and to.')));
       return;
     }
+    if (_vendorId == null) {
+      messenger.showSnackBar(
+          const SnackBar(content: Text('Pick a transporter to ask.')));
+      return;
+    }
     setState(() => _busy = true);
     try {
-      await SupabaseService.addTransportRequest(
+      final needs = [for (final i in _needs) TransportData.needs[i].label];
+      await SupabaseService.requestQuote(
+        kind: 'transport',
+        vendorId: _vendorId!,
         stableId: stableId,
-        reason: TransportData.reasons[_why].label,
-        from: _from.text.trim(),
-        to: _to.text.trim(),
+        subject: TransportData.reasons[_why].label,
+        detail: [
+          if (_horses.isNotEmpty) 'Horses: ${_horses.join(", ")}',
+          if (_by.text.trim().isNotEmpty) 'There by ${_by.text.trim()}',
+          if (needs.isNotEmpty) 'Needs: ${needs.join(", ")}',
+        ].join(' · '),
+        fromLoc: _from.text.trim(),
+        toLoc: _to.text.trim(),
         onDay: _day.text.trim(),
-        thereBy: _by.text.trim(),
-        horses: _horses.toList(),
-        needs: [
-          for (final i in _needs) TransportData.needs[i].label,
-        ],
+        horses: _horses.length,
       );
       navigator.pushReplacementNamed(TransportQuotesScreen.route);
     } catch (e) {
@@ -184,6 +196,34 @@ class _RequestTransportScreenState extends State<RequestTransportScreen> {
               ),
               const Hairline(),
             ],
+            const SizedBox(height: 24),
+            Text('TRANSPORTER', style: AppText.eyebrow()),
+            const SizedBox(height: 11),
+            FutureBuilder<List<Map<String, dynamic>>>(
+              future: _vendorsFuture,
+              builder: (context, snap) {
+                final vendors = snap.data ?? const [];
+                if (vendors.isEmpty) {
+                  return Text(
+                      'No transporters yet. A transporter sets up a Transport '
+                      'shop under "Sell on the market".',
+                      style: AppText.body(14, color: AppColors.ink(0.5)));
+                }
+                return Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final v in vendors)
+                      _Chip(
+                        label: (v['name'] as String?) ?? 'Transporter',
+                        selected: _vendorId == v['id'],
+                        onTap: () =>
+                            setState(() => _vendorId = v['id'] as String?),
+                      ),
+                  ],
+                );
+              },
+            ),
             const SizedBox(height: 24),
             AppButton(
               label: _busy

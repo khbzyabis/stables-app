@@ -24,6 +24,7 @@ import '../shows/shows_screen.dart';
 import '../market/market_screen.dart';
 import '../market/payments_screen.dart';
 import '../market/provider_screen.dart';
+import '../market/my_quotes_screen.dart';
 import '../admin/admin_screen.dart';
 import '../people/approvals_screen.dart';
 import '../people/my_stables_screen.dart';
@@ -744,6 +745,12 @@ class _YouTabState extends State<_YouTab> {
           title: 'My orders',
           subtitle: 'What you have ordered from the market',
           onTap: () => Navigator.of(context).pushNamed(PaymentsScreen.route),
+        ),
+        const Hairline(),
+        _NavRow(
+          title: 'My quotes',
+          subtitle: 'Prices from service and transport providers',
+          onTap: () => Navigator.of(context).pushNamed(MyQuotesScreen.route),
         ),
         const Hairline(),
         _NavRow(

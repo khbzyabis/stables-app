@@ -857,4 +857,85 @@ class SupabaseService {
       .from('vendors')
       .update({'approved': approved})
       .eq('id', id);
+
+  // ---- Quote requests (service & transport providers) -----------------
+  /// Kinds a shop can be. Products come from Feed…Services shops; Services and
+  /// Transport shops instead take quote requests.
+  static const providerKinds = <String>[
+    'Feed',
+    'Tack',
+    'Hoofcare',
+    'Rugs',
+    'Services',
+    'Transport',
+  ];
+
+  /// Approved vendors of a given kind (e.g. 'Services', 'Transport').
+  static Future<List<Map<String, dynamic>>> vendorsOfKind(String kind) => _db
+      .from('vendors')
+      .select()
+      .eq('kind', kind)
+      .eq('approved', true)
+      .order('name');
+
+  /// A stable asks a specific provider for a price.
+  static Future<Map<String, dynamic>> requestQuote({
+    required String kind, // 'service' | 'transport'
+    required String vendorId,
+    String? stableId,
+    String? subject,
+    String? detail,
+    String? fromLoc,
+    String? toLoc,
+    String? onDay,
+    int? horses,
+  }) =>
+      _db.from('quote_requests').insert({
+        'kind': kind,
+        'vendor_id': vendorId,
+        'stable_id': ?stableId,
+        'subject': ?subject,
+        'detail': ?detail,
+        'from_loc': ?fromLoc,
+        'to_loc': ?toLoc,
+        'on_day': ?onDay,
+        'horses': ?horses,
+      }).select().single();
+
+  /// The current person's quote requests (buyer side). Optionally by kind.
+  static Future<List<Map<String, dynamic>>> myQuoteRequests({String? kind}) async {
+    var q = _db
+        .from('quote_requests')
+        .select('*, vendors(name)')
+        .eq('buyer_id', currentUser?.id ?? '');
+    if (kind != null) q = q.eq('kind', kind);
+    final rows = await q.order('created_at', ascending: false);
+    return rows.map<Map<String, dynamic>>((r) {
+      final v = r['vendors'] as Map?;
+      return {...Map<String, dynamic>.from(r), 'vendor_name': v?['name'] ?? 'Provider'};
+    }).toList();
+  }
+
+  /// Requests sent to a vendor the current person owns (provider side).
+  static Future<List<Map<String, dynamic>>> vendorQuoteRequests(
+          String vendorId) =>
+      _db
+          .from('quote_requests')
+          .select()
+          .eq('vendor_id', vendorId)
+          .order('created_at', ascending: false);
+
+  /// Provider replies with a price. Marks the request 'quoted'.
+  static Future<void> submitQuote(
+          String id, double price, String? note) =>
+      _db.from('quote_requests').update({
+        'quote_price': price,
+        'quote_note': ?note,
+        'status': 'quoted',
+        'quoted_at': _nowIso(),
+      }).eq('id', id);
+
+  /// Buyer accepts or declines a quote.
+  static Future<void> setQuoteStatus(String id, String status) =>
+      _db.from('quote_requests').update({'status': status}).eq('id', id);
 }

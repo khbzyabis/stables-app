@@ -25,9 +25,10 @@ class ProviderVendorScreen extends StatefulWidget {
 
 class _ProviderVendorScreenState extends State<ProviderVendorScreen> {
   Map<String, dynamic>? _vendor;
-  int _tab = 0; // 0 = products, 1 = orders
+  int _tab = 0; // 0 = products, 1 = orders, 2 = requests
   Future<List<Map<String, dynamic>>>? _products;
   Future<List<Map<String, dynamic>>>? _orders;
+  Future<List<Map<String, dynamic>>>? _requests;
 
   @override
   void didChangeDependencies() {
@@ -36,16 +37,36 @@ class _ProviderVendorScreenState extends State<ProviderVendorScreen> {
     _vendor = (ModalRoute.of(context)?.settings.arguments
             as Map<String, dynamic>?) ??
         const {};
+    _tab = _isServiceKind ? 2 : 0;
     _reloadProducts();
     _reloadOrders();
+    _reloadRequests();
   }
 
   String get _vendorId => _vendor?['id'] as String? ?? '';
+  bool get _isServiceKind {
+    final k = _vendor?['kind'] as String?;
+    return k == 'Services' || k == 'Transport';
+  }
 
   void _reloadProducts() => setState(
       () => _products = SupabaseService.vendorProducts(_vendorId));
   void _reloadOrders() =>
       setState(() => _orders = SupabaseService.vendorOrders(_vendorId));
+  void _reloadRequests() => setState(
+      () => _requests = SupabaseService.vendorQuoteRequests(_vendorId));
+
+  Future<void> _quote(String id) async {
+    final ok = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.bg,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+      builder: (_) => _QuoteSheet(requestId: id),
+    );
+    if (ok == true) _reloadRequests();
+  }
 
   Future<void> _addProduct() async {
     final ok = await showModalBottomSheet<bool>(
@@ -91,17 +112,24 @@ class _ProviderVendorScreenState extends State<ProviderVendorScreen> {
                   const SizedBox(height: 16),
                   Text(name, style: AppText.heading(34, height: 1.05)),
                   const SizedBox(height: 18),
-                  Row(
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
                     children: [
+                      if (!_isServiceKind) ...[
+                        _TabBtn(
+                            label: 'Products',
+                            selected: _tab == 0,
+                            onTap: () => setState(() => _tab = 0)),
+                        _TabBtn(
+                            label: 'Orders',
+                            selected: _tab == 1,
+                            onTap: () => setState(() => _tab = 1)),
+                      ],
                       _TabBtn(
-                          label: 'Products',
-                          selected: _tab == 0,
-                          onTap: () => setState(() => _tab = 0)),
-                      const SizedBox(width: 10),
-                      _TabBtn(
-                          label: 'Orders',
-                          selected: _tab == 1,
-                          onTap: () => setState(() => _tab = 1)),
+                          label: 'Requests',
+                          selected: _tab == 2,
+                          onTap: () => setState(() => _tab = 2)),
                     ],
                   ),
                   const SizedBox(height: 18),
@@ -109,7 +137,11 @@ class _ProviderVendorScreenState extends State<ProviderVendorScreen> {
               ),
             ),
             Expanded(
-              child: _tab == 0 ? _productsView() : _ordersView(),
+              child: switch (_tab) {
+                0 => _productsView(),
+                1 => _ordersView(),
+                _ => _requestsView(),
+              },
             ),
           ],
         ),
@@ -192,6 +224,177 @@ class _ProviderVendorScreenState extends State<ProviderVendorScreen> {
           ],
         );
       },
+    );
+  }
+
+  Widget _requestsView() {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: _requests,
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snap.hasError) AppErrors.report(snap.error!);
+        final requests = snap.data ?? const [];
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(32, 0, 32, 40),
+          children: [
+            const Hairline(),
+            if (requests.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: Text('No requests yet. Stables that ask you for a price '
+                    'appear here.',
+                    style: AppText.body(16, color: AppColors.ink(0.6))),
+              ),
+            for (final r in requests) ...[
+              _RequestRow(request: r, onQuote: () => _quote(r['id'] as String)),
+              const Hairline(),
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _RequestRow extends StatelessWidget {
+  const _RequestRow({required this.request, required this.onQuote});
+  final Map<String, dynamic> request;
+  final VoidCallback onQuote;
+
+  (String, TagTone) get _tag => switch (request['status'] as String?) {
+        'quoted' => ('Quoted', TagTone.sage),
+        'accepted' => ('Accepted', TagTone.sage),
+        'declined' => ('Declined', TagTone.neutral),
+        _ => ('New', TagTone.accent),
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final status = (request['status'] as String?) ?? 'open';
+    final isTransport = request['kind'] == 'transport';
+    final title = isTransport
+        ? 'Transport: ${request['from_loc'] ?? '?'} → ${request['to_loc'] ?? '?'}'
+        : ((request['subject'] as String?)?.isNotEmpty == true
+            ? request['subject'] as String
+            : 'Service request');
+    final detail = isTransport
+        ? [
+            if ((request['on_day'] as String?)?.isNotEmpty == true)
+              request['on_day'],
+            if (request['horses'] != null) '${request['horses']} horse(s)',
+          ].join(' · ')
+        : (request['detail'] as String?) ?? '';
+    final price = (request['quote_price'] as num?)?.toDouble();
+    final tag = _tag;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(child: Text(title, style: AppText.heading(18, height: 1.2))),
+              AppTag(tag.$1, tone: tag.$2),
+            ],
+          ),
+          if (detail.isNotEmpty) ...[
+            const SizedBox(height: 5),
+            Text(detail, style: AppText.body(14, color: AppColors.ink(0.6))),
+          ],
+          if (price != null) ...[
+            const SizedBox(height: 6),
+            Text('Your quote: AED ${price.toStringAsFixed(0)}',
+                style: AppText.body(15, color: AppColors.accent700)),
+          ],
+          if (status == 'open') ...[
+            const SizedBox(height: 12),
+            AppButton(
+              label: 'Send a quote',
+              block: false,
+              minHeight: 44,
+              fontSize: 15,
+              onPressed: onQuote,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _QuoteSheet extends StatefulWidget {
+  const _QuoteSheet({required this.requestId});
+  final String requestId;
+
+  @override
+  State<_QuoteSheet> createState() => _QuoteSheetState();
+}
+
+class _QuoteSheetState extends State<_QuoteSheet> {
+  final _price = TextEditingController();
+  final _note = TextEditingController();
+  bool _saving = false;
+
+  @override
+  void dispose() {
+    _price.dispose();
+    _note.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    final price = double.tryParse(_price.text.trim());
+    if (price == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Enter a valid price.')));
+      return;
+    }
+    setState(() => _saving = true);
+    try {
+      await SupabaseService.submitQuote(
+          widget.requestId, price, _note.text.trim());
+      if (mounted) Navigator.of(context).pop(true);
+    } catch (e) {
+      AppErrors.report(e);
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Couldn't send: $e")));
+        setState(() => _saving = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 28,
+        right: 28,
+        top: 22,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 22,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Send a quote', style: AppText.heading(24)),
+          const SizedBox(height: 18),
+          AppField(
+              label: 'Price (AED)',
+              controller: _price,
+              keyboardType: TextInputType.number),
+          const SizedBox(height: 16),
+          AppField(label: 'Note (optional)', controller: _note, maxLines: 2),
+          const SizedBox(height: 22),
+          if (_saving)
+            const Center(child: CircularProgressIndicator())
+          else
+            AppButton(label: 'Send quote', onPressed: _save),
+          const SizedBox(height: 8),
+        ],
+      ),
     );
   }
 }
