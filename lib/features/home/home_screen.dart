@@ -23,6 +23,7 @@ import '../settings/stable_settings_screen.dart';
 import '../shows/shows_screen.dart';
 import '../market/market_screen.dart';
 import '../market/payments_screen.dart';
+import '../market/provider_screen.dart';
 import '../people/approvals_screen.dart';
 import '../people/my_stables_screen.dart';
 import '../people/people_screen.dart';
@@ -732,9 +733,15 @@ class _YouTab extends StatelessWidget {
         ),
         const Hairline(),
         _NavRow(
-          title: l10n.payments,
-          subtitle: l10n.paymentsSub,
+          title: 'My orders',
+          subtitle: 'What you have ordered from the market',
           onTap: () => Navigator.of(context).pushNamed(PaymentsScreen.route),
+        ),
+        const Hairline(),
+        _NavRow(
+          title: 'Sell on the market',
+          subtitle: 'Run a shop — list products and take orders',
+          onTap: () => Navigator.of(context).pushNamed(ProviderScreen.route),
         ),
         const Hairline(),
         _NavRow(

@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 
-import '../../data/market_data.dart';
+import '../../data/basket.dart';
+import '../../data/errors.dart';
+import '../../data/session.dart';
+import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
-import '../../models/market.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/hairline.dart';
 import '../../widgets/photo_placeholder.dart';
 import '../auth/back_link.dart';
-import 'paid_screen.dart';
+import 'payments_screen.dart';
 
-/// Screen 50 — Basket and checkout. Grouped by seller; each seller's delivery
-/// is separate and separately priced — deliveries are never merged. You pay the
-/// platform, not the seller.
+/// Screen 50 — Basket and checkout. Grouped by seller; each seller becomes its
+/// own order. Payment is arranged with the seller for now (no card step yet).
 class BasketScreen extends StatefulWidget {
   const BasketScreen({super.key});
   static const route = '/market/basket';
@@ -23,53 +24,110 @@ class BasketScreen extends StatefulWidget {
 }
 
 class _BasketScreenState extends State<BasketScreen> {
-  String _pay = 'card';
+  bool _placing = false;
+
+  Future<void> _placeOrders() async {
+    final basket = Basket.instance;
+    if (basket.isEmpty) return;
+    final stableId = SessionScope.of(context).activeStableId;
+    setState(() => _placing = true);
+    try {
+      for (final entry in basket.byVendor.entries) {
+        await SupabaseService.placeOrder(
+          vendorId: entry.key,
+          stableId: stableId,
+          items: [
+            for (final l in entry.value)
+              {
+                'product_id': l.productId,
+                'name': l.name,
+                'unit_price_aed': l.unitPrice,
+                'qty': l.qty,
+              }
+          ],
+        );
+      }
+      basket.clear();
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed(PaymentsScreen.route);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Order placed. The seller will confirm it.')));
+      }
+    } catch (e) {
+      AppErrors.report(e);
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Couldn't place order: $e")));
+        setState(() => _placing = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppL10n.of(context);
-    final groups = MarketData.basketGroups('125 mm');
-
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
         bottom: false,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(32, 18, 32, 40),
-          children: [
-            BackLink(label: l10n.market),
-            const SizedBox(height: 22),
-            Text(l10n.basket, style: AppText.heading(36, height: 1)),
-            const SizedBox(height: 24),
-            for (final g in groups) _SellerGroup(group: g),
-            const SizedBox(height: 6),
-            _totalRow(l10n.totalItems, MarketData.totalItems, false),
-            _totalRow(l10n.totalDelivery, MarketData.totalDelivery, false),
-            _totalRow(l10n.toPay, MarketData.basketTotal, true),
-            const SizedBox(height: 26),
-            Text(l10n.payWith.toUpperCase(), style: AppText.eyebrow()),
-            const SizedBox(height: 11),
-            const Hairline(),
-            for (final m in MarketData.payMethods) ...[
-              _PayRow(
-                method: m,
-                selected: _pay == m.id,
-                onTap: () => setState(() => _pay = m.id),
-              ),
-              const Hairline(),
-            ],
-            const SizedBox(height: 26),
-            AppButton(
-              label: l10n.payAmount(MarketData.basketTotal),
-              minHeight: 56,
-              fontSize: 17,
-              onPressed: () =>
-                  Navigator.of(context).pushNamed(PaidScreen.route),
-            ),
-            const SizedBox(height: 16),
-            Text(l10n.basketTerms,
-                style: AppText.body(14, height: 1.6, color: AppColors.ink(0.6))),
-          ],
+        child: AnimatedBuilder(
+          animation: Basket.instance,
+          builder: (context, _) {
+            final basket = Basket.instance;
+            final groups = basket.byVendor;
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(32, 18, 32, 40),
+              children: [
+                BackLink(label: l10n.market),
+                const SizedBox(height: 22),
+                Text(l10n.basket, style: AppText.heading(36, height: 1)),
+                const SizedBox(height: 24),
+                if (basket.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 30),
+                    child: Text('Your basket is empty.',
+                        style: AppText.body(16, color: AppColors.ink(0.6))),
+                  )
+                else ...[
+                  for (final entry in groups.entries)
+                    _SellerGroup(
+                      vendorName: entry.value.first.vendorName,
+                      lines: entry.value,
+                      onChanged: () => setState(() {}),
+                    ),
+                  const SizedBox(height: 6),
+                  _totalRow(l10n.toPay,
+                      'AED ${basket.total.toStringAsFixed(0)}', true),
+                  const SizedBox(height: 24),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Text(
+                      'Payment is arranged directly with the seller for now. '
+                      'Card payment is coming soon.',
+                      style: AppText.body(14,
+                          height: 1.5, color: AppColors.ink(0.7)),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  if (_placing)
+                    const Center(child: CircularProgressIndicator())
+                  else
+                    AppButton(
+                      label: groups.length > 1
+                          ? 'Place ${groups.length} orders'
+                          : 'Place order',
+                      minHeight: 56,
+                      fontSize: 17,
+                      onPressed: _placeOrders,
+                    ),
+                ],
+              ],
+            );
+          },
         ),
       ),
     );
@@ -79,8 +137,6 @@ class _BasketScreenState extends State<BasketScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 7),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.baseline,
-        textBaseline: TextBaseline.alphabetic,
         children: [
           Expanded(
             child: Text(label,
@@ -88,8 +144,7 @@ class _BasketScreenState extends State<BasketScreen> {
                     ? AppText.heading(19)
                     : AppText.body(16, color: AppColors.ink(0.6))),
           ),
-          Text(value,
-              style: strong ? AppText.heading(19) : AppText.body(16)),
+          Text(value, style: strong ? AppText.heading(19) : AppText.body(16)),
         ],
       ),
     );
@@ -97,8 +152,11 @@ class _BasketScreenState extends State<BasketScreen> {
 }
 
 class _SellerGroup extends StatelessWidget {
-  const _SellerGroup({required this.group});
-  final BasketGroup group;
+  const _SellerGroup(
+      {required this.vendorName, required this.lines, required this.onChanged});
+  final String vendorName;
+  final List<BasketLine> lines;
+  final VoidCallback onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -109,16 +167,13 @@ class _SellerGroup extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(bottom: 4),
-            child: Text(group.seller.toUpperCase(), style: AppText.eyebrow()),
+            child: Text(vendorName.toUpperCase(), style: AppText.eyebrow()),
           ),
           const Hairline(),
-          for (final l in group.lines) ...[
-            _LineRow(line: l),
+          for (final l in lines) ...[
+            _LineRow(line: l, onChanged: onChanged),
             const Hairline(),
           ],
-          const SizedBox(height: 9),
-          Text(group.delivery,
-              style: AppText.body(13, color: AppColors.ink(0.5))),
         ],
       ),
     );
@@ -126,8 +181,9 @@ class _SellerGroup extends StatelessWidget {
 }
 
 class _LineRow extends StatelessWidget {
-  const _LineRow({required this.line});
+  const _LineRow({required this.line, required this.onChanged});
   final BasketLine line;
+  final VoidCallback onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -142,60 +198,59 @@ class _LineRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(line.name, style: AppText.body(16, height: 1.3)),
-                const SizedBox(height: 4),
-                Text(line.detail,
-                    style: AppText.body(13, color: AppColors.ink(0.5))),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    _MiniBtn(
+                        icon: Icons.remove,
+                        onTap: () {
+                          Basket.instance.setQty(line.productId, line.qty - 1);
+                          onChanged();
+                        }),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Text('${line.qty}', style: AppText.heading(16)),
+                    ),
+                    _MiniBtn(
+                        icon: Icons.add,
+                        onTap: () {
+                          Basket.instance.setQty(line.productId, line.qty + 1);
+                          onChanged();
+                        }),
+                  ],
+                ),
               ],
             ),
           ),
           const SizedBox(width: 12),
-          Text(line.price, style: AppText.body(16)),
+          Text('AED ${line.lineTotal.toStringAsFixed(0)}',
+              style: AppText.body(16)),
         ],
       ),
     );
   }
 }
 
-class _PayRow extends StatelessWidget {
-  const _PayRow(
-      {required this.method, required this.selected, required this.onTap});
-  final PayMethod method;
-  final bool selected;
+class _MiniBtn extends StatelessWidget {
+  const _MiniBtn({required this.icon, required this.onTap});
+  final IconData icon;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 15),
-        child: Row(
-          children: [
-            Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: selected ? AppColors.accent : AppColors.ink(0.35),
-                  width: selected ? 6 : 1.5,
-                ),
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(method.label, style: AppText.body(16, height: 1.3)),
-                  const SizedBox(height: 3),
-                  Text(method.meta,
-                      style: AppText.body(13, color: AppColors.ink(0.5))),
-                ],
-              ),
-            ),
-          ],
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        width: 32,
+        height: 32,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.divider),
         ),
+        child: Icon(icon, size: 17, color: AppColors.text),
       ),
     );
   }

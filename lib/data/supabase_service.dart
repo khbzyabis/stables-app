@@ -566,4 +566,155 @@ class SupabaseService {
         'pinned': pinned,
         'author_name': displayName,
       }).select().single();
+
+  // ---- Marketplace: browsing (buyer side) -----------------------------
+  static const marketCategories = <String>[
+    'Feed',
+    'Tack',
+    'Hoofcare',
+    'Rugs',
+    'Services',
+  ];
+
+  /// Products in a category, across all approved vendors, with the seller name.
+  static Future<List<Map<String, dynamic>>> marketProducts(
+      String category) async {
+    final rows = await _db
+        .from('products')
+        .select('*, vendors(name, city, kind)')
+        .eq('category', category)
+        .eq('in_stock', true)
+        .order('created_at', ascending: false);
+    return rows.map<Map<String, dynamic>>((r) {
+      final v = r['vendors'] as Map?;
+      return {
+        ...Map<String, dynamic>.from(r),
+        'vendor_name': v?['name'] ?? 'Seller',
+        'vendor_city': v?['city'],
+      };
+    }).toList();
+  }
+
+  // ---- Marketplace: orders (buyer side) -------------------------------
+  /// Place one order for a single vendor. [items] are maps with keys
+  /// product_id, name, unit_price_aed, qty. Returns the created order row.
+  static Future<Map<String, dynamic>> placeOrder({
+    required String vendorId,
+    String? stableId,
+    required List<Map<String, dynamic>> items,
+    String? note,
+  }) async {
+    final total = items.fold<double>(
+        0, (t, i) => t + (i['unit_price_aed'] as num) * (i['qty'] as num));
+    final order = await _db.from('orders').insert({
+      'vendor_id': vendorId,
+      'stable_id': ?stableId,
+      'note': ?note,
+      'total_aed': total,
+    }).select().single();
+    final orderId = order['id'] as String;
+    await _db.from('order_items').insert([
+      for (final i in items)
+        {
+          'order_id': orderId,
+          'product_id': i['product_id'],
+          'name': i['name'],
+          'unit_price_aed': i['unit_price_aed'],
+          'qty': i['qty'],
+        }
+    ]);
+    Analytics.capture('order_placed', {'vendor_id': vendorId});
+    return order;
+  }
+
+  /// The current person's orders (buyer side), newest first, with vendor names.
+  static Future<List<Map<String, dynamic>>> myOrders() async {
+    final rows = await _db
+        .from('orders')
+        .select('*, vendors(name)')
+        .eq('buyer_id', currentUser?.id ?? '')
+        .order('created_at', ascending: false);
+    return rows.map<Map<String, dynamic>>((r) {
+      final v = r['vendors'] as Map?;
+      return {...Map<String, dynamic>.from(r), 'vendor_name': v?['name'] ?? 'Seller'};
+    }).toList();
+  }
+
+  static Future<List<Map<String, dynamic>>> orderItems(String orderId) => _db
+      .from('order_items')
+      .select()
+      .eq('order_id', orderId)
+      .order('name');
+
+  /// Buyer cancels their own order.
+  static Future<void> cancelOrder(String orderId) => _db
+      .from('orders')
+      .update({'status': 'cancelled'})
+      .eq('id', orderId);
+
+  // ---- Marketplace: provider (seller side) ----------------------------
+  /// Vendors the current person owns.
+  static Future<List<Map<String, dynamic>>> myVendors() => _db
+      .from('vendors')
+      .select()
+      .eq('owner_id', currentUser?.id ?? '')
+      .order('created_at');
+
+  static Future<Map<String, dynamic>> createVendor({
+    required String name,
+    String? kind,
+    String? city,
+    String? about,
+  }) =>
+      _db.from('vendors').insert({
+        'name': name,
+        'kind': ?kind,
+        'city': ?city,
+        'about': ?about,
+      }).select().single();
+
+  static Future<List<Map<String, dynamic>>> vendorProducts(String vendorId) =>
+      _db
+          .from('products')
+          .select()
+          .eq('vendor_id', vendorId)
+          .order('created_at', ascending: false);
+
+  static Future<Map<String, dynamic>> addProduct({
+    required String vendorId,
+    required String name,
+    required double priceAed,
+    required String category,
+    String? unit,
+    String? description,
+  }) =>
+      _db.from('products').insert({
+        'vendor_id': vendorId,
+        'name': name,
+        'price_aed': priceAed,
+        'category': category,
+        'unit': ?unit,
+        'description': ?description,
+      }).select().single();
+
+  static Future<void> setProductStock(String productId, bool inStock) => _db
+      .from('products')
+      .update({'in_stock': inStock})
+      .eq('id', productId);
+
+  static Future<void> deleteProduct(String productId) =>
+      _db.from('products').delete().eq('id', productId);
+
+  /// Orders placed with a vendor the current person owns, newest first.
+  static Future<List<Map<String, dynamic>>> vendorOrders(String vendorId) => _db
+      .from('orders')
+      .select()
+      .eq('vendor_id', vendorId)
+      .order('created_at', ascending: false);
+
+  /// Vendor advances an order: accepted / fulfilled / cancelled.
+  static Future<void> setOrderStatus(String orderId, String status) => _db
+      .from('orders')
+      .update({'status': status})
+      .eq('id', orderId);
 }

@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 
-import '../../data/market_data.dart';
+import '../../data/basket.dart';
+import '../../data/errors.dart';
+import '../../data/session.dart';
+import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
-import '../../models/market.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/hairline.dart';
 import '../../widgets/photo_placeholder.dart';
 import 'basket_screen.dart';
 import 'item_screen.dart';
-import 'quote_request_screen.dart';
 
-/// Screen 48 — Market (Shop). Browse by group; every seller is operator-approved.
+/// Screen 48 — Market (Shop). Browse real products by category, across every
+/// approved vendor. Sellers list products from the provider dashboard.
 class MarketScreen extends StatefulWidget {
   const MarketScreen({super.key});
   static const route = '/market';
@@ -21,12 +23,22 @@ class MarketScreen extends StatefulWidget {
 }
 
 class _MarketScreenState extends State<MarketScreen> {
-  String _cat = 'Tack';
+  String _cat = 'Feed';
+  late Future<List<Map<String, dynamic>>> _future = _load();
+
+  Future<List<Map<String, dynamic>>> _load() => SupabaseService.marketProducts(_cat);
+
+  void _select(String c) {
+    setState(() {
+      _cat = c;
+      _future = _load();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppL10n.of(context);
-    final items = MarketData.catalogue[_cat] ?? const [];
+    final stableName = SessionScope.of(context).activeStableName;
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -47,7 +59,7 @@ class _MarketScreenState extends State<MarketScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(l10n.deliversTo('Serc'),
+                            Text(l10n.deliversTo(stableName),
                                 style: AppText.eyebrow(color: AppColors.accent700)),
                             const SizedBox(height: 9),
                             Text(l10n.market, style: AppText.heading(36, height: 1)),
@@ -56,9 +68,11 @@ class _MarketScreenState extends State<MarketScreen> {
                       ),
                       const SizedBox(height: 20),
                       _BasketButton(
-                        count: 3,
-                        onTap: () =>
-                            Navigator.of(context).pushNamed(BasketScreen.route),
+                        onTap: () async {
+                          await Navigator.of(context)
+                              .pushNamed(BasketScreen.route);
+                          setState(() {});
+                        },
                       ),
                     ],
                   ),
@@ -67,11 +81,11 @@ class _MarketScreenState extends State<MarketScreen> {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      for (final c in MarketData.categories)
+                      for (final c in SupabaseService.marketCategories)
                         _CatChip(
                           label: c,
                           selected: c == _cat,
-                          onTap: () => setState(() => _cat = c),
+                          onTap: () => _select(c),
                         ),
                     ],
                   ),
@@ -79,20 +93,45 @@ class _MarketScreenState extends State<MarketScreen> {
               ),
             ),
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(32, 22, 32, 0),
-                children: [
-                  const Hairline(),
-                  for (final item in items) ...[
-                    _ItemRow(item: item),
-                    const Hairline(),
-                  ],
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: Text(l10n.everyApproved,
-                        style: AppText.body(14, height: 1.5, color: AppColors.ink(0.5))),
-                  ),
-                ],
+              child: FutureBuilder<List<Map<String, dynamic>>>(
+                future: _future,
+                builder: (context, snap) {
+                  if (snap.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snap.hasError) AppErrors.report(snap.error!);
+                  final items = snap.data ?? const [];
+                  return ListView(
+                    padding: const EdgeInsets.fromLTRB(32, 22, 32, 0),
+                    children: [
+                      const Hairline(),
+                      if (items.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 26),
+                          child: Text(
+                            'Nothing in $_cat yet. Sellers add products from '
+                            '"Sell on the market" (under You). Anything they '
+                            'list shows up here.',
+                            style: AppText.body(16,
+                                height: 1.5, color: AppColors.ink(0.6)),
+                          ),
+                        ),
+                      for (final item in items) ...[
+                        _ItemRow(
+                          item: item,
+                          onReturn: () => setState(() {}),
+                        ),
+                        const Hairline(),
+                      ],
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: Text(l10n.everyApproved,
+                            style: AppText.body(14,
+                                height: 1.5, color: AppColors.ink(0.5))),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ],
@@ -103,23 +142,29 @@ class _MarketScreenState extends State<MarketScreen> {
 }
 
 class _BasketButton extends StatelessWidget {
-  const _BasketButton({required this.count, required this.onTap});
-  final int count;
+  const _BasketButton({required this.onTap});
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.shopping_bag_outlined,
-              color: AppColors.accent700, size: 22),
-          const SizedBox(width: 7),
-          Text('$count', style: AppText.heading(15, color: AppColors.accent700)),
-        ],
-      ),
+    return AnimatedBuilder(
+      animation: Basket.instance,
+      builder: (context, _) {
+        final count = Basket.instance.count;
+        return GestureDetector(
+          onTap: onTap,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.shopping_bag_outlined,
+                  color: AppColors.accent700, size: 22),
+              const SizedBox(width: 7),
+              Text('$count',
+                  style: AppText.heading(15, color: AppColors.accent700)),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -152,18 +197,19 @@ class _CatChip extends StatelessWidget {
 }
 
 class _ItemRow extends StatelessWidget {
-  const _ItemRow({required this.item});
-  final MarketItem item;
+  const _ItemRow({required this.item, required this.onReturn});
+  final Map<String, dynamic> item;
+  final VoidCallback onReturn;
 
   @override
   Widget build(BuildContext context) {
+    final price = (item['price_aed'] as num?)?.toDouble() ?? 0;
+    final unit = item['unit'] as String?;
     return InkWell(
-      onTap: () {
-        if (item.isService) {
-          Navigator.of(context).pushNamed(QuoteRequestScreen.route);
-        } else {
-          Navigator.of(context).pushNamed(ItemScreen.route);
-        }
+      onTap: () async {
+        await Navigator.of(context)
+            .pushNamed(ItemScreen.route, arguments: item);
+        onReturn();
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -175,9 +221,10 @@ class _ItemRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(item.name, style: AppText.body(17, height: 1.3)),
+                  Text((item['name'] as String?) ?? 'Product',
+                      style: AppText.body(17, height: 1.3)),
                   const SizedBox(height: 4),
-                  Text(item.seller,
+                  Text((item['vendor_name'] as String?) ?? 'Seller',
                       style: AppText.body(14, color: AppColors.ink(0.55))),
                 ],
               ),
@@ -186,10 +233,12 @@ class _ItemRow extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(item.price, style: AppText.heading(17)),
-                const SizedBox(height: 3),
-                Text(item.meta,
-                    style: AppText.body(13, color: AppColors.ink(0.5))),
+                Text('AED ${price.toStringAsFixed(0)}',
+                    style: AppText.heading(17)),
+                if (unit != null && unit.isNotEmpty) ...[
+                  const SizedBox(height: 3),
+                  Text(unit, style: AppText.body(13, color: AppColors.ink(0.5))),
+                ],
               ],
             ),
           ],
