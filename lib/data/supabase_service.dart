@@ -159,6 +159,13 @@ class SupabaseService {
   static Future<void> removeMember(String membershipId) =>
       _db.from('memberships').delete().eq('id', membershipId);
 
+  /// Stables the current person has asked to join but isn't approved for yet.
+  static Future<List<Map<String, dynamic>>> myPendingRequests() async {
+    final rows = await _db.rpc('my_pending_requests');
+    if (rows is! List) return const [];
+    return rows.map<Map<String, dynamic>>((r) => Map<String, dynamic>.from(r as Map)).toList();
+  }
+
   /// People waiting to be let into the stable (status = pending).
   static Future<List<Map<String, dynamic>>> pendingMembers(
       String stableId) async {

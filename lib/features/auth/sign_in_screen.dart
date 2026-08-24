@@ -54,9 +54,12 @@ class _SignInScreenState extends State<SignInScreen> {
       await SupabaseService.signIn(email: email, password: password);
       await session.refresh();
       if (!mounted) return;
-      // No stable yet → send them to create one; otherwise straight home.
+      // Have a stable, or waiting to be approved for one → Home (which shows
+      // the waiting panel). Otherwise send them to create/join one.
       nav.pushNamedAndRemoveUntil(
-        session.hasStable ? HomeScreen.route : CreateStableScreen.route,
+        (session.hasStable || session.hasPending)
+            ? HomeScreen.route
+            : CreateStableScreen.route,
         (r) => false,
       );
     } catch (e) {

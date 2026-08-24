@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../app_state.dart';
 import '../../data/session.dart';
 import '../../data/supabase_service.dart';
+import '../auth/create_stable_screen.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
@@ -109,7 +110,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(32, 24, 32, 0),
-                    child: switch (_tab) {
+                    child: (session.activeStableId == null && session.hasPending)
+                      ? _PendingPanel(session: session)
+                      : switch (_tab) {
                       AppTab.horses => _HorsesTab(stableId: session.activeStableId),
                       AppTab.board => _BoardTab(stableId: session.activeStableId),
                       AppTab.stable => _StableTab(
@@ -825,6 +828,88 @@ class _YouTabState extends State<_YouTab> {
                 ),
               ),
           ],
+        ),
+      ],
+    );
+  }
+}
+
+/// Shown on Home when the person has asked to join a stable but isn't approved
+/// yet. Persists every visit until an admin lets them in.
+class _PendingPanel extends StatefulWidget {
+  const _PendingPanel({required this.session});
+  final AppSession session;
+
+  @override
+  State<_PendingPanel> createState() => _PendingPanelState();
+}
+
+class _PendingPanelState extends State<_PendingPanel> {
+  bool _checking = false;
+
+  Future<void> _check() async {
+    setState(() => _checking = true);
+    await widget.session.refresh();
+    if (mounted) setState(() => _checking = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final pending = widget.session.pendingRequests;
+    final names = pending
+        .map((p) => (p['stable_name'] as String?) ?? 'a stable')
+        .toList();
+    return ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        const SizedBox(height: 20),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: AppColors.accent200,
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Waiting for approval',
+                  style: AppText.heading(22, color: AppColors.accent900)),
+              const SizedBox(height: 8),
+              Text(
+                names.length == 1
+                    ? 'You asked to join ${names.first}. An owner or manager '
+                        'needs to approve you — it will open up here the moment '
+                        'they do.'
+                    : 'You asked to join: ${names.join(", ")}. An owner or '
+                        'manager needs to approve you.',
+                style: AppText.body(16,
+                    height: 1.5, color: AppColors.accent900),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 22),
+        if (_checking)
+          const Center(child: CircularProgressIndicator())
+        else
+          GestureDetector(
+            onTap: _check,
+            child: Text('Check again',
+                style: AppText.heading(17, color: AppColors.accent700)),
+          ),
+        const SizedBox(height: 22),
+        const Hairline(),
+        const SizedBox(height: 22),
+        Text('Or start your own',
+            style: AppText.heading(18, height: 1.2)),
+        const SizedBox(height: 8),
+        GestureDetector(
+          onTap: () async {
+            await Navigator.of(context).pushNamed(CreateStableScreen.route);
+            _check();
+          },
+          child: Text('Create my own stable',
+              style: AppText.body(16, color: AppColors.accent700)),
         ),
       ],
     );

@@ -7,11 +7,14 @@ import 'supabase_service.dart';
 /// load their own rows (horses, notices) for it.
 class AppSession extends ChangeNotifier {
   List<Map<String, dynamic>> _stables = const [];
+  List<Map<String, dynamic>> _pending = const [];
   String? _activeId;
   bool _loading = false;
   Object? _error;
 
   List<Map<String, dynamic>> get stables => _stables;
+  List<Map<String, dynamic>> get pendingRequests => _pending;
+  bool get hasPending => _pending.isNotEmpty;
   bool get loading => _loading;
   Object? get error => _error;
 
@@ -37,6 +40,7 @@ class AppSession extends ChangeNotifier {
   Future<void> refresh() async {
     if (!SupabaseService.isSignedIn) {
       _stables = const [];
+      _pending = const [];
       _activeId = null;
       notifyListeners();
       return;
@@ -47,6 +51,12 @@ class AppSession extends ChangeNotifier {
     try {
       _stables = await SupabaseService.myStables();
       _activeId ??= _stables.isNotEmpty ? _stables.first['id'] as String : null;
+      // Best-effort: which stables am I still waiting to be approved for.
+      try {
+        _pending = await SupabaseService.myPendingRequests();
+      } catch (_) {
+        _pending = const [];
+      }
     } catch (e) {
       _error = e;
     } finally {
@@ -64,6 +74,7 @@ class AppSession extends ChangeNotifier {
 
   void clear() {
     _stables = const [];
+    _pending = const [];
     _activeId = null;
     notifyListeners();
   }

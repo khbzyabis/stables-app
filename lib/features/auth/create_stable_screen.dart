@@ -73,32 +73,14 @@ class _CreateStableScreenState extends State<CreateStableScreen> {
         if (!mounted) return;
         if (isActive) {
           session.setActive(joinedId);
-          navigator.pushNamedAndRemoveUntil(HomeScreen.route, (r) => false);
         } else {
-          // Joined but pending an admin's approval — the stable stays hidden
-          // until then, so tell them clearly instead of dropping to create.
-          await showDialog<void>(
-            context: context,
-            builder: (_) => AlertDialog(
-              backgroundColor: AppColors.bg,
-              title: Text('Request sent', style: AppText.heading(22)),
+          // Joined but pending approval — Home shows a persistent waiting panel.
+          messenger.showSnackBar(SnackBar(
               content: Text(
-                'You\'ve asked to join ${stable['name'] ?? 'the stable'}. '
-                'An owner or manager needs to approve you — it will appear '
-                'here once they do.',
-                style: AppText.body(16, height: 1.5),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text('OK',
-                      style:
-                          AppText.heading(16, color: AppColors.accent700)),
-                ),
-              ],
-            ),
-          );
+                  'Request sent to ${stable['name'] ?? 'the stable'}. '
+                  'Waiting for approval.')));
         }
+        navigator.pushNamedAndRemoveUntil(HomeScreen.route, (r) => false);
       } catch (e) {
       AppErrors.report(e);
         if (mounted) {
