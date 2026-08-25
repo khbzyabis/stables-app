@@ -995,6 +995,25 @@ class SupabaseService {
       .update({'approved': approved})
       .eq('id', id);
 
+  // ---- Admin console (platform-wide reads; operator only) -------------
+  static Future<Map<String, dynamic>> adminOverview() async {
+    final res = await _db.rpc('admin_overview');
+    if (res == null) return const {};
+    return Map<String, dynamic>.from(res as Map);
+  }
+
+  static Future<List<Map<String, dynamic>>> adminStables() async {
+    final rows = await _db.rpc('admin_stables');
+    if (rows is! List) return const [];
+    return rows.map<Map<String, dynamic>>((r) => Map<String, dynamic>.from(r as Map)).toList();
+  }
+
+  static Future<List<Map<String, dynamic>>> adminSellers() async {
+    final rows = await _db.rpc('admin_sellers');
+    if (rows is! List) return const [];
+    return rows.map<Map<String, dynamic>>((r) => Map<String, dynamic>.from(r as Map)).toList();
+  }
+
   // ---- Quote requests (service & transport providers) -----------------
   /// Kinds a shop can be. Products come from Feed…Services shops; Services and
   /// Transport shops instead take quote requests.

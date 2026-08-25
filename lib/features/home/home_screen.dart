@@ -26,7 +26,7 @@ import '../market/market_screen.dart';
 import '../market/payments_screen.dart';
 import '../market/provider_screen.dart';
 import '../market/my_quotes_screen.dart';
-import '../admin/admin_screen.dart';
+import '../admin/console_screen.dart';
 import '../people/approvals_screen.dart';
 import '../people/my_stables_screen.dart';
 import '../people/people_screen.dart';
@@ -770,9 +770,9 @@ class _YouTabState extends State<_YouTab> {
                 const Hairline(),
                 _NavRow(
                   title: 'Operator console',
-                  subtitle: 'Approve shops and post announcements',
+                  subtitle: 'Applications, sellers, stables, announcements',
                   onTap: () =>
-                      Navigator.of(context).pushNamed(AdminScreen.route),
+                      Navigator.of(context).pushNamed(ConsoleScreen.route),
                 ),
               ],
             );

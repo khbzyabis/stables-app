@@ -1,0 +1,847 @@
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../data/errors.dart';
+import '../../data/supabase_service.dart';
+import '../../theme/app_theme.dart';
+import '../../theme/tokens.dart';
+import '../../widgets/app_button.dart';
+import '../../widgets/app_field.dart';
+import '../../widgets/app_tag.dart';
+
+/// Stables Admin Console — the platform operator's desktop dashboard. A dark
+/// sidebar of sections; the content area shows platform-wide data (across every
+/// stable and seller) via operator-only reads. Responsive: the sidebar becomes
+/// a top nav on narrow screens.
+class ConsoleScreen extends StatefulWidget {
+  const ConsoleScreen({super.key});
+  static const route = '/console';
+
+  @override
+  State<ConsoleScreen> createState() => _ConsoleScreenState();
+}
+
+enum _Section { overview, applications, sellers, stables, announcements }
+
+class _ConsoleScreenState extends State<ConsoleScreen> {
+  _Section _section = _Section.overview;
+
+  static const _labels = {
+    _Section.overview: 'Overview',
+    _Section.applications: 'Applications',
+    _Section.sellers: 'Sellers',
+    _Section.stables: 'Stables',
+    _Section.announcements: 'Announcements',
+  };
+  static const _icons = {
+    _Section.overview: Icons.grid_view_rounded,
+    _Section.applications: Icons.assignment_outlined,
+    _Section.sellers: Icons.storefront_outlined,
+    _Section.stables: Icons.holiday_village_outlined,
+    _Section.announcements: Icons.campaign_outlined,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.bg,
+      body: LayoutBuilder(
+        builder: (context, c) {
+          final wide = c.maxWidth >= 900;
+          return SafeArea(
+            child: wide
+                ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _Sidebar(
+                        section: _section,
+                        onSelect: (s) => setState(() => _section = s),
+                      ),
+                      Expanded(child: _content()),
+                    ],
+                  )
+                : Column(
+                    children: [
+                      _TopNav(
+                        section: _section,
+                        onSelect: (s) => setState(() => _section = s),
+                      ),
+                      Expanded(child: _content()),
+                    ],
+                  ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _content() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(32, 24, 32, 12),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(_labels[_section]!,
+                    style: AppText.heading(30, height: 1)),
+              ),
+              IconButton(
+                tooltip: 'Back to app',
+                onPressed: () => Navigator.of(context).maybePop(),
+                icon: Icon(Icons.close, color: AppColors.ink(0.5)),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: switch (_section) {
+            _Section.overview => const _OverviewView(),
+            _Section.applications => const _ApplicationsView(),
+            _Section.sellers => const _SellersView(),
+            _Section.stables => const _StablesView(),
+            _Section.announcements => const _AnnouncementsView(),
+          },
+        ),
+      ],
+    );
+  }
+}
+
+// ---- Navigation ------------------------------------------------------------
+class _Sidebar extends StatelessWidget {
+  const _Sidebar({required this.section, required this.onSelect});
+  final _Section section;
+  final ValueChanged<_Section> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 248,
+      color: AppColors.neutral900,
+      padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Row(
+              children: [
+                Container(
+                    width: 9,
+                    height: 9,
+                    decoration: const BoxDecoration(
+                        color: AppColors.accent, shape: BoxShape.circle)),
+                const SizedBox(width: 9),
+                Text('My Stables',
+                    style: AppText.heading(16, color: AppColors.neutral100)),
+              ],
+            ),
+          ),
+          const SizedBox(height: 6),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Text('OPERATOR',
+                style: AppText.body(11,
+                    letterSpacing: 1.4, color: AppColors.neutral400)),
+          ),
+          const SizedBox(height: 22),
+          for (final s in _Section.values)
+            _NavItem(
+              label: _ConsoleScreenState._labels[s]!,
+              icon: _ConsoleScreenState._icons[s]!,
+              active: s == section,
+              onTap: () => onSelect(s),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NavItem extends StatelessWidget {
+  const _NavItem(
+      {required this.label,
+      required this.icon,
+      required this.active,
+      required this.onTap});
+  final String label;
+  final IconData icon;
+  final bool active;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Material(
+        color: active ? AppColors.neutral800 : Colors.transparent,
+        borderRadius: BorderRadius.circular(11),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(11),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            child: Row(
+              children: [
+                Icon(icon,
+                    size: 19,
+                    color: active ? AppColors.accent300 : AppColors.neutral400),
+                const SizedBox(width: 12),
+                Text(label,
+                    style: AppText.body(15,
+                        color: active
+                            ? AppColors.neutral100
+                            : AppColors.neutral300)),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TopNav extends StatelessWidget {
+  const _TopNav({required this.section, required this.onSelect});
+  final _Section section;
+  final ValueChanged<_Section> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: AppColors.neutral900,
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        child: Row(
+          children: [
+            for (final s in _Section.values)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: ChoiceChip(
+                  label: Text(_ConsoleScreenState._labels[s]!),
+                  selected: s == section,
+                  onSelected: (_) => onSelect(s),
+                  showCheckmark: false,
+                  backgroundColor: AppColors.neutral800,
+                  selectedColor: AppColors.accent,
+                  labelStyle: AppText.body(14,
+                      color: s == section
+                          ? AppColors.bg
+                          : AppColors.neutral200),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ---- Overview --------------------------------------------------------------
+class _OverviewView extends StatefulWidget {
+  const _OverviewView();
+  @override
+  State<_OverviewView> createState() => _OverviewViewState();
+}
+
+class _OverviewViewState extends State<_OverviewView> {
+  late final Future<Map<String, dynamic>> _f = SupabaseService.adminOverview();
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Map<String, dynamic>>(
+      future: _f,
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snap.hasError) AppErrors.report(snap.error!);
+        final d = snap.data ?? const {};
+        if (d.isEmpty) {
+          return _PadBody(child: Text(
+              'No data — or this account is not an operator.',
+              style: AppText.body(16, color: AppColors.ink(0.6))));
+        }
+        int n(String k) => (d[k] as num?)?.toInt() ?? 0;
+        final tiles = <(String, String)>[
+          ('Stables', '${n('stables')}'),
+          ('People', '${n('people')}'),
+          ('Horses', '${n('horses')}'),
+          ('Applications waiting', '${n('apps_pending')}'),
+          ('Live sellers', '${n('sellers_live')} / ${n('sellers_total')}'),
+          ('Open orders', '${n('orders_open')} / ${n('orders_total')}'),
+        ];
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(32, 8, 32, 40),
+          children: [
+            Wrap(
+              spacing: 14,
+              runSpacing: 14,
+              children: [for (final t in tiles) _Kpi(label: t.$1, value: t.$2)],
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _Kpi extends StatelessWidget {
+  const _Kpi({required this.label, required this.value});
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 220,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(value, style: AppText.heading(32, height: 1)),
+          const SizedBox(height: 6),
+          Text(label, style: AppText.body(14, color: AppColors.ink(0.6))),
+        ],
+      ),
+    );
+  }
+}
+
+// ---- Applications ----------------------------------------------------------
+class _ApplicationsView extends StatefulWidget {
+  const _ApplicationsView();
+  @override
+  State<_ApplicationsView> createState() => _ApplicationsViewState();
+}
+
+class _ApplicationsViewState extends State<_ApplicationsView> {
+  late Future<List<Map<String, dynamic>>> _f =
+      SupabaseService.pendingApplications();
+
+  void _reload() =>
+      setState(() => _f = SupabaseService.pendingApplications());
+
+  Future<void> _decide(String id, bool approve) async {
+    try {
+      await SupabaseService.decideApplication(id, approve);
+      _reload();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(approve ? 'Approved — shop is live.' : 'Rejected.')));
+      }
+    } catch (e) {
+      AppErrors.report(e);
+    }
+  }
+
+  Future<void> _openDoc(String path) async {
+    try {
+      final url = await SupabaseService.sellerDocUrl(path);
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } catch (e) {
+      AppErrors.report(e);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: _f,
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snap.hasError) AppErrors.report(snap.error!);
+        final apps = snap.data ?? const [];
+        if (apps.isEmpty) {
+          return _PadBody(child: Text('No applications waiting.',
+              style: AppText.body(16, color: AppColors.ink(0.6))));
+        }
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(32, 8, 32, 40),
+          children: [
+            for (final a in apps) ...[
+              _Card(
+                child: _AppCard(
+                  app: a,
+                  onOpenDoc: _openDoc,
+                  onApprove: () => _decide(a['id'] as String, true),
+                  onReject: () => _decide(a['id'] as String, false),
+                ),
+              ),
+              const SizedBox(height: 14),
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _AppCard extends StatefulWidget {
+  const _AppCard(
+      {required this.app,
+      required this.onOpenDoc,
+      required this.onApprove,
+      required this.onReject});
+  final Map<String, dynamic> app;
+  final ValueChanged<String> onOpenDoc;
+  final VoidCallback onApprove;
+  final VoidCallback onReject;
+
+  @override
+  State<_AppCard> createState() => _AppCardState();
+}
+
+class _AppCardState extends State<_AppCard> {
+  late final Future<List<Map<String, dynamic>>> _docs =
+      SupabaseService.applicationDocuments(widget.app['id'] as String);
+
+  @override
+  Widget build(BuildContext context) {
+    final a = widget.app;
+    final trades = (a['trades'] as List?)?.cast<String>() ?? const [];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text((a['trading_name'] as String?) ?? 'Applicant',
+            style: AppText.heading(22)),
+        if ((a['location'] as String?)?.isNotEmpty == true) ...[
+          const SizedBox(height: 4),
+          Text(a['location'] as String,
+              style: AppText.body(14, color: AppColors.ink(0.55))),
+        ],
+        if (trades.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          Wrap(spacing: 8, runSpacing: 8, children: [
+            for (final t in trades) AppTag(t, tone: TagTone.sage)
+          ]),
+        ],
+        const SizedBox(height: 14),
+        Text('PAPERS', style: AppText.eyebrow()),
+        const SizedBox(height: 4),
+        FutureBuilder<List<Map<String, dynamic>>>(
+          future: _docs,
+          builder: (context, snap) {
+            final docs = snap.data ?? const [];
+            if (docs.isEmpty) {
+              return Text('No papers uploaded.',
+                  style: AppText.body(14, color: AppColors.ink(0.5)));
+            }
+            return Column(children: [
+              for (final d in docs)
+                InkWell(
+                  onTap: d['storage_path'] == null
+                      ? null
+                      : () => widget.onOpenDoc(d['storage_path'] as String),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Row(children: [
+                      Icon(Icons.description_outlined,
+                          size: 18, color: AppColors.ink(0.5)),
+                      const SizedBox(width: 10),
+                      Expanded(
+                          child: Text((d['label'] as String?) ?? 'Document',
+                              style: AppText.body(15))),
+                      Text('View',
+                          style:
+                              AppText.body(14, color: AppColors.accent700)),
+                    ]),
+                  ),
+                ),
+            ]);
+          },
+        ),
+        const SizedBox(height: 14),
+        Row(children: [
+          AppButton(
+              label: 'Approve',
+              block: false,
+              minHeight: 44,
+              fontSize: 15,
+              onPressed: widget.onApprove),
+          const SizedBox(width: 10),
+          AppButton(
+              label: 'Reject',
+              variant: AppButtonVariant.secondary,
+              block: false,
+              minHeight: 44,
+              fontSize: 15,
+              onPressed: widget.onReject),
+        ]),
+      ],
+    );
+  }
+}
+
+// ---- Sellers ---------------------------------------------------------------
+class _SellersView extends StatefulWidget {
+  const _SellersView();
+  @override
+  State<_SellersView> createState() => _SellersViewState();
+}
+
+class _SellersViewState extends State<_SellersView> {
+  late Future<List<Map<String, dynamic>>> _f = SupabaseService.adminSellers();
+  void _reload() => setState(() => _f = SupabaseService.adminSellers());
+
+  Future<void> _toggle(String id, bool approve) async {
+    try {
+      await SupabaseService.setVendorApproved(id, approve);
+      _reload();
+    } catch (e) {
+      AppErrors.report(e);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: _f,
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snap.hasError) AppErrors.report(snap.error!);
+        final sellers = snap.data ?? const [];
+        if (sellers.isEmpty) {
+          return _PadBody(child: Text('No sellers yet.',
+              style: AppText.body(16, color: AppColors.ink(0.6))));
+        }
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(32, 8, 32, 40),
+          children: [
+            for (final v in sellers) ...[
+              _Card(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text((v['name'] as String?) ?? 'Shop',
+                              style: AppText.heading(19)),
+                          const SizedBox(height: 4),
+                          Text([
+                            if ((v['kind'] as String?)?.isNotEmpty == true) v['kind'],
+                            if ((v['owner_email'] as String?)?.isNotEmpty == true)
+                              v['owner_email'],
+                            '${(v['products'] as num?)?.toInt() ?? 0} products',
+                          ].join(' · '),
+                              style:
+                                  AppText.body(14, color: AppColors.ink(0.55))),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    AppTag(
+                        (v['approved'] as bool? ?? false) ? 'Live' : 'In review',
+                        tone: (v['approved'] as bool? ?? false)
+                            ? TagTone.sage
+                            : TagTone.accent),
+                    const SizedBox(width: 10),
+                    AppButton(
+                      label: (v['approved'] as bool? ?? false)
+                          ? 'Suspend'
+                          : 'Approve',
+                      variant: (v['approved'] as bool? ?? false)
+                          ? AppButtonVariant.secondary
+                          : AppButtonVariant.primary,
+                      block: false,
+                      minHeight: 42,
+                      fontSize: 14,
+                      onPressed: () => _toggle(
+                          v['id'] as String, !(v['approved'] as bool? ?? false)),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+// ---- Stables ---------------------------------------------------------------
+class _StablesView extends StatelessWidget {
+  const _StablesView();
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: SupabaseService.adminStables(),
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snap.hasError) AppErrors.report(snap.error!);
+        final stables = snap.data ?? const [];
+        if (stables.isEmpty) {
+          return _PadBody(child: Text('No stables yet.',
+              style: AppText.body(16, color: AppColors.ink(0.6))));
+        }
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(32, 8, 32, 40),
+          children: [
+            for (final s in stables) ...[
+              _Card(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text((s['name'] as String?) ?? 'Stable',
+                              style: AppText.heading(19)),
+                          if ((s['city'] as String?)?.isNotEmpty == true) ...[
+                            const SizedBox(height: 4),
+                            Text(s['city'] as String,
+                                style: AppText.body(14,
+                                    color: AppColors.ink(0.55))),
+                          ],
+                        ],
+                      ),
+                    ),
+                    Text(
+                        '${(s['horses'] as num?)?.toInt() ?? 0} horses · '
+                        '${(s['people'] as num?)?.toInt() ?? 0} people',
+                        style: AppText.body(14, color: AppColors.ink(0.6))),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+// ---- Announcements ---------------------------------------------------------
+class _AnnouncementsView extends StatefulWidget {
+  const _AnnouncementsView();
+  @override
+  State<_AnnouncementsView> createState() => _AnnouncementsViewState();
+}
+
+class _AnnouncementsViewState extends State<_AnnouncementsView> {
+  late Future<List<Map<String, dynamic>>> _f =
+      SupabaseService.allAnnouncements();
+  void _reload() => setState(() => _f = SupabaseService.allAnnouncements());
+
+  Future<void> _post() async {
+    final ok = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.bg,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+      builder: (_) => const _NewAnnouncementSheet(),
+    );
+    if (ok == true) _reload();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: _f,
+      builder: (context, snap) {
+        final items = snap.data ?? const [];
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(32, 8, 32, 40),
+          children: [
+            AppButton(label: 'Post an announcement', onPressed: _post),
+            const SizedBox(height: 18),
+            if (snap.connectionState == ConnectionState.waiting)
+              const Center(child: CircularProgressIndicator()),
+            for (final a in items) ...[
+              _Card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      AppTag((a['kind'] as String?) ?? 'Update',
+                          tone: TagTone.neutral),
+                      const Spacer(),
+                      Text((a['active'] as bool? ?? true) ? 'Live' : 'Hidden',
+                          style: AppText.body(12, color: AppColors.ink(0.5))),
+                      Switch(
+                        value: a['active'] as bool? ?? true,
+                        onChanged: (v) async {
+                          try {
+                            await SupabaseService.setAnnouncementActive(
+                                a['id'] as String, v);
+                            _reload();
+                          } catch (e) {
+                            AppErrors.report(e);
+                          }
+                        },
+                        activeThumbColor: AppColors.bg,
+                        activeTrackColor: AppColors.accent2600,
+                      ),
+                      IconButton(
+                        onPressed: () async {
+                          try {
+                            await SupabaseService.deleteAnnouncement(
+                                a['id'] as String);
+                            _reload();
+                          } catch (e) {
+                            AppErrors.report(e);
+                          }
+                        },
+                        icon: Icon(Icons.delete_outline,
+                            color: AppColors.ink(0.5)),
+                      ),
+                    ]),
+                    Text((a['title'] as String?) ?? '',
+                        style: AppText.heading(19, height: 1.25)),
+                    const SizedBox(height: 6),
+                    Text((a['body'] as String?) ?? '',
+                        style: AppText.body(15,
+                            height: 1.5, color: AppColors.ink(0.8))),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+// ---- Shared bits -----------------------------------------------------------
+class _Card extends StatelessWidget {
+  const _Card({required this.child});
+  final Widget child;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: child,
+    );
+  }
+}
+
+class _PadBody extends StatelessWidget {
+  const _PadBody({required this.child});
+  final Widget child;
+  @override
+  Widget build(BuildContext context) => Padding(
+      padding: const EdgeInsets.fromLTRB(32, 20, 32, 0), child: child);
+}
+
+class _NewAnnouncementSheet extends StatefulWidget {
+  const _NewAnnouncementSheet();
+  @override
+  State<_NewAnnouncementSheet> createState() => _NewAnnouncementSheetState();
+}
+
+class _NewAnnouncementSheetState extends State<_NewAnnouncementSheet> {
+  final _title = TextEditingController();
+  final _body = TextEditingController();
+  String _kind = 'Update';
+  bool _pinned = false;
+  bool _saving = false;
+  static const _kinds = ['Update', 'Show', 'Advert'];
+
+  @override
+  void dispose() {
+    _title.dispose();
+    _body.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    if (_title.text.trim().isEmpty || _body.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('A title and a message are needed.')));
+      return;
+    }
+    setState(() => _saving = true);
+    try {
+      await SupabaseService.addAnnouncement(
+          title: _title.text.trim(),
+          body: _body.text.trim(),
+          kind: _kind,
+          pinned: _pinned);
+      if (mounted) Navigator.of(context).pop(true);
+    } catch (e) {
+      AppErrors.report(e);
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+          left: 28,
+          right: 28,
+          top: 22,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 22),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('New announcement', style: AppText.heading(24)),
+          const SizedBox(height: 18),
+          AppField(label: 'Title', controller: _title),
+          const SizedBox(height: 16),
+          AppField(label: 'Message', controller: _body, maxLines: 3),
+          const SizedBox(height: 16),
+          Wrap(spacing: 8, children: [
+            for (final k in _kinds)
+              GestureDetector(
+                onTap: () => setState(() => _kind = k),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 9),
+                  decoration: BoxDecoration(
+                    color: k == _kind ? AppColors.accent : Colors.transparent,
+                    borderRadius: BorderRadius.circular(AppRadius.pill),
+                    border: Border.all(
+                        color: k == _kind ? AppColors.accent : AppColors.divider),
+                  ),
+                  child: Text(k,
+                      style: AppText.body(14,
+                          color: k == _kind ? AppColors.bg : AppColors.text)),
+                ),
+              ),
+          ]),
+          const SizedBox(height: 8),
+          Row(children: [
+            Checkbox(
+                value: _pinned,
+                onChanged: (v) => setState(() => _pinned = v ?? false),
+                activeColor: AppColors.accent),
+            Text('Pin to the top', style: AppText.body(15)),
+          ]),
+          const SizedBox(height: 12),
+          if (_saving)
+            const Center(child: CircularProgressIndicator())
+          else
+            AppButton(label: 'Post announcement', onPressed: _save),
+          const SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+}
