@@ -2606,6 +2606,174 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Remove'**
   String get paRemove;
+
+  /// No description provided for @bItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Items'**
+  String get bItems;
+
+  /// No description provided for @bDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery'**
+  String get bDelivery;
+
+  /// No description provided for @bDeliverySellers.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery ({count} sellers)'**
+  String bDeliverySellers(int count);
+
+  /// No description provided for @bFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get bFree;
+
+  /// No description provided for @bCheckoutNote.
+  ///
+  /// In en, this message translates to:
+  /// **'You pay My Stables, not the seller. Goods sit in a 14-day return window before the seller is paid. Each seller adds their own AED 25 delivery, free over AED 300. VAT is included.'**
+  String get bCheckoutNote;
+
+  /// No description provided for @bPaymentReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment received. The seller will pack your order.'**
+  String get bPaymentReceived;
+
+  /// No description provided for @bPaymentCouldnt.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment could not be taken.'**
+  String get bPaymentCouldnt;
+
+  /// No description provided for @bCheckoutFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t complete checkout: {error}'**
+  String bCheckoutFailed(String error);
+
+  /// No description provided for @oYouPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'You paid'**
+  String get oYouPaid;
+
+  /// No description provided for @oVat.
+  ///
+  /// In en, this message translates to:
+  /// **'VAT {vat}% included'**
+  String oVat(String vat);
+
+  /// No description provided for @oVatTrn.
+  ///
+  /// In en, this message translates to:
+  /// **'VAT {vat}% included · TRN {trn}'**
+  String oVatTrn(String vat, String trn);
+
+  /// No description provided for @oReportProblem.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a problem'**
+  String get oReportProblem;
+
+  /// No description provided for @oReportBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us what went wrong. My Stables holds the seller\'s money while we look into it.'**
+  String get oReportBody;
+
+  /// No description provided for @oReportHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Bag split in transit'**
+  String get oReportHint;
+
+  /// No description provided for @oSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get oSend;
+
+  /// No description provided for @oCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get oCancel;
+
+  /// No description provided for @oProblemSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent. My Stables will look into it.'**
+  String get oProblemSent;
+
+  /// No description provided for @oCouldntSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t send: {error}'**
+  String oCouldntSend(String error);
+
+  /// No description provided for @oInfoDispute.
+  ///
+  /// In en, this message translates to:
+  /// **'A problem has been reported. My Stables is holding the seller\'s money while we look into it.'**
+  String get oInfoDispute;
+
+  /// No description provided for @oInfoCanReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered. You have until the return window closes to report a problem; after that the seller is paid.'**
+  String get oInfoCanReturn;
+
+  /// No description provided for @oInfoDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'You pay My Stables, not the seller.'**
+  String get oInfoDefault;
+
+  /// No description provided for @oCouldntCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t cancel: {error}'**
+  String oCouldntCancel(String error);
+
+  /// No description provided for @oStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get oStatusPending;
+
+  /// No description provided for @oStatusAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get oStatusAccepted;
+
+  /// No description provided for @oStatusDelivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered'**
+  String get oStatusDelivered;
+
+  /// No description provided for @oStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get oStatusCancelled;
+
+  /// No description provided for @oCancelOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this order'**
+  String get oCancelOrder;
+
+  /// No description provided for @ordersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders'**
+  String get ordersTitle;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

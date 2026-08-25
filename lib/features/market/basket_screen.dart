@@ -44,7 +44,8 @@ class _BasketScreenState extends State<BasketScreen> {
       if (!result.success) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(result.error ?? 'Payment could not be taken.')));
+              content: Text(
+                  result.error ?? AppL10n.of(context).bPaymentCouldnt)));
           setState(() => _placing = false);
         }
         return;
@@ -75,15 +76,16 @@ class _BasketScreenState extends State<BasketScreen> {
       }
       basket.clear();
       if (mounted) {
+        final l10n = AppL10n.of(context);
         Navigator.of(context).pushReplacementNamed(PaymentsScreen.route);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Payment received. The seller will pack your order.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.bPaymentReceived)));
       }
     } catch (e) {
       AppErrors.report(e);
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Couldn't complete checkout: $e")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(AppL10n.of(context).bCheckoutFailed('$e'))));
         setState(() => _placing = false);
       }
     }
@@ -122,14 +124,14 @@ class _BasketScreenState extends State<BasketScreen> {
                       onChanged: () => setState(() {}),
                     ),
                   const SizedBox(height: 6),
-                  _totalRow('Items', 'AED ${basket.total.toStringAsFixed(0)}',
-                      false),
+                  _totalRow(l10n.bItems,
+                      'AED ${basket.total.toStringAsFixed(0)}', false),
                   _totalRow(
                       groups.length > 1
-                          ? 'Delivery (${groups.length} sellers)'
-                          : 'Delivery',
+                          ? l10n.bDeliverySellers(groups.length)
+                          : l10n.bDelivery,
                       basket.delivery == 0
-                          ? 'Free'
+                          ? l10n.bFree
                           : 'AED ${basket.delivery.toStringAsFixed(0)}',
                       false),
                   const Hairline(),
@@ -143,10 +145,7 @@ class _BasketScreenState extends State<BasketScreen> {
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Text(
-                      'You pay My Stables, not the seller. Goods sit in a '
-                      '14-day return window before the seller is paid. Each '
-                      'seller adds their own AED 25 delivery, free over AED 300. '
-                      'VAT is included.',
+                      l10n.bCheckoutNote,
                       style: AppText.body(14,
                           height: 1.5, color: AppColors.ink(0.7)),
                     ),

@@ -1327,4 +1327,104 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get paRemove => 'إزالة';
+
+  @override
+  String get bItems => 'المنتجات';
+
+  @override
+  String get bDelivery => 'التوصيل';
+
+  @override
+  String bDeliverySellers(int count) {
+    return 'التوصيل ($count بائعين)';
+  }
+
+  @override
+  String get bFree => 'مجاني';
+
+  @override
+  String get bCheckoutNote =>
+      'أنت تدفع لإسطبلاتي، لا للبائع. تبقى البضائع في نافذة إرجاع مدتها ١٤ يومًا قبل أن يُدفع للبائع. يضيف كل بائع رسوم توصيل قدرها ٢٥ درهمًا، مجانًا فوق ٣٠٠ درهم. ضريبة القيمة المضافة مشمولة.';
+
+  @override
+  String get bPaymentReceived => 'تم استلام الدفعة. سيقوم البائع بتجهيز طلبك.';
+
+  @override
+  String get bPaymentCouldnt => 'تعذّر إتمام الدفع.';
+
+  @override
+  String bCheckoutFailed(String error) {
+    return 'تعذّر إتمام الشراء: $error';
+  }
+
+  @override
+  String get oYouPaid => 'دفعتَ';
+
+  @override
+  String oVat(String vat) {
+    return 'شاملة ضريبة القيمة المضافة $vat٪';
+  }
+
+  @override
+  String oVatTrn(String vat, String trn) {
+    return 'شاملة ضريبة القيمة المضافة $vat٪ · الرقم الضريبي $trn';
+  }
+
+  @override
+  String get oReportProblem => 'الإبلاغ عن مشكلة';
+
+  @override
+  String get oReportBody =>
+      'أخبرنا بما حدث. تحتجز إسطبلاتي أموال البائع ريثما ننظر في الأمر.';
+
+  @override
+  String get oReportHint => 'مثال: تمزّق الكيس أثناء النقل';
+
+  @override
+  String get oSend => 'إرسال';
+
+  @override
+  String get oCancel => 'إلغاء';
+
+  @override
+  String get oProblemSent => 'تم الإرسال. ستنظر إسطبلاتي في الأمر.';
+
+  @override
+  String oCouldntSend(String error) {
+    return 'تعذّر الإرسال: $error';
+  }
+
+  @override
+  String get oInfoDispute =>
+      'تم الإبلاغ عن مشكلة. تحتجز إسطبلاتي أموال البائع ريثما ننظر في الأمر.';
+
+  @override
+  String get oInfoCanReturn =>
+      'تم التوصيل. أمامك حتى إغلاق نافذة الإرجاع للإبلاغ عن مشكلة؛ بعدها يُدفع للبائع.';
+
+  @override
+  String get oInfoDefault => 'أنت تدفع لإسطبلاتي، لا للبائع.';
+
+  @override
+  String oCouldntCancel(String error) {
+    return 'تعذّر الإلغاء: $error';
+  }
+
+  @override
+  String get oStatusPending => 'قيد الانتظار';
+
+  @override
+  String get oStatusAccepted => 'مقبول';
+
+  @override
+  String get oStatusDelivered => 'تم التوصيل';
+
+  @override
+  String get oStatusCancelled => 'ملغى';
+
+  @override
+  String get oCancelOrder => 'إلغاء هذا الطلب';
+
+  @override
+  String get ordersTitle => 'الطلبات';
 }

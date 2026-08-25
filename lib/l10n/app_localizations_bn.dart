@@ -1344,4 +1344,105 @@ class AppL10nBn extends AppL10n {
 
   @override
   String get paRemove => 'Remove';
+
+  @override
+  String get bItems => 'Items';
+
+  @override
+  String get bDelivery => 'Delivery';
+
+  @override
+  String bDeliverySellers(int count) {
+    return 'Delivery ($count sellers)';
+  }
+
+  @override
+  String get bFree => 'Free';
+
+  @override
+  String get bCheckoutNote =>
+      'You pay My Stables, not the seller. Goods sit in a 14-day return window before the seller is paid. Each seller adds their own AED 25 delivery, free over AED 300. VAT is included.';
+
+  @override
+  String get bPaymentReceived =>
+      'Payment received. The seller will pack your order.';
+
+  @override
+  String get bPaymentCouldnt => 'Payment could not be taken.';
+
+  @override
+  String bCheckoutFailed(String error) {
+    return 'Couldn\'t complete checkout: $error';
+  }
+
+  @override
+  String get oYouPaid => 'You paid';
+
+  @override
+  String oVat(String vat) {
+    return 'VAT $vat% included';
+  }
+
+  @override
+  String oVatTrn(String vat, String trn) {
+    return 'VAT $vat% included · TRN $trn';
+  }
+
+  @override
+  String get oReportProblem => 'Report a problem';
+
+  @override
+  String get oReportBody =>
+      'Tell us what went wrong. My Stables holds the seller\'s money while we look into it.';
+
+  @override
+  String get oReportHint => 'e.g. Bag split in transit';
+
+  @override
+  String get oSend => 'Send';
+
+  @override
+  String get oCancel => 'Cancel';
+
+  @override
+  String get oProblemSent => 'Sent. My Stables will look into it.';
+
+  @override
+  String oCouldntSend(String error) {
+    return 'Couldn\'t send: $error';
+  }
+
+  @override
+  String get oInfoDispute =>
+      'A problem has been reported. My Stables is holding the seller\'s money while we look into it.';
+
+  @override
+  String get oInfoCanReturn =>
+      'Delivered. You have until the return window closes to report a problem; after that the seller is paid.';
+
+  @override
+  String get oInfoDefault => 'You pay My Stables, not the seller.';
+
+  @override
+  String oCouldntCancel(String error) {
+    return 'Couldn\'t cancel: $error';
+  }
+
+  @override
+  String get oStatusPending => 'Pending';
+
+  @override
+  String get oStatusAccepted => 'Accepted';
+
+  @override
+  String get oStatusDelivered => 'Delivered';
+
+  @override
+  String get oStatusCancelled => 'Cancelled';
+
+  @override
+  String get oCancelOrder => 'Cancel this order';
+
+  @override
+  String get ordersTitle => 'Orders';
 }

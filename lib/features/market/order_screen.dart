@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../../data/errors.dart';
 import '../../data/supabase_service.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
@@ -52,19 +53,19 @@ class _OrderScreenState extends State<OrderScreen> {
     } catch (e) {
       AppErrors.report(e);
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Couldn't cancel: $e")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(AppL10n.of(context).oCouldntCancel('$e'))));
       }
     } finally {
       if (mounted) setState(() => _cancelling = false);
     }
   }
 
-  (String, TagTone) get _statusTag => switch (_status) {
-        'accepted' => ('Accepted', TagTone.sage),
-        'fulfilled' => ('Delivered', TagTone.sage),
-        'cancelled' => ('Cancelled', TagTone.neutral),
-        _ => ('Pending', TagTone.accent),
+  (String, TagTone) _statusTagFor(AppL10n l10n) => switch (_status) {
+        'accepted' => (l10n.oStatusAccepted, TagTone.sage),
+        'fulfilled' => (l10n.oStatusDelivered, TagTone.sage),
+        'cancelled' => (l10n.oStatusCancelled, TagTone.neutral),
+        _ => (l10n.oStatusPending, TagTone.accent),
       };
 
   bool get _hasOpenDispute {
@@ -88,32 +89,31 @@ class _OrderScreenState extends State<OrderScreen> {
   Future<void> _return() async {
     final id = _order?['id'] as String?;
     if (id == null) return;
+    final l10n = AppL10n.of(context);
     final reasonC = TextEditingController();
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: AppColors.bg,
-        title: Text('Report a problem', style: AppText.heading(22)),
+        title: Text(l10n.oReportProblem, style: AppText.heading(22)),
         content: Column(mainAxisSize: MainAxisSize.min, children: [
-          Text('Tell us what went wrong. My Stables holds the seller\'s money '
-              'while we look into it.',
+          Text(l10n.oReportBody,
               style: AppText.body(14, height: 1.5, color: AppColors.ink(0.7))),
           const SizedBox(height: 12),
           TextField(
             controller: reasonC,
             minLines: 2,
             maxLines: 4,
-            decoration: const InputDecoration(
-                hintText: 'e.g. Bag split in transit'),
+            decoration: InputDecoration(hintText: l10n.oReportHint),
           ),
         ]),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel')),
+              child: Text(l10n.oCancel)),
           TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Send')),
+              child: Text(l10n.oSend)),
         ],
       ),
     );
@@ -124,14 +124,14 @@ class _OrderScreenState extends State<OrderScreen> {
           buyerSays: reasonC.text.trim());
       if (mounted) {
         setState(() => _disputeRaised = true);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Sent. My Stables will look into it.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.oProblemSent)));
       }
     } catch (e) {
       AppErrors.report(e);
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Couldn't send: $e")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(AppL10n.of(context).oCouldntSend('$e'))));
       }
     } finally {
       if (mounted) setState(() => _returning = false);
@@ -140,14 +140,17 @@ class _OrderScreenState extends State<OrderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     final order = _order ?? const {};
     final vendor = (order['vendor_name'] as String?) ?? 'Seller';
     final total = (order['total_aed'] as num?)?.toDouble() ?? 0;
     final subtotal = (order['subtotal_aed'] as num?)?.toDouble() ?? total;
     final delivery = (order['delivery_aed'] as num?)?.toDouble() ?? 0;
     final created = DateTime.tryParse((order['created_at'] as String?) ?? '');
-    final when = created != null ? DateFormat.yMMMMd().format(created) : '';
-    final tag = _statusTag;
+    final when = created != null
+        ? DateFormat.yMMMMd(l10n.localeName).format(created)
+        : '';
+    final tag = _statusTagFor(l10n);
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -156,7 +159,7 @@ class _OrderScreenState extends State<OrderScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(32, 18, 32, 40),
           children: [
-            const BackLink(label: 'Orders'),
+            BackLink(label: l10n.ordersTitle),
             const SizedBox(height: 18),
             Row(
               children: [
@@ -190,20 +193,22 @@ class _OrderScreenState extends State<OrderScreen> {
               },
             ),
             const SizedBox(height: 12),
-            _totalLine('Items', subtotal, false),
-            _totalLine('Delivery', delivery, false, freeIfZero: true),
+            _totalLine(l10n.bItems, subtotal, false),
+            _totalLine(l10n.bDelivery, delivery, false, freeLabel: l10n.bFree),
             const SizedBox(height: 6),
-            _totalLine('You paid', total, true),
+            _totalLine(l10n.oYouPaid, total, true),
             const SizedBox(height: 8),
             FutureBuilder<Map<String, dynamic>>(
               future: SupabaseService.platformSettings(),
               builder: (context, snap) {
                 final s = snap.data ?? const {};
-                final vat = (s['vat_pct'] as num?)?.toDouble() ?? 5;
+                final vat = ((s['vat_pct'] as num?)?.toDouble() ?? 5)
+                    .toStringAsFixed(0);
                 final trn = (s['trn'] as String?)?.trim();
                 return Text(
-                    'VAT ${vat.toStringAsFixed(0)}% included'
-                    '${trn != null && trn.isNotEmpty ? ' · TRN $trn' : ''}',
+                    trn != null && trn.isNotEmpty
+                        ? l10n.oVatTrn(vat, trn)
+                        : l10n.oVat(vat),
                     style: AppText.body(13, color: AppColors.ink(0.5)));
               },
             ),
@@ -216,13 +221,10 @@ class _OrderScreenState extends State<OrderScreen> {
               ),
               child: Text(
                 _hasOpenDispute
-                    ? 'A problem has been reported. My Stables is holding the '
-                        'seller\'s money while we look into it.'
+                    ? l10n.oInfoDispute
                     : _canReturn
-                        ? 'Delivered. You have until the return window closes to '
-                            'report a problem; after that the seller is paid.'
-                        : 'You pay My Stables, not the seller. Card payment is '
-                            'coming soon.',
+                        ? l10n.oInfoCanReturn
+                        : l10n.oInfoDefault,
                 style: AppText.body(14, height: 1.5, color: AppColors.ink(0.7)),
               ),
             ),
@@ -232,7 +234,7 @@ class _OrderScreenState extends State<OrderScreen> {
                 const Center(child: CircularProgressIndicator())
               else
                 AppButton(
-                  label: 'Cancel this order',
+                  label: l10n.oCancelOrder,
                   variant: AppButtonVariant.secondary,
                   onPressed: _cancel,
                 ),
@@ -241,7 +243,7 @@ class _OrderScreenState extends State<OrderScreen> {
                 const Center(child: CircularProgressIndicator())
               else
                 AppButton(
-                  label: 'Report a problem',
+                  label: l10n.oReportProblem,
                   variant: AppButtonVariant.secondary,
                   onPressed: _return,
                 ),
@@ -253,8 +255,10 @@ class _OrderScreenState extends State<OrderScreen> {
   }
 
   Widget _totalLine(String label, double v, bool strong,
-      {bool freeIfZero = false}) {
-    final value = (freeIfZero && v == 0) ? 'Free' : 'AED ${v.toStringAsFixed(0)}';
+      {String? freeLabel}) {
+    final value = (freeLabel != null && v == 0)
+        ? freeLabel
+        : 'AED ${v.toStringAsFixed(0)}';
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(children: [
