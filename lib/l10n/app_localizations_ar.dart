@@ -1006,4 +1006,325 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get keepIt => 'الإبقاء عليه';
+
+  @override
+  String saStepOf(int n) {
+    return 'الخطوة $n من ٣';
+  }
+
+  @override
+  String get saWhatDoYouDo => 'ماذا تعمل؟';
+
+  @override
+  String get saWhatSub => 'اختر كل ما ينطبق عليك. يُراجَع كل اختصاص على حِدة.';
+
+  @override
+  String get saTradingName => 'الاسم التجاري';
+
+  @override
+  String get saWhereYouWork => 'مكان عملك';
+
+  @override
+  String get saPickWhat => 'اختر ما تعمله';
+
+  @override
+  String saContinueTrades(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count اختصاصات',
+      one: 'اختصاص واحد',
+    );
+    return 'متابعة · $_temp0';
+  }
+
+  @override
+  String get saVerifiedNote =>
+      'معظم هذه البيانات يُتحقق منها عبر سجل التراخيص.';
+
+  @override
+  String get saBack => 'رجوع';
+
+  @override
+  String get saYourPapers => 'أوراقك';
+
+  @override
+  String get saPapersSub => 'صوّرها. سنقرأ رقم الترخيص وتاريخ انتهائه.';
+
+  @override
+  String get saUploaded => 'تم الرفع';
+
+  @override
+  String get saDoneTag => 'تم';
+
+  @override
+  String get saNeededTag => 'مطلوب';
+
+  @override
+  String get saAcceptPre => 'أوافق على ';
+
+  @override
+  String get saSellerAgreement => 'اتفاقية البائع';
+
+  @override
+  String get saAgreementSub =>
+      'نسبتنا، وموعد استلامك أموالك، وأن إسطبلاتي هي من تفصل في النزاعات.';
+
+  @override
+  String get saSend => 'إرسال الطلب';
+
+  @override
+  String get saAcceptToSend => 'وافق على اتفاقية البائع لإرسال هذا.';
+
+  @override
+  String get saUploadAllToSend => 'ارفع كل ورقة مطلوبة لإرسال هذا.';
+
+  @override
+  String get saWithMyStables => 'قيد المراجعة لدى إسطبلاتي';
+
+  @override
+  String get saSentBody =>
+      'تم الإرسال. تُجاب معظم الطلبات خلال يومي عمل. لن يظهر شيء أمام أي فارس حتى تتم الموافقة عليك.';
+
+  @override
+  String get saInMeantime => 'في هذه الأثناء';
+
+  @override
+  String get saMeantimeBody =>
+      'يمكنك تحديد أسعارك وإضافة أول منتجاتك الآن. تبقى مخفية حتى تتم الموافقة عليك.';
+
+  @override
+  String get saSetUpShop => 'إعداد متجري';
+
+  @override
+  String get saBackToShops => 'العودة إلى متاجري';
+
+  @override
+  String saCouldntUpload(String error) {
+    return 'تعذّر الرفع: $error';
+  }
+
+  @override
+  String saCouldntSend(String error) {
+    return 'تعذّر الإرسال: $error';
+  }
+
+  @override
+  String get sellOnTheMarket => 'البيع في السوق';
+
+  @override
+  String get paTabToday => 'اليوم';
+
+  @override
+  String get paTabRequests => 'الطلبات';
+
+  @override
+  String get paTabOrders => 'الطلبيات';
+
+  @override
+  String get paTabChat => 'المحادثة';
+
+  @override
+  String get paTabMoney => 'المال';
+
+  @override
+  String get paBooked => 'محجوز';
+
+  @override
+  String get paToAnswer => 'بانتظار الرد';
+
+  @override
+  String paNRequests(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count طلبات',
+      one: 'طلب واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get paNoJobs => 'لا مهام محجوزة بعد. الطلبات المقبولة تظهر هنا.';
+
+  @override
+  String get paWhenIWork => 'مواعيد عملي';
+
+  @override
+  String get paDoneTag => 'مكتمل';
+
+  @override
+  String get paTodayTag => 'اليوم';
+
+  @override
+  String get paBookedTag => 'محجوز';
+
+  @override
+  String get paTransport => 'نقل';
+
+  @override
+  String get paVisit => 'زيارة';
+
+  @override
+  String get paWhen => 'الموعد';
+
+  @override
+  String get paSetADay => 'حدّد يومًا';
+
+  @override
+  String get paNoteForStable => 'ملاحظة للإسطبل';
+
+  @override
+  String get paNoteHint => 'كانت الكعوب منخفضة. أنصح بإعادته بعد خمسة أسابيع.';
+
+  @override
+  String get paNoNote => 'لا توجد ملاحظة.';
+
+  @override
+  String get paCompletedTag => 'مكتمل';
+
+  @override
+  String get paMarkDone => 'إنهاء المهمة';
+
+  @override
+  String get paFinishNote =>
+      'الإنهاء يُبلغ الإسطبل ويُسوّي قيمة الزيارة. الخدمات تُدفع يوم إتمامها.';
+
+  @override
+  String get paNoRequests =>
+      'لا شيء بالانتظار. طلبات الإسطبلات الجديدة تظهر هنا.';
+
+  @override
+  String get paQuotedTag => 'تم التسعير';
+
+  @override
+  String get paNewTag => 'جديد';
+
+  @override
+  String get paServiceRequest => 'طلب خدمة';
+
+  @override
+  String get paFactStable => 'الإسطبل';
+
+  @override
+  String get paFactFrom => 'من';
+
+  @override
+  String get paFactTo => 'إلى';
+
+  @override
+  String get paFactDay => 'اليوم';
+
+  @override
+  String get paFactHorses => 'الخيول';
+
+  @override
+  String get paYourPrice => 'سعرك (درهم)';
+
+  @override
+  String get paSendPrice => 'أرسل هذا السعر';
+
+  @override
+  String get paCannotTake => 'لا أستطيع قبولها';
+
+  @override
+  String get paEnterPrice => 'أدخل سعرًا أولًا.';
+
+  @override
+  String get paQuoteSentTag => 'تم إرسال التسعيرة';
+
+  @override
+  String get paDeclinedTag => 'مرفوض';
+
+  @override
+  String get paQuoteSentNote => 'سيرى الإسطبل سعرك ويمكنه قبوله.';
+
+  @override
+  String get paDeclinedNote => 'أُبلغ الإسطبل بأنك لا تستطيع قبولها.';
+
+  @override
+  String get paPriceFootnote => 'سعر تلتزم به — يقبله الإسطبل كأجرة.';
+
+  @override
+  String get paToPack => 'للتجهيز';
+
+  @override
+  String get paToPackSub => 'حدِّدها كمجهّزة وسيُبلَّغ الإسطبل.';
+
+  @override
+  String get paNoPack => 'لا شيء للتجهيز. الطلبيات الجديدة تظهر هنا.';
+
+  @override
+  String get paAcceptedTag => 'مقبول';
+
+  @override
+  String get paAcceptOrder => 'قبول الطلبية';
+
+  @override
+  String get paMarkPacked => 'تحديد كمجهّزة';
+
+  @override
+  String get paNoChat => 'لا محادثات بعد. تظهر هنا الإسطبلات التي تتعامل معها.';
+
+  @override
+  String get paSayHello => 'ابدأ الحديث';
+
+  @override
+  String get paNoMessages => 'لا رسائل بعد.';
+
+  @override
+  String paMessageStable(String stable) {
+    return 'راسل $stable';
+  }
+
+  @override
+  String get paNextPayout => 'الدفعة القادمة';
+
+  @override
+  String get paPayoutNote =>
+      'تُدفع في الأول أو الخامس عشر من الشهر، بعد خصم عمولتنا.';
+
+  @override
+  String get paHeldRow => 'محتجز (نوافذ الإرجاع مفتوحة)';
+
+  @override
+  String get paReadyRow => 'جاهز للدفع';
+
+  @override
+  String get paServicesRow => 'خدمات مُسوّاة';
+
+  @override
+  String get paPaidRow => 'المدفوع حتى الآن';
+
+  @override
+  String get paMoneyFootnote =>
+      'هذا ملخص الهاتف. السجل الكامل والدفعات والنزاعات في لوحة البائع على الويب.';
+
+  @override
+  String get paWhenSub =>
+      'لا يمكن لأحد حجزك خارج هذه المواعيد. غيّرها متى شئت.';
+
+  @override
+  String get paWorking => 'أعمل';
+
+  @override
+  String get paOff => 'إجازة';
+
+  @override
+  String get paHorsesPerDay => 'كم حصانًا في اليوم';
+
+  @override
+  String get paCapNote => 'الحد الأقصى يبقي يومك واقعيًا.';
+
+  @override
+  String get paAway => 'غياب';
+
+  @override
+  String get paAwaySub => 'لا يمكن لأحد طلب هذه الأيام';
+
+  @override
+  String get paAddAway => '+ إضافة فترة غياب';
+
+  @override
+  String get paRemove => 'إزالة';
 }

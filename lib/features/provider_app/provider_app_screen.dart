@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../../data/errors.dart';
 import '../../data/supabase_service.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
@@ -36,7 +37,6 @@ class _ProviderAppScreenState extends State<ProviderAppScreen> {
 
   String get _vid => _vendor?['id'] as String? ?? '';
 
-  static const _tabs = ['Today', 'Requests', 'Orders', 'Chat', 'Money'];
   static const _icons = [
     Icons.wb_sunny_outlined,
     Icons.mark_email_unread_outlined,
@@ -47,6 +47,14 @@ class _ProviderAppScreenState extends State<ProviderAppScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
+    final tabs = [
+      l10n.paTabToday,
+      l10n.paTabRequests,
+      l10n.paTabOrders,
+      l10n.paTabChat,
+      l10n.paTabMoney,
+    ];
     final v = _vendor ?? const {};
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -74,7 +82,7 @@ class _ProviderAppScreenState extends State<ProviderAppScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             child: Row(
               children: [
-                for (var i = 0; i < _tabs.length; i++)
+                for (var i = 0; i < tabs.length; i++)
                   Expanded(
                     child: InkWell(
                       borderRadius: BorderRadius.circular(18),
@@ -90,7 +98,7 @@ class _ProviderAppScreenState extends State<ProviderAppScreen> {
                                     ? AppColors.accent700
                                     : AppColors.ink(0.5)),
                             const SizedBox(height: 5),
-                            Text(_tabs[i],
+                            Text(tabs[i],
                                 style: AppText.body(11,
                                     color: i == _tab
                                         ? AppColors.accent700
@@ -156,6 +164,7 @@ class _TodayTabState extends State<_TodayTab> {
         return FutureBuilder<List<Map<String, dynamic>>>(
           future: _requests,
           builder: (context, reqSnap) {
+            final l10n = AppL10n.of(context);
             final toAnswer = (reqSnap.data ?? const [])
                 .where((r) => r['status'] == 'open')
                 .length;
@@ -169,10 +178,13 @@ class _TodayTabState extends State<_TodayTab> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(DateFormat('EEEE').format(DateTime.now()),
+                          Text(
+                              DateFormat('EEEE', l10n.localeName)
+                                  .format(DateTime.now()),
                               style: AppText.eyebrow(color: AppColors.accent700)),
                           const SizedBox(height: 6),
-                          Text('Today', style: AppText.heading(36, height: 1)),
+                          Text(l10n.paTabToday,
+                              style: AppText.heading(36, height: 1)),
                         ],
                       ),
                     ),
@@ -183,18 +195,19 @@ class _TodayTabState extends State<_TodayTab> {
                 Row(children: [
                   Expanded(
                       child: _MiniStat(
-                          label: 'Booked',
+                          label: l10n.paBooked,
                           value: 'AED ${booked.toStringAsFixed(0)}')),
                   const SizedBox(width: 8),
                   Expanded(
                       child: _MiniStat(
-                          label: 'To answer', value: '$toAnswer requests')),
+                          label: l10n.paToAnswer,
+                          value: l10n.paNRequests(toAnswer))),
                 ]),
                 const SizedBox(height: 24),
                 if (jobSnap.connectionState == ConnectionState.waiting)
                   const Center(child: CircularProgressIndicator())
                 else if (jobs.isEmpty)
-                  Text('No jobs booked yet. Accepted requests land here.',
+                  Text(l10n.paNoJobs,
                       style: AppText.body(16, color: AppColors.ink(0.6)))
                 else
                   for (final j in jobs) ...[
@@ -211,7 +224,7 @@ class _TodayTabState extends State<_TodayTab> {
                   ],
                 const SizedBox(height: 22),
                 AppButton(
-                  label: 'When I work',
+                  label: l10n.paWhenIWork,
                   variant: AppButtonVariant.secondary,
                   onPressed: () => Navigator.of(context).push(MaterialPageRoute(
                       builder: (_) => _WhenIWorkScreen(vendor: widget.vendor))),
@@ -232,11 +245,12 @@ class _JobRow extends StatelessWidget {
   final VoidCallback onTap;
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     final done = job['status'] == 'completed';
     final price = (job['quote_price'] as num?)?.toDouble() ?? 0;
     final subject = (job['subject'] as String?)?.isNotEmpty == true
         ? job['subject'] as String
-        : (job['kind'] == 'transport' ? 'Transport' : 'Visit');
+        : (job['kind'] == 'transport' ? l10n.paTransport : l10n.paVisit);
     final when = job['scheduled_for'] as String?;
     return InkWell(
       onTap: onTap,
@@ -258,11 +272,11 @@ class _JobRow extends StatelessWidget {
             ]),
           ),
           if (done)
-            const AppTag('Done', tone: TagTone.neutral)
+            AppTag(l10n.paDoneTag, tone: TagTone.neutral)
           else if (today)
-            const AppTag('Today', tone: TagTone.accent)
+            AppTag(l10n.paTodayTag, tone: TagTone.accent)
           else
-            const AppTag('Booked', tone: TagTone.sage),
+            AppTag(l10n.paBookedTag, tone: TagTone.sage),
           const SizedBox(width: 6),
           Icon(Icons.chevron_right, color: AppColors.ink(0.4)),
         ]),
@@ -333,19 +347,21 @@ class _FinishJobScreenState extends State<_FinishJobScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     final job = widget.job;
     final done = job['status'] == 'completed';
     final price = (job['quote_price'] as num?)?.toDouble() ?? 0;
     final subject = (job['subject'] as String?)?.isNotEmpty == true
         ? job['subject'] as String
-        : 'Visit';
+        : l10n.paVisit;
     return Scaffold(
       backgroundColor: AppColors.bg,
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
         foregroundColor: AppColors.text,
-        title: Text('Today', style: AppText.body(15, color: AppColors.ink(0.6))),
+        title: Text(l10n.paTabToday,
+            style: AppText.body(15, color: AppColors.ink(0.6))),
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(28, 4, 28, 40),
@@ -367,39 +383,37 @@ class _FinishJobScreenState extends State<_FinishJobScreen> {
           ],
           const SizedBox(height: 22),
           _RowTile(
-            label: 'When',
+            label: l10n.paWhen,
             value: _scheduled == null
-                ? 'Set a day'
+                ? l10n.paSetADay
                 : DateFormat('EEE d MMM').format(_scheduled!),
             onTap: done ? null : _pickDay,
           ),
           const SizedBox(height: 22),
-          Text('NOTE FOR THE STABLE', style: AppText.eyebrow()),
+          Text(l10n.paNoteForStable, style: AppText.eyebrow()),
           const SizedBox(height: 8),
           if (done)
             Text(
                 (job['provider_note'] as String?)?.isNotEmpty == true
                     ? job['provider_note'] as String
-                    : 'No note left.',
+                    : l10n.paNoNote,
                 style: AppText.body(16, height: 1.5))
           else
             AppField(
               label: '',
               controller: _note,
               maxLines: 3,
-              hintText: 'Heels were low. I would bring him back in five weeks.',
+              hintText: l10n.paNoteHint,
             ),
           const SizedBox(height: 24),
           if (done)
-            const AppTag('Completed', tone: TagTone.sage)
+            AppTag(l10n.paCompletedTag, tone: TagTone.sage)
           else if (_saving)
             const Center(child: CircularProgressIndicator())
           else
-            AppButton(label: 'Mark the job done', onPressed: _finish),
+            AppButton(label: l10n.paMarkDone, onPressed: _finish),
           const SizedBox(height: 14),
-          Text(
-              'Marking it done tells the stable and settles the visit. Services '
-              'are paid the day they are finished.',
+          Text(l10n.paFinishNote,
               style: AppText.body(14, height: 1.5, color: AppColors.ink(0.55))),
         ],
       ),
@@ -427,18 +441,19 @@ class _RequestsTabState extends State<_RequestsTab> {
       future: _f,
       builder: (context, snap) {
         final all = snap.data ?? const [];
+        final l10n = AppL10n.of(context);
         final open = all
             .where((r) => r['status'] == 'open' || r['status'] == 'quoted')
             .toList();
         return ListView(
           padding: const EdgeInsets.fromLTRB(28, 16, 28, 30),
           children: [
-            Text('Requests', style: AppText.heading(34, height: 1)),
+            Text(l10n.paTabRequests, style: AppText.heading(34, height: 1)),
             const SizedBox(height: 20),
             if (snap.connectionState == ConnectionState.waiting)
               const Center(child: CircularProgressIndicator())
             else if (open.isEmpty)
-              Text('Nothing waiting. New requests from stables show here.',
+              Text(l10n.paNoRequests,
                   style: AppText.body(16, color: AppColors.ink(0.6)))
             else
               for (final r in open) ...[
@@ -465,13 +480,14 @@ class _RequestRow extends StatelessWidget {
   final VoidCallback onTap;
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     final quoted = req['status'] == 'quoted';
     final isTransport = req['kind'] == 'transport';
     final title = isTransport
-        ? 'Transport: ${req['from_loc'] ?? '?'} → ${req['to_loc'] ?? '?'}'
+        ? '${l10n.paTransport}: ${req['from_loc'] ?? '?'} → ${req['to_loc'] ?? '?'}'
         : ((req['subject'] as String?)?.isNotEmpty == true
             ? req['subject'] as String
-            : 'Service request');
+            : l10n.paServiceRequest);
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -481,11 +497,11 @@ class _RequestRow extends StatelessWidget {
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(title, style: AppText.heading(18, height: 1.2)),
               const SizedBox(height: 4),
-              Text(req['stable_name'] as String? ?? 'A stable',
+              Text(req['stable_name'] as String? ?? l10n.paFactStable,
                   style: AppText.body(14, color: AppColors.ink(0.6))),
             ]),
           ),
-          AppTag(quoted ? 'Quoted' : 'New',
+          AppTag(quoted ? l10n.paQuotedTag : l10n.paNewTag,
               tone: quoted ? TagTone.sage : TagTone.accent),
           const SizedBox(width: 6),
           Icon(Icons.chevron_right, color: AppColors.ink(0.4)),
@@ -524,7 +540,7 @@ class _RequestScreenState extends State<_RequestScreen> {
     final price = double.tryParse(_price.text.trim());
     if (price == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Enter a price first.')));
+          SnackBar(content: Text(AppL10n.of(context).paEnterPrice)));
       return;
     }
     setState(() => _busy = true);
@@ -552,20 +568,21 @@ class _RequestScreenState extends State<_RequestScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     final r = widget.req;
     final isTransport = r['kind'] == 'transport';
     final title = isTransport
-        ? 'Transport'
+        ? l10n.paTransport
         : ((r['subject'] as String?)?.isNotEmpty == true
             ? r['subject'] as String
-            : 'Service request');
+            : l10n.paServiceRequest);
     final facts = <(String, String)>[
-      ('Stable', r['stable_name'] as String? ?? 'A stable'),
-      if (isTransport) ('From', (r['from_loc'] as String?) ?? '—'),
-      if (isTransport) ('To', (r['to_loc'] as String?) ?? '—'),
+      (l10n.paFactStable, r['stable_name'] as String? ?? l10n.paFactStable),
+      if (isTransport) (l10n.paFactFrom, (r['from_loc'] as String?) ?? '—'),
+      if (isTransport) (l10n.paFactTo, (r['to_loc'] as String?) ?? '—'),
       if ((r['on_day'] as String?)?.isNotEmpty == true)
-        ('Day', r['on_day'] as String),
-      if (r['horses'] != null) ('Horses', '${r['horses']}'),
+        (l10n.paFactDay, r['on_day'] as String),
+      if (r['horses'] != null) (l10n.paFactHorses, '${r['horses']}'),
     ];
     final answered = _outcome != null;
     return Scaffold(
@@ -574,7 +591,7 @@ class _RequestScreenState extends State<_RequestScreen> {
         backgroundColor: AppColors.bg,
         elevation: 0,
         foregroundColor: AppColors.text,
-        title: Text('Requests',
+        title: Text(l10n.paTabRequests,
             style: AppText.body(15, color: AppColors.ink(0.6))),
       ),
       body: ListView(
@@ -609,16 +626,16 @@ class _RequestScreenState extends State<_RequestScreen> {
           ],
           const SizedBox(height: 26),
           if (answered) ...[
-            AppTag(_outcome == 'quoted' ? 'Quote sent' : 'Declined',
+            AppTag(_outcome == 'quoted' ? l10n.paQuoteSentTag : l10n.paDeclinedTag,
                 tone: _outcome == 'quoted' ? TagTone.sage : TagTone.neutral),
             const SizedBox(height: 12),
             Text(
                 _outcome == 'quoted'
-                    ? 'The stable will see your price and can accept it.'
-                    : 'The stable has been told you cannot take it.',
+                    ? l10n.paQuoteSentNote
+                    : l10n.paDeclinedNote,
                 style: AppText.body(15, height: 1.5, color: AppColors.ink(0.6))),
           ] else ...[
-            Text('YOUR PRICE (AED)', style: AppText.eyebrow()),
+            Text(l10n.paYourPrice, style: AppText.eyebrow()),
             const SizedBox(height: 8),
             AppField(
                 label: '',
@@ -628,15 +645,15 @@ class _RequestScreenState extends State<_RequestScreen> {
             if (_busy)
               const Center(child: CircularProgressIndicator())
             else ...[
-              AppButton(label: 'Send this price', onPressed: _send),
+              AppButton(label: l10n.paSendPrice, onPressed: _send),
               const SizedBox(height: 12),
               AppButton(
-                  label: 'Cannot take it',
+                  label: l10n.paCannotTake,
                   variant: AppButtonVariant.secondary,
                   onPressed: _decline),
             ],
             const SizedBox(height: 14),
-            Text('A price you can stand by — the stable accepts it as the fee.',
+            Text(l10n.paPriceFootnote,
                 style: AppText.body(14, height: 1.5, color: AppColors.ink(0.55))),
           ],
         ],
@@ -674,21 +691,22 @@ class _OrdersTabState extends State<_OrdersTab> {
       future: _f,
       builder: (context, snap) {
         final all = snap.data ?? const [];
+        final l10n = AppL10n.of(context);
         final toPack = all
             .where((o) => o['status'] == 'pending' || o['status'] == 'accepted')
             .toList();
         return ListView(
           padding: const EdgeInsets.fromLTRB(28, 16, 28, 30),
           children: [
-            Text('To pack', style: AppText.heading(34, height: 1)),
+            Text(l10n.paToPack, style: AppText.heading(34, height: 1)),
             const SizedBox(height: 8),
-            Text('Mark it packed and the stable is told.',
+            Text(l10n.paToPackSub,
                 style: AppText.body(16, color: AppColors.ink(0.6))),
             const SizedBox(height: 22),
             if (snap.connectionState == ConnectionState.waiting)
               const Center(child: CircularProgressIndicator())
             else if (toPack.isEmpty)
-              Text('Nothing to pack. New orders appear here.',
+              Text(l10n.paNoPack,
                   style: AppText.body(16, color: AppColors.ink(0.6)))
             else
               for (final o in toPack) ...[
@@ -716,6 +734,7 @@ class _PackRowState extends State<_PackRow> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     final o = widget.order;
     final status = (o['status'] as String?) ?? 'pending';
     final total = (o['total_aed'] as num?)?.toDouble() ?? 0;
@@ -726,7 +745,7 @@ class _PackRowState extends State<_PackRow> {
           Expanded(
               child: Text('AED ${total.toStringAsFixed(0)}',
                   style: AppText.heading(19))),
-          AppTag(status == 'accepted' ? 'Accepted' : 'New',
+          AppTag(status == 'accepted' ? l10n.paAcceptedTag : l10n.paNewTag,
               tone: status == 'accepted' ? TagTone.sage : TagTone.accent),
         ]),
         const SizedBox(height: 10),
@@ -756,7 +775,7 @@ class _PackRowState extends State<_PackRow> {
         ),
         const SizedBox(height: 12),
         AppButton(
-          label: status == 'pending' ? 'Accept the order' : 'Mark packed',
+          label: status == 'pending' ? l10n.paAcceptOrder : l10n.paMarkPacked,
           minHeight: 46,
           fontSize: 15,
           onPressed: () => widget.onAdvance(
@@ -787,16 +806,17 @@ class _ChatTabState extends State<_ChatTab> {
       future: _f,
       builder: (context, snap) {
         if (snap.hasError) AppErrors.report(snap.error!);
+        final l10n = AppL10n.of(context);
         final threads = snap.data ?? const [];
         return ListView(
           padding: const EdgeInsets.fromLTRB(28, 16, 28, 30),
           children: [
-            Text('Chat', style: AppText.heading(34, height: 1)),
+            Text(l10n.paTabChat, style: AppText.heading(34, height: 1)),
             const SizedBox(height: 20),
             if (snap.connectionState == ConnectionState.waiting)
               const Center(child: CircularProgressIndicator())
             else if (threads.isEmpty)
-              Text('No conversations yet. Stables you work with appear here.',
+              Text(l10n.paNoChat,
                   style: AppText.body(16, color: AppColors.ink(0.6)))
             else
               for (final t in threads) ...[
@@ -824,7 +844,7 @@ class _ChatTabState extends State<_ChatTab> {
                               Text(
                                   (t['last_body'] as String?)?.isNotEmpty == true
                                       ? t['last_body'] as String
-                                      : 'Say hello',
+                                      : l10n.paSayHello,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: AppText.body(14,
@@ -910,7 +930,7 @@ class _ThreadScreenState extends State<_ThreadScreen> {
                 final msgs = snap.data ?? const [];
                 if (msgs.isEmpty) {
                   return Center(
-                      child: Text('No messages yet.',
+                      child: Text(AppL10n.of(context).paNoMessages,
                           style: AppText.body(15, color: AppColors.ink(0.5))));
                 }
                 return ListView(
@@ -933,7 +953,7 @@ class _ThreadScreenState extends State<_ThreadScreen> {
                     minLines: 1,
                     maxLines: 4,
                     decoration: InputDecoration(
-                      hintText: 'Message ${widget.stableName}',
+                      hintText: AppL10n.of(context).paMessageStable(widget.stableName),
                       filled: true,
                       fillColor: AppColors.neutral100,
                       border: OutlineInputBorder(
@@ -1038,34 +1058,33 @@ class _MoneyTabState extends State<_MoneyTab> {
                 final loading = oSnap.connectionState ==
                         ConnectionState.waiting ||
                     jSnap.connectionState == ConnectionState.waiting;
+                final l10n = AppL10n.of(context);
                 return ListView(
                   padding: const EdgeInsets.fromLTRB(28, 16, 28, 30),
                   children: [
-                    Text('Money', style: AppText.heading(34, height: 1)),
+                    Text(l10n.paTabMoney, style: AppText.heading(34, height: 1)),
                     const SizedBox(height: 22),
                     if (loading)
                       const Center(child: CircularProgressIndicator())
                     else ...[
-                      Text('NEXT PAYOUT', style: AppText.eyebrow()),
+                      Text(l10n.paNextPayout, style: AppText.eyebrow()),
                       const SizedBox(height: 8),
                       Text('AED ${nextPayout.toStringAsFixed(0)}',
                           style: AppText.heading(46, height: 1)),
                       const SizedBox(height: 10),
-                      Text('Paid on the 1st or the 15th, less our commission.',
+                      Text(l10n.paPayoutNote,
                           style: AppText.body(16, color: AppColors.accent700)),
                       const SizedBox(height: 26),
                       _MoneyRow(
-                          label: 'Held (return windows open)',
+                          label: l10n.paHeldRow,
                           value: held,
                           quiet: true),
-                      _MoneyRow(label: 'Ready to pay out', value: payable),
+                      _MoneyRow(label: l10n.paReadyRow, value: payable),
+                      _MoneyRow(label: l10n.paServicesRow, value: services),
                       _MoneyRow(
-                          label: 'Services settled', value: services),
-                      _MoneyRow(label: 'Paid out so far', value: lastPaid, quiet: true),
+                          label: l10n.paPaidRow, value: lastPaid, quiet: true),
                       const SizedBox(height: 22),
-                      Text(
-                          'This is the phone summary. The full ledger, payouts '
-                          'and disputes live on the web Seller Dashboard.',
+                      Text(l10n.paMoneyFootnote,
                           style: AppText.body(14,
                               height: 1.5, color: AppColors.ink(0.6))),
                     ],
@@ -1116,15 +1135,9 @@ class _WhenIWorkScreen extends StatefulWidget {
 }
 
 class _WhenIWorkScreenState extends State<_WhenIWorkScreen> {
-  static const _days = [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday'
-  ];
+  // 2024-01-07 is a Sunday; day d maps to that week so the name localises.
+  String _dayName(int d, String locale) =>
+      DateFormat('EEEE', locale).format(DateTime(2024, 1, 7 + d));
   Map<int, bool> _open = {for (var d = 0; d < 7; d++) d: true};
   int _cap = 6;
   late Future<List<Map<String, dynamic>>> _away;
@@ -1188,22 +1201,24 @@ class _WhenIWorkScreenState extends State<_WhenIWorkScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     return Scaffold(
       backgroundColor: AppColors.bg,
       appBar: AppBar(
         backgroundColor: AppColors.bg,
         elevation: 0,
         foregroundColor: AppColors.text,
-        title: Text('Today', style: AppText.body(15, color: AppColors.ink(0.6))),
+        title: Text(l10n.paTabToday,
+            style: AppText.body(15, color: AppColors.ink(0.6))),
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
               padding: const EdgeInsets.fromLTRB(28, 4, 28, 40),
               children: [
-                Text('When I work', style: AppText.heading(34, height: 1.05)),
+                Text(l10n.paWhenIWork, style: AppText.heading(34, height: 1.05)),
                 const SizedBox(height: 10),
-                Text('Nobody can book you outside this. Change it whenever.',
+                Text(l10n.paWhenSub,
                     style: AppText.body(16, color: AppColors.ink(0.6))),
                 const SizedBox(height: 22),
                 for (var d = 0; d < 7; d++) ...[
@@ -1212,12 +1227,12 @@ class _WhenIWorkScreenState extends State<_WhenIWorkScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 6),
                     child: Row(children: [
                       Expanded(
-                          child: Text(_days[d],
+                          child: Text(_dayName(d, l10n.localeName),
                               style: AppText.heading(17,
                                   color: (_open[d] ?? true)
                                       ? AppColors.text
                                       : AppColors.ink(0.4)))),
-                      Text((_open[d] ?? true) ? 'Working' : 'Off',
+                      Text((_open[d] ?? true) ? l10n.paWorking : l10n.paOff,
                           style: AppText.body(14, color: AppColors.ink(0.5))),
                       Switch(
                         value: _open[d] ?? true,
@@ -1230,7 +1245,7 @@ class _WhenIWorkScreenState extends State<_WhenIWorkScreen> {
                 ],
                 const _Line(),
                 const SizedBox(height: 26),
-                Text('HOW MANY HORSES A DAY',
+                Text(l10n.paHorsesPerDay,
                     style: AppText.eyebrow(color: AppColors.accent2700)),
                 const SizedBox(height: 12),
                 Row(children: [
@@ -1243,12 +1258,13 @@ class _WhenIWorkScreenState extends State<_WhenIWorkScreen> {
                   _CapBtn(icon: Icons.add, onTap: () => _setCap(1)),
                   const SizedBox(width: 12),
                   Expanded(
-                      child: Text('A cap keeps your day realistic.',
+                      child: Text(l10n.paCapNote,
                           style:
                               AppText.body(14, color: AppColors.ink(0.6)))),
                 ]),
                 const SizedBox(height: 28),
-                Text('AWAY', style: AppText.eyebrow(color: AppColors.accent2700)),
+                Text(l10n.paAway,
+                    style: AppText.eyebrow(color: AppColors.accent2700)),
                 const SizedBox(height: 8),
                 FutureBuilder<List<Map<String, dynamic>>>(
                   future: _away,
@@ -1268,7 +1284,7 @@ class _WhenIWorkScreenState extends State<_WhenIWorkScreen> {
                                         '${_fmt(r['start_date'])} – ${_fmt(r['end_date'])}',
                                         style: AppText.body(16)),
                                     const SizedBox(height: 3),
-                                    Text('Nobody can request these days',
+                                    Text(l10n.paAwaySub,
                                         style: AppText.body(13,
                                             color: AppColors.ink(0.5))),
                                   ]),
@@ -1284,7 +1300,7 @@ class _WhenIWorkScreenState extends State<_WhenIWorkScreen> {
                                   AppErrors.report(e);
                                 }
                               },
-                              child: Text('Remove',
+                              child: Text(l10n.paRemove,
                                   style: AppText.body(14,
                                       color: AppColors.ink(0.55))),
                             ),
@@ -1297,7 +1313,7 @@ class _WhenIWorkScreenState extends State<_WhenIWorkScreen> {
                         alignment: Alignment.centerLeft,
                         child: TextButton(
                           onPressed: _addAway,
-                          child: Text('+ Add time away',
+                          child: Text(l10n.paAddAway,
                               style: AppText.heading(16,
                                   color: AppColors.accent700)),
                         ),

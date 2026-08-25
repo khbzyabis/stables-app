@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../data/errors.dart';
 import '../../data/supabase_service.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
@@ -59,8 +60,8 @@ class _SellerApplyScreenState extends State<SellerApplyScreen> {
     } catch (e) {
       AppErrors.report(e);
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Couldn't upload: $e")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(AppL10n.of(context).saCouldntUpload('$e'))));
       }
     } finally {
       if (mounted) setState(() => _uploading.remove(docId));
@@ -94,8 +95,8 @@ class _SellerApplyScreenState extends State<SellerApplyScreen> {
     } catch (e) {
       AppErrors.report(e);
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Couldn't send: $e")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(AppL10n.of(context).saCouldntSend('$e'))));
       }
     } finally {
       if (mounted) setState(() => _submitting = false);
@@ -139,17 +140,18 @@ class _SellerApplyScreenState extends State<SellerApplyScreen> {
 
   // ---- Step 1: trades --------------------------------------------------
   Widget _trades0() {
+    final l10n = AppL10n.of(context);
     final canContinue = _trades.isNotEmpty && _name.text.trim().isNotEmpty;
     return ListView(
       padding: const EdgeInsets.fromLTRB(32, 18, 32, 40),
       children: [
-        const BackLink(label: 'Sell on the market'),
+        BackLink(label: l10n.sellOnTheMarket),
         const SizedBox(height: 18),
-        Text('STEP 1 OF 3', style: AppText.eyebrow(color: AppColors.accent700)),
+        Text(l10n.saStepOf(1), style: AppText.eyebrow(color: AppColors.accent700)),
         const SizedBox(height: 10),
-        Text('What do you do?', style: AppText.heading(34, height: 1.05)),
+        Text(l10n.saWhatDoYouDo, style: AppText.heading(34, height: 1.05)),
         const SizedBox(height: 10),
-        Text('Pick everything that applies. Each one is checked separately.',
+        Text(l10n.saWhatSub,
             style: AppText.body(16, height: 1.5, color: AppColors.ink(0.6))),
         const SizedBox(height: 24),
         _bars(0),
@@ -168,18 +170,18 @@ class _SellerApplyScreenState extends State<SellerApplyScreen> {
           const Hairline(),
         ],
         const SizedBox(height: 22),
-        AppField(label: 'Trading name', controller: _name),
+        AppField(label: l10n.saTradingName, controller: _name),
         const SizedBox(height: 16),
-        AppField(label: 'Where you work', controller: _location),
+        AppField(label: l10n.saWhereYouWork, controller: _location),
         const SizedBox(height: 26),
         AppButton(
           label: _trades.isEmpty
-              ? 'Pick what you do'
-              : 'Continue · ${_trades.length} ${_trades.length == 1 ? "trade" : "trades"}',
+              ? l10n.saPickWhat
+              : l10n.saContinueTrades(_trades.length),
           onPressed: canContinue ? () => setState(() => _step = 1) : null,
         ),
         const SizedBox(height: 14),
-        Text('Most of this is verified against the licence register.',
+        Text(l10n.saVerifiedNote,
             style: AppText.body(14, height: 1.5, color: AppColors.ink(0.55))),
       ],
     );
@@ -187,20 +189,21 @@ class _SellerApplyScreenState extends State<SellerApplyScreen> {
 
   // ---- Step 2: papers + agreement -------------------------------------
   Widget _papers1() {
+    final l10n = AppL10n.of(context);
     return ListView(
       padding: const EdgeInsets.fromLTRB(32, 18, 32, 40),
       children: [
         GestureDetector(
           onTap: () => setState(() => _step = 0),
-          child: Text('← Back',
+          child: Text('← ${l10n.saBack}',
               style: AppText.body(15, color: AppColors.ink(0.55))),
         ),
         const SizedBox(height: 18),
-        Text('STEP 2 OF 3', style: AppText.eyebrow(color: AppColors.accent700)),
+        Text(l10n.saStepOf(2), style: AppText.eyebrow(color: AppColors.accent700)),
         const SizedBox(height: 10),
-        Text('Your papers', style: AppText.heading(34, height: 1.05)),
+        Text(l10n.saYourPapers, style: AppText.heading(34, height: 1.05)),
         const SizedBox(height: 10),
-        Text('Photograph them. We read the licence number and the expiry.',
+        Text(l10n.saPapersSub,
             style: AppText.body(16, height: 1.5, color: AppColors.ink(0.6))),
         const SizedBox(height: 24),
         _bars(1),
@@ -208,10 +211,12 @@ class _SellerApplyScreenState extends State<SellerApplyScreen> {
           _DocRow(
             label: d['label']!,
             meta: _uploaded.containsKey(d['id'])
-                ? 'Uploaded'
+                ? l10n.saUploaded
                 : d['meta']!,
             done: _uploaded.containsKey(d['id']),
             busy: _uploading.contains(d['id']),
+            doneTag: l10n.saDoneTag,
+            neededTag: l10n.saNeededTag,
             onTap: () => _pickDoc(d['id']!, d['label']!),
           ),
           const SizedBox(height: 12),
@@ -232,14 +237,13 @@ class _SellerApplyScreenState extends State<SellerApplyScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text.rich(TextSpan(children: [
-                        const TextSpan(text: 'I accept the '),
+                        TextSpan(text: l10n.saAcceptPre),
                         TextSpan(
-                            text: 'seller agreement',
+                            text: l10n.saSellerAgreement,
                             style: TextStyle(color: AppColors.accent700)),
                       ]), style: AppText.body(16, height: 1.4)),
                       const SizedBox(height: 5),
-                      Text(
-                          'Our cut, when you are paid, and that My Stables decides disputes.',
+                      Text(l10n.saAgreementSub,
                           style: AppText.body(14,
                               height: 1.45, color: AppColors.ink(0.55))),
                     ],
@@ -255,16 +259,16 @@ class _SellerApplyScreenState extends State<SellerApplyScreen> {
           const Center(child: CircularProgressIndicator())
         else
           AppButton(
-            label: 'Send application',
+            label: l10n.saSend,
             onPressed: (_agreement && _allDocsIn) ? _submit : null,
           ),
         if (!_agreement) ...[
           const SizedBox(height: 12),
-          Text('Accept the seller agreement to send this.',
+          Text(l10n.saAcceptToSend,
               style: AppText.body(14, color: AppColors.accent700)),
         ] else if (!_allDocsIn) ...[
           const SizedBox(height: 12),
-          Text('Upload every required paper to send this.',
+          Text(l10n.saUploadAllToSend,
               style: AppText.body(14, color: AppColors.accent700)),
         ],
       ],
@@ -273,6 +277,7 @@ class _SellerApplyScreenState extends State<SellerApplyScreen> {
 
   // ---- Step 3: submitted ----------------------------------------------
   Widget _waiting2() {
+    final l10n = AppL10n.of(context);
     return ListView(
       padding: const EdgeInsets.fromLTRB(32, 40, 32, 40),
       children: [
@@ -286,11 +291,9 @@ class _SellerApplyScreenState extends State<SellerApplyScreen> {
           child: const Icon(Icons.check, color: AppColors.accent2600),
         ),
         const SizedBox(height: 26),
-        Text('With My Stables', style: AppText.heading(34, height: 1.05)),
+        Text(l10n.saWithMyStables, style: AppText.heading(34, height: 1.05)),
         const SizedBox(height: 12),
-        Text(
-            'Sent. Most applications are answered within two working days. '
-            "Nothing goes in front of a rider until you're approved.",
+        Text(l10n.saSentBody,
             style: AppText.body(17, height: 1.55, color: AppColors.ink(0.7))),
         const SizedBox(height: 26),
         Container(
@@ -302,18 +305,15 @@ class _SellerApplyScreenState extends State<SellerApplyScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('IN THE MEANTIME', style: AppText.eyebrow()),
+              Text(l10n.saInMeantime, style: AppText.eyebrow()),
               const SizedBox(height: 7),
-              Text(
-                  'You can set your prices and add your first items now. They '
-                  'stay hidden until you are approved.',
-                  style: AppText.body(16, height: 1.5)),
+              Text(l10n.saMeantimeBody, style: AppText.body(16, height: 1.5)),
             ],
           ),
         ),
         const SizedBox(height: 24),
         AppButton(
-          label: 'Set up my shop',
+          label: l10n.saSetUpShop,
           onPressed: () {
             if (_createdVendor != null) {
               Navigator.of(context).pushReplacementNamed(
@@ -328,7 +328,7 @@ class _SellerApplyScreenState extends State<SellerApplyScreen> {
         GestureDetector(
           onTap: () => Navigator.of(context).maybePop(),
           child: Center(
-            child: Text('Back to my shops',
+            child: Text(l10n.saBackToShops,
                 style: AppText.body(16, color: AppColors.accent700)),
           ),
         ),
@@ -382,11 +382,15 @@ class _DocRow extends StatelessWidget {
       required this.meta,
       required this.done,
       required this.busy,
+      required this.doneTag,
+      required this.neededTag,
       required this.onTap});
   final String label;
   final String meta;
   final bool done;
   final bool busy;
+  final String doneTag;
+  final String neededTag;
   final VoidCallback onTap;
 
   @override
@@ -435,7 +439,7 @@ class _DocRow extends StatelessWidget {
                 ],
               ),
             ),
-            Text(done ? 'DONE' : 'NEEDED',
+            Text(done ? doneTag : neededTag,
                 style: AppText.body(11,
                     letterSpacing: 0.6,
                     color: done ? AppColors.accent2700 : AppColors.neutral700)),

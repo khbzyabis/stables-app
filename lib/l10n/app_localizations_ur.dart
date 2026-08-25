@@ -1017,4 +1017,331 @@ class AppL10nUr extends AppL10n {
 
   @override
   String get keepIt => 'Keep it';
+
+  @override
+  String saStepOf(int n) {
+    return 'STEP $n OF 3';
+  }
+
+  @override
+  String get saWhatDoYouDo => 'What do you do?';
+
+  @override
+  String get saWhatSub =>
+      'Pick everything that applies. Each one is checked separately.';
+
+  @override
+  String get saTradingName => 'Trading name';
+
+  @override
+  String get saWhereYouWork => 'Where you work';
+
+  @override
+  String get saPickWhat => 'Pick what you do';
+
+  @override
+  String saContinueTrades(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count trades',
+      one: '1 trade',
+    );
+    return 'Continue · $_temp0';
+  }
+
+  @override
+  String get saVerifiedNote =>
+      'Most of this is verified against the licence register.';
+
+  @override
+  String get saBack => 'Back';
+
+  @override
+  String get saYourPapers => 'Your papers';
+
+  @override
+  String get saPapersSub =>
+      'Photograph them. We read the licence number and the expiry.';
+
+  @override
+  String get saUploaded => 'Uploaded';
+
+  @override
+  String get saDoneTag => 'DONE';
+
+  @override
+  String get saNeededTag => 'NEEDED';
+
+  @override
+  String get saAcceptPre => 'I accept the ';
+
+  @override
+  String get saSellerAgreement => 'seller agreement';
+
+  @override
+  String get saAgreementSub =>
+      'Our cut, when you are paid, and that My Stables decides disputes.';
+
+  @override
+  String get saSend => 'Send application';
+
+  @override
+  String get saAcceptToSend => 'Accept the seller agreement to send this.';
+
+  @override
+  String get saUploadAllToSend => 'Upload every required paper to send this.';
+
+  @override
+  String get saWithMyStables => 'With My Stables';
+
+  @override
+  String get saSentBody =>
+      'Sent. Most applications are answered within two working days. Nothing goes in front of a rider until you\'re approved.';
+
+  @override
+  String get saInMeantime => 'IN THE MEANTIME';
+
+  @override
+  String get saMeantimeBody =>
+      'You can set your prices and add your first items now. They stay hidden until you are approved.';
+
+  @override
+  String get saSetUpShop => 'Set up my shop';
+
+  @override
+  String get saBackToShops => 'Back to my shops';
+
+  @override
+  String saCouldntUpload(String error) {
+    return 'Couldn\'t upload: $error';
+  }
+
+  @override
+  String saCouldntSend(String error) {
+    return 'Couldn\'t send: $error';
+  }
+
+  @override
+  String get sellOnTheMarket => 'Sell on the market';
+
+  @override
+  String get paTabToday => 'Today';
+
+  @override
+  String get paTabRequests => 'Requests';
+
+  @override
+  String get paTabOrders => 'Orders';
+
+  @override
+  String get paTabChat => 'Chat';
+
+  @override
+  String get paTabMoney => 'Money';
+
+  @override
+  String get paBooked => 'Booked';
+
+  @override
+  String get paToAnswer => 'To answer';
+
+  @override
+  String paNRequests(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count requests',
+      one: '1 request',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get paNoJobs => 'No jobs booked yet. Accepted requests land here.';
+
+  @override
+  String get paWhenIWork => 'When I work';
+
+  @override
+  String get paDoneTag => 'Done';
+
+  @override
+  String get paTodayTag => 'Today';
+
+  @override
+  String get paBookedTag => 'Booked';
+
+  @override
+  String get paTransport => 'Transport';
+
+  @override
+  String get paVisit => 'Visit';
+
+  @override
+  String get paWhen => 'When';
+
+  @override
+  String get paSetADay => 'Set a day';
+
+  @override
+  String get paNoteForStable => 'NOTE FOR THE STABLE';
+
+  @override
+  String get paNoteHint =>
+      'Heels were low. I would bring him back in five weeks.';
+
+  @override
+  String get paNoNote => 'No note left.';
+
+  @override
+  String get paCompletedTag => 'Completed';
+
+  @override
+  String get paMarkDone => 'Mark the job done';
+
+  @override
+  String get paFinishNote =>
+      'Marking it done tells the stable and settles the visit. Services are paid the day they are finished.';
+
+  @override
+  String get paNoRequests =>
+      'Nothing waiting. New requests from stables show here.';
+
+  @override
+  String get paQuotedTag => 'Quoted';
+
+  @override
+  String get paNewTag => 'New';
+
+  @override
+  String get paServiceRequest => 'Service request';
+
+  @override
+  String get paFactStable => 'Stable';
+
+  @override
+  String get paFactFrom => 'From';
+
+  @override
+  String get paFactTo => 'To';
+
+  @override
+  String get paFactDay => 'Day';
+
+  @override
+  String get paFactHorses => 'Horses';
+
+  @override
+  String get paYourPrice => 'YOUR PRICE (AED)';
+
+  @override
+  String get paSendPrice => 'Send this price';
+
+  @override
+  String get paCannotTake => 'Cannot take it';
+
+  @override
+  String get paEnterPrice => 'Enter a price first.';
+
+  @override
+  String get paQuoteSentTag => 'Quote sent';
+
+  @override
+  String get paDeclinedTag => 'Declined';
+
+  @override
+  String get paQuoteSentNote =>
+      'The stable will see your price and can accept it.';
+
+  @override
+  String get paDeclinedNote => 'The stable has been told you cannot take it.';
+
+  @override
+  String get paPriceFootnote =>
+      'A price you can stand by — the stable accepts it as the fee.';
+
+  @override
+  String get paToPack => 'To pack';
+
+  @override
+  String get paToPackSub => 'Mark it packed and the stable is told.';
+
+  @override
+  String get paNoPack => 'Nothing to pack. New orders appear here.';
+
+  @override
+  String get paAcceptedTag => 'Accepted';
+
+  @override
+  String get paAcceptOrder => 'Accept the order';
+
+  @override
+  String get paMarkPacked => 'Mark packed';
+
+  @override
+  String get paNoChat =>
+      'No conversations yet. Stables you work with appear here.';
+
+  @override
+  String get paSayHello => 'Say hello';
+
+  @override
+  String get paNoMessages => 'No messages yet.';
+
+  @override
+  String paMessageStable(String stable) {
+    return 'Message $stable';
+  }
+
+  @override
+  String get paNextPayout => 'NEXT PAYOUT';
+
+  @override
+  String get paPayoutNote =>
+      'Paid on the 1st or the 15th, less our commission.';
+
+  @override
+  String get paHeldRow => 'Held (return windows open)';
+
+  @override
+  String get paReadyRow => 'Ready to pay out';
+
+  @override
+  String get paServicesRow => 'Services settled';
+
+  @override
+  String get paPaidRow => 'Paid out so far';
+
+  @override
+  String get paMoneyFootnote =>
+      'This is the phone summary. The full ledger, payouts and disputes live on the web Seller Dashboard.';
+
+  @override
+  String get paWhenSub =>
+      'Nobody can book you outside this. Change it whenever.';
+
+  @override
+  String get paWorking => 'Working';
+
+  @override
+  String get paOff => 'Off';
+
+  @override
+  String get paHorsesPerDay => 'HOW MANY HORSES A DAY';
+
+  @override
+  String get paCapNote => 'A cap keeps your day realistic.';
+
+  @override
+  String get paAway => 'AWAY';
+
+  @override
+  String get paAwaySub => 'Nobody can request these days';
+
+  @override
+  String get paAddAway => '+ Add time away';
+
+  @override
+  String get paRemove => 'Remove';
 }

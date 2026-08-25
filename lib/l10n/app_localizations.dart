@@ -2030,6 +2030,582 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Keep it'**
   String get keepIt;
+
+  /// No description provided for @saStepOf.
+  ///
+  /// In en, this message translates to:
+  /// **'STEP {n} OF 3'**
+  String saStepOf(int n);
+
+  /// No description provided for @saWhatDoYouDo.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you do?'**
+  String get saWhatDoYouDo;
+
+  /// No description provided for @saWhatSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick everything that applies. Each one is checked separately.'**
+  String get saWhatSub;
+
+  /// No description provided for @saTradingName.
+  ///
+  /// In en, this message translates to:
+  /// **'Trading name'**
+  String get saTradingName;
+
+  /// No description provided for @saWhereYouWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Where you work'**
+  String get saWhereYouWork;
+
+  /// No description provided for @saPickWhat.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick what you do'**
+  String get saPickWhat;
+
+  /// No description provided for @saContinueTrades.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue · {count, plural, =1{1 trade} other{{count} trades}}'**
+  String saContinueTrades(int count);
+
+  /// No description provided for @saVerifiedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Most of this is verified against the licence register.'**
+  String get saVerifiedNote;
+
+  /// No description provided for @saBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get saBack;
+
+  /// No description provided for @saYourPapers.
+  ///
+  /// In en, this message translates to:
+  /// **'Your papers'**
+  String get saYourPapers;
+
+  /// No description provided for @saPapersSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Photograph them. We read the licence number and the expiry.'**
+  String get saPapersSub;
+
+  /// No description provided for @saUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploaded'**
+  String get saUploaded;
+
+  /// No description provided for @saDoneTag.
+  ///
+  /// In en, this message translates to:
+  /// **'DONE'**
+  String get saDoneTag;
+
+  /// No description provided for @saNeededTag.
+  ///
+  /// In en, this message translates to:
+  /// **'NEEDED'**
+  String get saNeededTag;
+
+  /// No description provided for @saAcceptPre.
+  ///
+  /// In en, this message translates to:
+  /// **'I accept the '**
+  String get saAcceptPre;
+
+  /// No description provided for @saSellerAgreement.
+  ///
+  /// In en, this message translates to:
+  /// **'seller agreement'**
+  String get saSellerAgreement;
+
+  /// No description provided for @saAgreementSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Our cut, when you are paid, and that My Stables decides disputes.'**
+  String get saAgreementSub;
+
+  /// No description provided for @saSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send application'**
+  String get saSend;
+
+  /// No description provided for @saAcceptToSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept the seller agreement to send this.'**
+  String get saAcceptToSend;
+
+  /// No description provided for @saUploadAllToSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload every required paper to send this.'**
+  String get saUploadAllToSend;
+
+  /// No description provided for @saWithMyStables.
+  ///
+  /// In en, this message translates to:
+  /// **'With My Stables'**
+  String get saWithMyStables;
+
+  /// No description provided for @saSentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent. Most applications are answered within two working days. Nothing goes in front of a rider until you\'re approved.'**
+  String get saSentBody;
+
+  /// No description provided for @saInMeantime.
+  ///
+  /// In en, this message translates to:
+  /// **'IN THE MEANTIME'**
+  String get saInMeantime;
+
+  /// No description provided for @saMeantimeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You can set your prices and add your first items now. They stay hidden until you are approved.'**
+  String get saMeantimeBody;
+
+  /// No description provided for @saSetUpShop.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up my shop'**
+  String get saSetUpShop;
+
+  /// No description provided for @saBackToShops.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to my shops'**
+  String get saBackToShops;
+
+  /// No description provided for @saCouldntUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t upload: {error}'**
+  String saCouldntUpload(String error);
+
+  /// No description provided for @saCouldntSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t send: {error}'**
+  String saCouldntSend(String error);
+
+  /// No description provided for @sellOnTheMarket.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell on the market'**
+  String get sellOnTheMarket;
+
+  /// No description provided for @paTabToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get paTabToday;
+
+  /// No description provided for @paTabRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get paTabRequests;
+
+  /// No description provided for @paTabOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders'**
+  String get paTabOrders;
+
+  /// No description provided for @paTabChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get paTabChat;
+
+  /// No description provided for @paTabMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Money'**
+  String get paTabMoney;
+
+  /// No description provided for @paBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked'**
+  String get paBooked;
+
+  /// No description provided for @paToAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'To answer'**
+  String get paToAnswer;
+
+  /// No description provided for @paNRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 request} other{{count} requests}}'**
+  String paNRequests(int count);
+
+  /// No description provided for @paNoJobs.
+  ///
+  /// In en, this message translates to:
+  /// **'No jobs booked yet. Accepted requests land here.'**
+  String get paNoJobs;
+
+  /// No description provided for @paWhenIWork.
+  ///
+  /// In en, this message translates to:
+  /// **'When I work'**
+  String get paWhenIWork;
+
+  /// No description provided for @paDoneTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get paDoneTag;
+
+  /// No description provided for @paTodayTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get paTodayTag;
+
+  /// No description provided for @paBookedTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked'**
+  String get paBookedTag;
+
+  /// No description provided for @paTransport.
+  ///
+  /// In en, this message translates to:
+  /// **'Transport'**
+  String get paTransport;
+
+  /// No description provided for @paVisit.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit'**
+  String get paVisit;
+
+  /// No description provided for @paWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'When'**
+  String get paWhen;
+
+  /// No description provided for @paSetADay.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a day'**
+  String get paSetADay;
+
+  /// No description provided for @paNoteForStable.
+  ///
+  /// In en, this message translates to:
+  /// **'NOTE FOR THE STABLE'**
+  String get paNoteForStable;
+
+  /// No description provided for @paNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Heels were low. I would bring him back in five weeks.'**
+  String get paNoteHint;
+
+  /// No description provided for @paNoNote.
+  ///
+  /// In en, this message translates to:
+  /// **'No note left.'**
+  String get paNoNote;
+
+  /// No description provided for @paCompletedTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get paCompletedTag;
+
+  /// No description provided for @paMarkDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark the job done'**
+  String get paMarkDone;
+
+  /// No description provided for @paFinishNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Marking it done tells the stable and settles the visit. Services are paid the day they are finished.'**
+  String get paFinishNote;
+
+  /// No description provided for @paNoRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing waiting. New requests from stables show here.'**
+  String get paNoRequests;
+
+  /// No description provided for @paQuotedTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Quoted'**
+  String get paQuotedTag;
+
+  /// No description provided for @paNewTag.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get paNewTag;
+
+  /// No description provided for @paServiceRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Service request'**
+  String get paServiceRequest;
+
+  /// No description provided for @paFactStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Stable'**
+  String get paFactStable;
+
+  /// No description provided for @paFactFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get paFactFrom;
+
+  /// No description provided for @paFactTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get paFactTo;
+
+  /// No description provided for @paFactDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get paFactDay;
+
+  /// No description provided for @paFactHorses.
+  ///
+  /// In en, this message translates to:
+  /// **'Horses'**
+  String get paFactHorses;
+
+  /// No description provided for @paYourPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'YOUR PRICE (AED)'**
+  String get paYourPrice;
+
+  /// No description provided for @paSendPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Send this price'**
+  String get paSendPrice;
+
+  /// No description provided for @paCannotTake.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot take it'**
+  String get paCannotTake;
+
+  /// No description provided for @paEnterPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a price first.'**
+  String get paEnterPrice;
+
+  /// No description provided for @paQuoteSentTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Quote sent'**
+  String get paQuoteSentTag;
+
+  /// No description provided for @paDeclinedTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get paDeclinedTag;
+
+  /// No description provided for @paQuoteSentNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The stable will see your price and can accept it.'**
+  String get paQuoteSentNote;
+
+  /// No description provided for @paDeclinedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The stable has been told you cannot take it.'**
+  String get paDeclinedNote;
+
+  /// No description provided for @paPriceFootnote.
+  ///
+  /// In en, this message translates to:
+  /// **'A price you can stand by — the stable accepts it as the fee.'**
+  String get paPriceFootnote;
+
+  /// No description provided for @paToPack.
+  ///
+  /// In en, this message translates to:
+  /// **'To pack'**
+  String get paToPack;
+
+  /// No description provided for @paToPackSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark it packed and the stable is told.'**
+  String get paToPackSub;
+
+  /// No description provided for @paNoPack.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to pack. New orders appear here.'**
+  String get paNoPack;
+
+  /// No description provided for @paAcceptedTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get paAcceptedTag;
+
+  /// No description provided for @paAcceptOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept the order'**
+  String get paAcceptOrder;
+
+  /// No description provided for @paMarkPacked.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark packed'**
+  String get paMarkPacked;
+
+  /// No description provided for @paNoChat.
+  ///
+  /// In en, this message translates to:
+  /// **'No conversations yet. Stables you work with appear here.'**
+  String get paNoChat;
+
+  /// No description provided for @paSayHello.
+  ///
+  /// In en, this message translates to:
+  /// **'Say hello'**
+  String get paSayHello;
+
+  /// No description provided for @paNoMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'No messages yet.'**
+  String get paNoMessages;
+
+  /// No description provided for @paMessageStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Message {stable}'**
+  String paMessageStable(String stable);
+
+  /// No description provided for @paNextPayout.
+  ///
+  /// In en, this message translates to:
+  /// **'NEXT PAYOUT'**
+  String get paNextPayout;
+
+  /// No description provided for @paPayoutNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid on the 1st or the 15th, less our commission.'**
+  String get paPayoutNote;
+
+  /// No description provided for @paHeldRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Held (return windows open)'**
+  String get paHeldRow;
+
+  /// No description provided for @paReadyRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to pay out'**
+  String get paReadyRow;
+
+  /// No description provided for @paServicesRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Services settled'**
+  String get paServicesRow;
+
+  /// No description provided for @paPaidRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid out so far'**
+  String get paPaidRow;
+
+  /// No description provided for @paMoneyFootnote.
+  ///
+  /// In en, this message translates to:
+  /// **'This is the phone summary. The full ledger, payouts and disputes live on the web Seller Dashboard.'**
+  String get paMoneyFootnote;
+
+  /// No description provided for @paWhenSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody can book you outside this. Change it whenever.'**
+  String get paWhenSub;
+
+  /// No description provided for @paWorking.
+  ///
+  /// In en, this message translates to:
+  /// **'Working'**
+  String get paWorking;
+
+  /// No description provided for @paOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get paOff;
+
+  /// No description provided for @paHorsesPerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'HOW MANY HORSES A DAY'**
+  String get paHorsesPerDay;
+
+  /// No description provided for @paCapNote.
+  ///
+  /// In en, this message translates to:
+  /// **'A cap keeps your day realistic.'**
+  String get paCapNote;
+
+  /// No description provided for @paAway.
+  ///
+  /// In en, this message translates to:
+  /// **'AWAY'**
+  String get paAway;
+
+  /// No description provided for @paAwaySub.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody can request these days'**
+  String get paAwaySub;
+
+  /// No description provided for @paAddAway.
+  ///
+  /// In en, this message translates to:
+  /// **'+ Add time away'**
+  String get paAddAway;
+
+  /// No description provided for @paRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get paRemove;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {
