@@ -1192,12 +1192,17 @@ class SupabaseService {
 
   /// Requests sent to a vendor the current person owns (provider side).
   static Future<List<Map<String, dynamic>>> vendorQuoteRequests(
-          String vendorId) =>
-      _db
-          .from('quote_requests')
-          .select()
-          .eq('vendor_id', vendorId)
-          .order('created_at', ascending: false);
+      String vendorId) async {
+    final rows = await _db
+        .from('quote_requests')
+        .select('*, stables(name)')
+        .eq('vendor_id', vendorId)
+        .order('created_at', ascending: false);
+    return rows.map<Map<String, dynamic>>((r) {
+      final s = r['stables'] as Map?;
+      return {...Map<String, dynamic>.from(r), 'stable_name': s?['name'] ?? 'A stable'};
+    }).toList();
+  }
 
   /// Provider replies with a price. Marks the request 'quoted'.
   static Future<void> submitQuote(
@@ -1212,4 +1217,102 @@ class SupabaseService {
   /// Buyer accepts or declines a quote.
   static Future<void> setQuoteStatus(String id, String status) =>
       _db.from('quote_requests').update({'status': status}).eq('id', id);
+
+  // ---- Provider app (the phone side) ----------------------------------
+  /// A provider's booked and completed jobs (accepted service/transport
+  /// quotes), with the stable name, newest first.
+  static Future<List<Map<String, dynamic>>> providerJobs(String vendorId) async {
+    final rows = await _db
+        .from('quote_requests')
+        .select('*, stables(name)')
+        .eq('vendor_id', vendorId)
+        .inFilter('status', ['accepted', 'completed'])
+        .order('scheduled_for', ascending: true, nullsFirst: false)
+        .order('created_at', ascending: false);
+    return rows.map<Map<String, dynamic>>((r) {
+      final s = r['stables'] as Map?;
+      return {...Map<String, dynamic>.from(r), 'stable_name': s?['name'] ?? 'A stable'};
+    }).toList();
+  }
+
+  /// The provider sets when a booked job happens.
+  static Future<void> scheduleJob(String id, DateTime day) =>
+      _db.from('quote_requests').update({
+        'scheduled_for': day.toIso8601String().split('T').first,
+      }).eq('id', id);
+
+  /// The provider finishes a job: a note for the stable, marked completed.
+  static Future<void> completeJob(String id, {String? note}) =>
+      _db.from('quote_requests').update({
+        'status': 'completed',
+        'provider_note': ?note,
+        'completed_at': _nowIso(),
+      }).eq('id', id);
+
+  static Future<void> declineQuote(String id) => setQuoteStatus(id, 'declined');
+
+  // ---- Availability ("When I work") -----------------------------------
+  /// Returns dow(0–6) -> is_open. Missing days default to open.
+  static Future<Map<int, bool>> availability(String vendorId) async {
+    final rows = await _db
+        .from('vendor_availability')
+        .select()
+        .eq('vendor_id', vendorId);
+    final map = <int, bool>{for (var d = 0; d < 7; d++) d: true};
+    for (final r in rows) {
+      map[(r['dow'] as num).toInt()] = r['is_open'] as bool? ?? true;
+    }
+    return map;
+  }
+
+  static Future<void> setAvailabilityDay(
+          String vendorId, int dow, bool isOpen) =>
+      _db.from('vendor_availability').upsert(
+          {'vendor_id': vendorId, 'dow': dow, 'is_open': isOpen},
+          onConflict: 'vendor_id,dow');
+
+  static Future<void> setDailyCap(String vendorId, int cap) =>
+      _db.from('vendors').update({'daily_cap': cap}).eq('id', vendorId);
+
+  static Future<List<Map<String, dynamic>>> timeAway(String vendorId) => _db
+      .from('vendor_time_away')
+      .select()
+      .eq('vendor_id', vendorId)
+      .order('start_date');
+
+  static Future<void> addTimeAway(
+          String vendorId, DateTime start, DateTime end) =>
+      _db.from('vendor_time_away').insert({
+        'vendor_id': vendorId,
+        'start_date': start.toIso8601String().split('T').first,
+        'end_date': end.toIso8601String().split('T').first,
+      });
+
+  static Future<void> removeTimeAway(String id) =>
+      _db.from('vendor_time_away').delete().eq('id', id);
+
+  // ---- Chat (provider <-> stable thread) ------------------------------
+  static Future<List<Map<String, dynamic>>> providerThreads(
+      String vendorId) async {
+    final res = await _db.rpc('provider_threads', params: {'p_vendor': vendorId});
+    if (res is! List) return const [];
+    return res.map<Map<String, dynamic>>((r) => Map<String, dynamic>.from(r as Map)).toList();
+  }
+
+  static Future<List<Map<String, dynamic>>> threadMessages(
+          String vendorId, String stableId) =>
+      _db
+          .from('provider_messages')
+          .select()
+          .eq('vendor_id', vendorId)
+          .eq('stable_id', stableId)
+          .order('created_at');
+
+  static Future<void> sendProviderMessage(
+          String vendorId, String stableId, String body) =>
+      _db.from('provider_messages').insert({
+        'vendor_id': vendorId,
+        'stable_id': stableId,
+        'body': body,
+      });
 }

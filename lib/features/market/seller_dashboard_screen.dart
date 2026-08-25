@@ -9,6 +9,7 @@ import '../../widgets/app_button.dart';
 import '../../widgets/app_field.dart';
 import '../../widgets/app_tag.dart';
 import '../../widgets/photo_placeholder.dart';
+import '../provider_app/provider_app_screen.dart';
 
 /// Seller Dashboard — an approved seller's desktop workspace. Sidebar splits
 /// Shop (orders, listings) from Services (requests), with Money and Account.
@@ -864,6 +865,23 @@ class _Account extends StatelessWidget {
             Wrap(spacing: 8, runSpacing: 8, children: [
               for (final t in trades) AppTag(t, tone: TagTone.sage)
             ]),
+        ])),
+        const SizedBox(height: 14),
+        _card(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('On the road?', style: AppText.heading(18)),
+          const SizedBox(height: 6),
+          Text('The provider phone app is the light view for out in the field — '
+              'today\'s jobs, requests, orders to pack, chat and your money.',
+              style: AppText.body(14, height: 1.5, color: AppColors.ink(0.65))),
+          const SizedBox(height: 14),
+          AppButton(
+            label: 'Open the provider app',
+            variant: AppButtonVariant.secondary,
+            block: false,
+            onPressed: () => Navigator.of(context).pushNamed(
+                ProviderAppScreen.route,
+                arguments: vendor),
+          ),
         ])),
       ],
     );
