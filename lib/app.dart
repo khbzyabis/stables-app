@@ -65,6 +65,7 @@ import 'features/market/payments_screen.dart';
 import 'features/market/provider_screen.dart';
 import 'features/market/provider_vendor_screen.dart';
 import 'features/market/my_quotes_screen.dart';
+import 'features/market/seller_apply_screen.dart';
 import 'features/admin/admin_screen.dart';
 import 'features/market/quote_request_screen.dart';
 import 'features/market/receipt_screen.dart';
@@ -234,6 +235,7 @@ class _MyStablesAppState extends State<MyStablesApp> {
                     const ProviderVendorScreen(),
                 AdminScreen.route: (_) => const AdminScreen(),
                 MyQuotesScreen.route: (_) => const MyQuotesScreen(),
+                SellerApplyScreen.route: (_) => const SellerApplyScreen(),
                 QuoteRequestScreen.route: (_) => const QuoteRequestScreen(),
                 CompareQuotesScreen.route: (_) => const CompareQuotesScreen(),
                 RequestTransportScreen.route: (_) => const RequestTransportScreen(),

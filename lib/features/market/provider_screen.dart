@@ -5,10 +5,11 @@ import '../../data/supabase_service.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
-import '../../widgets/app_field.dart';
+import '../../widgets/app_tag.dart';
 import '../../widgets/hairline.dart';
 import '../auth/back_link.dart';
 import 'provider_vendor_screen.dart';
+import 'seller_apply_screen.dart';
 
 /// Seller dashboard — the shops you run. Create a vendor, then manage its
 /// products and incoming orders. Anything you list appears in the marketplace.
@@ -26,15 +27,8 @@ class _ProviderScreenState extends State<ProviderScreen> {
   void _reload() => setState(() => _future = SupabaseService.myVendors());
 
   Future<void> _newVendor() async {
-    final created = await showModalBottomSheet<bool>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppColors.bg,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
-      builder: (_) => const _NewVendorSheet(),
-    );
-    if (created == true) _reload();
+    await Navigator.of(context).pushNamed(SellerApplyScreen.route);
+    _reload();
   }
 
   @override
@@ -79,7 +73,7 @@ class _ProviderScreenState extends State<ProviderScreen> {
                   const Hairline(),
                 ],
                 const SizedBox(height: 26),
-                AppButton(label: 'Create a shop', onPressed: _newVendor),
+                AppButton(label: 'Apply to sell', onPressed: _newVendor),
               ],
             );
           },
@@ -124,117 +118,16 @@ class _VendorRow extends StatelessWidget {
                 ],
               ),
             ),
+            AppTag(
+              (vendor['approved'] as bool? ?? false) ? 'Live' : 'In review',
+              tone: (vendor['approved'] as bool? ?? false)
+                  ? TagTone.sage
+                  : TagTone.accent,
+            ),
+            const SizedBox(width: 8),
             Icon(Icons.chevron_right, color: AppColors.ink(0.4)),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _NewVendorSheet extends StatefulWidget {
-  const _NewVendorSheet();
-
-  @override
-  State<_NewVendorSheet> createState() => _NewVendorSheetState();
-}
-
-class _NewVendorSheetState extends State<_NewVendorSheet> {
-  final _name = TextEditingController();
-  final _city = TextEditingController();
-  final _about = TextEditingController();
-  String _kind = 'Feed';
-  bool _saving = false;
-
-  @override
-  void dispose() {
-    _name.dispose();
-    _city.dispose();
-    _about.dispose();
-    super.dispose();
-  }
-
-  Future<void> _save() async {
-    if (_name.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Give the shop a name.')));
-      return;
-    }
-    setState(() => _saving = true);
-    try {
-      await SupabaseService.createVendor(
-        name: _name.text.trim(),
-        kind: _kind,
-        city: _city.text.trim(),
-        about: _about.text.trim(),
-      );
-      if (mounted) Navigator.of(context).pop(true);
-    } catch (e) {
-      AppErrors.report(e);
-      if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Couldn't create: $e")));
-        setState(() => _saving = false);
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 28,
-        right: 28,
-        top: 22,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 22,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('New shop', style: AppText.heading(24)),
-          const SizedBox(height: 18),
-          AppField(label: 'Shop name', controller: _name),
-          const SizedBox(height: 16),
-          Text('CATEGORY', style: AppText.eyebrow()),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (final c in SupabaseService.providerKinds)
-                GestureDetector(
-                  onTap: () => setState(() => _kind = c),
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 15, vertical: 9),
-                    decoration: BoxDecoration(
-                      color: c == _kind ? AppColors.accent : Colors.transparent,
-                      borderRadius: BorderRadius.circular(AppRadius.pill),
-                      border: Border.all(
-                          color: c == _kind
-                              ? AppColors.accent
-                              : AppColors.divider),
-                    ),
-                    child: Text(c,
-                        style: AppText.body(14,
-                            color:
-                                c == _kind ? AppColors.bg : AppColors.text)),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          AppField(label: 'City', controller: _city),
-          const SizedBox(height: 16),
-          AppField(label: 'About', controller: _about, maxLines: 2),
-          const SizedBox(height: 22),
-          if (_saving)
-            const Center(child: CircularProgressIndicator())
-          else
-            AppButton(label: 'Create shop', onPressed: _save),
-          const SizedBox(height: 8),
-        ],
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/errors.dart';
 import '../../data/supabase_service.dart';
@@ -22,26 +23,30 @@ class AdminScreen extends StatefulWidget {
 }
 
 class _AdminScreenState extends State<AdminScreen> {
-  int _tab = 0; // 0 = vendors, 1 = announcements
-  Future<List<Map<String, dynamic>>>? _vendors;
+  int _tab = 0; // 0 = applications, 1 = announcements
+  Future<List<Map<String, dynamic>>>? _apps;
   Future<List<Map<String, dynamic>>>? _announcements;
 
   @override
   void initState() {
     super.initState();
-    _reloadVendors();
+    _reloadApps();
     _reloadAnnouncements();
   }
 
-  void _reloadVendors() =>
-      setState(() => _vendors = SupabaseService.pendingVendors());
+  void _reloadApps() =>
+      setState(() => _apps = SupabaseService.pendingApplications());
   void _reloadAnnouncements() =>
       setState(() => _announcements = SupabaseService.allAnnouncements());
 
-  Future<void> _decideVendor(String id, bool approved) async {
+  Future<void> _decideApp(String id, bool approve) async {
     try {
-      await SupabaseService.setVendorApproved(id, approved);
-      _reloadVendors();
+      await SupabaseService.decideApplication(id, approve);
+      _reloadApps();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(approve ? 'Approved — the shop is live.' : 'Rejected.')));
+      }
     } catch (e) {
       AppErrors.report(e);
       if (mounted) {
@@ -85,7 +90,7 @@ class _AdminScreenState extends State<AdminScreen> {
                   Row(
                     children: [
                       _TabBtn(
-                          label: 'Shops',
+                          label: 'Applications',
                           selected: _tab == 0,
                           onTap: () => setState(() => _tab = 0)),
                       const SizedBox(width: 10),
@@ -99,40 +104,40 @@ class _AdminScreenState extends State<AdminScreen> {
                 ],
               ),
             ),
-            Expanded(child: _tab == 0 ? _vendorsView() : _announcementsView()),
+            Expanded(child: _tab == 0 ? _applicationsView() : _announcementsView()),
           ],
         ),
       ),
     );
   }
 
-  Widget _vendorsView() {
+  Widget _applicationsView() {
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: _vendors,
+      future: _apps,
       builder: (context, snap) {
         if (snap.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
         if (snap.hasError) AppErrors.report(snap.error!);
-        final vendors = snap.data ?? const [];
+        final apps = snap.data ?? const [];
         return ListView(
           padding: const EdgeInsets.fromLTRB(32, 0, 32, 40),
           children: [
-            Text('Shops waiting for approval',
+            Text('Seller applications waiting for review',
                 style: AppText.body(15, color: AppColors.ink(0.6))),
             const SizedBox(height: 14),
             const Hairline(),
-            if (vendors.isEmpty)
+            if (apps.isEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 26),
-                child: Text('Nothing waiting. New shops appear here to review.',
+                child: Text('Nothing waiting. New applications appear here.',
                     style: AppText.body(16, color: AppColors.ink(0.6))),
               ),
-            for (final v in vendors) ...[
-              _VendorRow(
-                vendor: v,
-                onApprove: () => _decideVendor(v['id'] as String, true),
-                onReject: () => _decideVendor(v['id'] as String, false),
+            for (final a in apps) ...[
+              _ApplicationRow(
+                app: a,
+                onApprove: () => _decideApp(a['id'] as String, true),
+                onReject: () => _decideApp(a['id'] as String, false),
               ),
               const Hairline(),
             ],
@@ -193,35 +198,97 @@ class _AdminScreenState extends State<AdminScreen> {
   }
 }
 
-class _VendorRow extends StatelessWidget {
-  const _VendorRow(
-      {required this.vendor, required this.onApprove, required this.onReject});
-  final Map<String, dynamic> vendor;
+class _ApplicationRow extends StatefulWidget {
+  const _ApplicationRow(
+      {required this.app, required this.onApprove, required this.onReject});
+  final Map<String, dynamic> app;
   final VoidCallback onApprove;
   final VoidCallback onReject;
 
   @override
+  State<_ApplicationRow> createState() => _ApplicationRowState();
+}
+
+class _ApplicationRowState extends State<_ApplicationRow> {
+  late final Future<List<Map<String, dynamic>>> _docs =
+      SupabaseService.applicationDocuments(widget.app['id'] as String);
+
+  Future<void> _openDoc(String path) async {
+    try {
+      final url = await SupabaseService.sellerDocUrl(path);
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } catch (e) {
+      AppErrors.report(e);
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Couldn't open: $e")));
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final bits = [
-      if ((vendor['kind'] as String?)?.isNotEmpty == true) vendor['kind'],
-      if ((vendor['city'] as String?)?.isNotEmpty == true) vendor['city'],
-    ].join(' · ');
+    final a = widget.app;
+    final trades = (a['trades'] as List?)?.cast<String>() ?? const [];
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text((vendor['name'] as String?) ?? 'Shop',
+          Text((a['trading_name'] as String?) ?? 'Applicant',
               style: AppText.heading(20)),
-          if (bits.isNotEmpty) ...[
+          if ((a['location'] as String?)?.isNotEmpty == true) ...[
             const SizedBox(height: 4),
-            Text(bits, style: AppText.body(14, color: AppColors.ink(0.55))),
+            Text(a['location'] as String,
+                style: AppText.body(14, color: AppColors.ink(0.55))),
           ],
-          if ((vendor['about'] as String?)?.isNotEmpty == true) ...[
-            const SizedBox(height: 6),
-            Text(vendor['about'] as String,
-                style: AppText.body(15, height: 1.4, color: AppColors.ink(0.7))),
+          if (trades.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [for (final t in trades) AppTag(t, tone: TagTone.sage)],
+            ),
           ],
+          const SizedBox(height: 12),
+          Text('PAPERS', style: AppText.eyebrow()),
+          const SizedBox(height: 6),
+          FutureBuilder<List<Map<String, dynamic>>>(
+            future: _docs,
+            builder: (context, snap) {
+              final docs = snap.data ?? const [];
+              if (docs.isEmpty) {
+                return Text('No papers uploaded.',
+                    style: AppText.body(14, color: AppColors.ink(0.5)));
+              }
+              return Column(
+                children: [
+                  for (final d in docs)
+                    InkWell(
+                      onTap: d['storage_path'] == null
+                          ? null
+                          : () => _openDoc(d['storage_path'] as String),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Row(
+                          children: [
+                            Icon(Icons.description_outlined,
+                                size: 18, color: AppColors.ink(0.5)),
+                            const SizedBox(width: 10),
+                            Expanded(
+                                child: Text((d['label'] as String?) ?? 'Document',
+                                    style: AppText.body(15))),
+                            Text('View',
+                                style: AppText.body(14,
+                                    color: AppColors.accent700)),
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
           const SizedBox(height: 14),
           Row(
             children: [
@@ -230,7 +297,7 @@ class _VendorRow extends StatelessWidget {
                 block: false,
                 minHeight: 44,
                 fontSize: 15,
-                onPressed: onApprove,
+                onPressed: widget.onApprove,
               ),
               const SizedBox(width: 10),
               AppButton(
@@ -239,7 +306,7 @@ class _VendorRow extends StatelessWidget {
                 block: false,
                 minHeight: 44,
                 fontSize: 15,
-                onPressed: onReject,
+                onPressed: widget.onReject,
               ),
             ],
           ),

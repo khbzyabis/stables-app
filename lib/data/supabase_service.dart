@@ -704,6 +704,120 @@ class SupabaseService {
       .eq('owner_id', currentUser?.id ?? '')
       .order('created_at');
 
+  // ---- Seller onboarding (apply → approve) ----------------------------
+  /// The trades a person can apply to offer, with the papers each needs.
+  static const sellerTrades = <Map<String, String>>[
+    {'id': 'goods', 'label': 'Sell goods', 'needs': 'Trade licence'},
+    {'id': 'feed', 'label': 'Sell feed and supplements', 'needs': 'Trade licence · read by a person'},
+    {'id': 'farriery', 'label': 'Farriery', 'needs': 'Trade licence and public liability insurance'},
+    {'id': 'vet', 'label': 'Veterinary work', 'needs': 'MOCCAE veterinary licence'},
+    {'id': 'physio', 'label': 'Physiotherapy or chiropractic', 'needs': 'Professional qualification and indemnity'},
+    {'id': 'transport', 'label': 'Horse transport', 'needs': 'Vehicle registration and goods-in-transit insurance'},
+    {'id': 'medicines', 'label': 'Sell medicines', 'needs': 'Veterinary licence · rarely approved'},
+  ];
+
+  /// The papers required for a chosen set of trades.
+  static List<Map<String, String>> requiredDocs(Set<String> trades) {
+    final needsInsurance = trades.contains('farriery') || trades.contains('physio');
+    final needsVet = trades.contains('vet') || trades.contains('medicines');
+    return [
+      {'id': 'trade_licence', 'label': 'Trade licence', 'meta': 'Dubai DED · we read the number'},
+      {'id': 'emirates_id', 'label': 'Emirates ID', 'meta': 'Both sides'},
+      if (needsInsurance)
+        {'id': 'public_liability', 'label': 'Public liability insurance', 'meta': 'For farriery / physiotherapy'},
+      if (trades.contains('transport'))
+        {'id': 'transit_insurance', 'label': 'Vehicle and transit insurance', 'meta': 'Registration + what you carry per horse'},
+      if (needsVet)
+        {'id': 'vet_licence', 'label': 'Veterinary licence', 'meta': 'MOCCAE · read by a person'},
+    ];
+  }
+
+  /// Submit an application: creates a pending shop (vendor, approved=false) so
+  /// the seller can set up while they wait, plus the application + its papers.
+  static Future<Map<String, dynamic>> submitSellerApplication({
+    required String tradingName,
+    required Set<String> trades,
+    String? location,
+    required List<Map<String, dynamic>> docs, // {doc_type,label,storage_path}
+  }) async {
+    final vendor = await _db.from('vendors').insert({
+      'name': tradingName,
+      'kind': trades.contains('transport')
+          ? 'Transport'
+          : (trades.contains('farriery') || trades.contains('vet') ||
+                  trades.contains('physio'))
+              ? 'Services'
+              : 'Feed',
+      'city': ?location,
+      'trades': trades.toList(),
+      'approved': false,
+    }).select().single();
+    final app = await _db.from('seller_applications').insert({
+      'vendor_id': vendor['id'],
+      'trading_name': tradingName,
+      'trades': trades.toList(),
+      'location': ?location,
+      'agreement_accepted': true,
+    }).select().single();
+    if (docs.isNotEmpty) {
+      await _db.from('application_documents').insert([
+        for (final d in docs)
+          {
+            'application_id': app['id'],
+            'doc_type': d['doc_type'],
+            'label': d['label'],
+            'storage_path': d['storage_path'],
+          }
+      ]);
+    }
+    Analytics.capture('seller_applied');
+    return {...app, 'vendor': vendor};
+  }
+
+  /// Upload one application paper to the private seller-docs bucket.
+  static Future<String> uploadSellerDoc({
+    required String fileName,
+    required Uint8List bytes,
+  }) async {
+    final safe = fileName.replaceAll(RegExp(r'[^A-Za-z0-9._-]'), '_');
+    final path =
+        '${currentUser?.id}/${DateTime.now().microsecondsSinceEpoch}_$safe';
+    await _db.storage.from('seller-docs').uploadBinary(path, bytes,
+        fileOptions: const FileOptions(upsert: false));
+    return path;
+  }
+
+  /// The current person's applications (buyer/seller side).
+  static Future<List<Map<String, dynamic>>> myApplications() => _db
+      .from('seller_applications')
+      .select()
+      .eq('user_id', currentUser?.id ?? '')
+      .order('created_at', ascending: false);
+
+  // Operator side
+  static Future<List<Map<String, dynamic>>> pendingApplications() => _db
+      .from('seller_applications')
+      .select()
+      .eq('status', 'submitted')
+      .order('created_at');
+
+  static Future<List<Map<String, dynamic>>> applicationDocuments(
+          String applicationId) =>
+      _db
+          .from('application_documents')
+          .select()
+          .eq('application_id', applicationId)
+          .order('created_at');
+
+  /// A short-lived link to view an uploaded paper.
+  static Future<String> sellerDocUrl(String storagePath) =>
+      _db.storage.from('seller-docs').createSignedUrl(storagePath, 3600);
+
+  static Future<void> decideApplication(String appId, bool approve,
+          {String? note}) =>
+      _db.rpc('decide_application',
+          params: {'app_id': appId, 'approve': approve, 'decision_note': note});
+
   static Future<Map<String, dynamic>> createVendor({
     required String name,
     String? kind,
