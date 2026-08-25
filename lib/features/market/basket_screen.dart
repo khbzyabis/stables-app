@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../data/basket.dart';
 import '../../data/errors.dart';
+import '../../data/payments/payment_gateway.dart';
 import '../../data/session.dart';
 import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
@@ -32,10 +33,35 @@ class _BasketScreenState extends State<BasketScreen> {
     final stableId = SessionScope.of(context).activeStableId;
     setState(() => _placing = true);
     try {
+      // 1. Open a payment for the whole checkout (all sellers, one charge).
+      final payment = await SupabaseService.createPayment(
+          amount: basket.grandTotal, stableId: stableId);
+      final provider = payment['provider'] as String? ?? 'mock';
+
+      // 2. Collect the money through whichever gateway is live.
+      final gateway = PaymentGateway.forProvider(provider);
+      final result = await gateway.pay(payment);
+      if (!result.success) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(result.error ?? 'Payment could not be taken.')));
+          setState(() => _placing = false);
+        }
+        return;
+      }
+
+      // 3. Mock settles from the app; a real provider settles via its webhook.
+      if (provider == 'mock') {
+        await SupabaseService.markPaymentPaid(payment['id'] as String,
+            ref: result.ref);
+      }
+
+      // 4. Place one order per seller, each linked to the payment.
       for (final entry in basket.byVendor.entries) {
         await SupabaseService.placeOrder(
           vendorId: entry.key,
           stableId: stableId,
+          paymentId: payment['id'] as String,
           items: [
             for (final l in entry.value)
               {
@@ -51,13 +77,13 @@ class _BasketScreenState extends State<BasketScreen> {
       if (mounted) {
         Navigator.of(context).pushReplacementNamed(PaymentsScreen.route);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Order placed. The seller will confirm it.')));
+            content: Text('Payment received. The seller will pack your order.')));
       }
     } catch (e) {
       AppErrors.report(e);
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Couldn't place order: $e")));
+            .showSnackBar(SnackBar(content: Text("Couldn't complete checkout: $e")));
         setState(() => _placing = false);
       }
     }
@@ -120,7 +146,7 @@ class _BasketScreenState extends State<BasketScreen> {
                       'You pay My Stables, not the seller. Goods sit in a '
                       '14-day return window before the seller is paid. Each '
                       'seller adds their own AED 25 delivery, free over AED 300. '
-                      'Card payment is coming soon.',
+                      'VAT is included.',
                       style: AppText.body(14,
                           height: 1.5, color: AppColors.ink(0.7)),
                     ),

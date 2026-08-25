@@ -647,6 +647,7 @@ class SupabaseService {
     String? stableId,
     required List<Map<String, dynamic>> items,
     String? note,
+    String? paymentId,
   }) async {
     // Send the goods subtotal; the server trigger fills delivery, the
     // commission, the seller's net and the buyer's total authoritatively.
@@ -658,6 +659,7 @@ class SupabaseService {
       'note': ?note,
       'category_group': 'goods',
       'subtotal_aed': subtotal,
+      'payment_id': ?paymentId,
     }).select().single();
     final orderId = order['id'] as String;
     await _db.from('order_items').insert([
@@ -1130,6 +1132,40 @@ class SupabaseService {
         'p_dispute': disputeId,
         'p_decision': decision,
         'p_note': note,
+      });
+
+  // ---- Payments (provider-agnostic) -----------------------------------
+  /// Platform settings — the live payment provider, the operator TRN, VAT %.
+  static Future<Map<String, dynamic>> platformSettings() async {
+    final rows = await _db.from('platform_settings').select().limit(1);
+    if (rows.isEmpty) {
+      return {'payment_provider': 'mock', 'vat_pct': 5};
+    }
+    return Map<String, dynamic>.from(rows.first);
+  }
+
+  /// Open a payment for a checkout. The provider is stamped server-side.
+  static Future<Map<String, dynamic>> createPayment(
+      {required double amount, String? stableId}) async {
+    final res = await _db.rpc('create_payment',
+        params: {'p_amount': amount, 'p_stable': stableId});
+    return Map<String, dynamic>.from(res as Map);
+  }
+
+  /// Settle a mock payment (a real provider settles via its webhook).
+  static Future<Map<String, dynamic>> markPaymentPaid(String paymentId,
+      {String? ref}) async {
+    final res = await _db.rpc('mark_payment_paid',
+        params: {'p_payment': paymentId, 'p_ref': ref});
+    return Map<String, dynamic>.from(res as Map);
+  }
+
+  static Future<void> setPaymentSettings(
+          {String? provider, String? trn, double? vat}) =>
+      _db.rpc('set_payment_settings', params: {
+        'p_provider': provider,
+        'p_trn': trn,
+        'p_vat': vat,
       });
 
   // ---- Quote requests (service & transport providers) -----------------

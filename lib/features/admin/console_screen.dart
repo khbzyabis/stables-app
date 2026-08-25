@@ -1049,6 +1049,151 @@ class _DueRow extends StatelessWidget {
   }
 }
 
+// ---- Payment provider settings ---------------------------------------------
+class _PaymentsSettingsCard extends StatefulWidget {
+  const _PaymentsSettingsCard();
+  @override
+  State<_PaymentsSettingsCard> createState() => _PaymentsSettingsCardState();
+}
+
+class _PaymentsSettingsCardState extends State<_PaymentsSettingsCard> {
+  late Future<Map<String, dynamic>> _f = SupabaseService.platformSettings();
+  static const _providers = ['mock', 'stripe', 'telr'];
+  static const _labels = {
+    'mock': 'Test (no real money)',
+    'stripe': 'Stripe',
+    'telr': 'Telr (UAE)',
+  };
+
+  Future<void> _setProvider(String p) async {
+    try {
+      await SupabaseService.setPaymentSettings(provider: p);
+      setState(() => _f = SupabaseService.platformSettings());
+      if (mounted && p != 'mock') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('$p selected — deploy its Edge Function and keys to '
+                'take real money.')));
+      }
+    } catch (e) {
+      AppErrors.report(e);
+    }
+  }
+
+  Future<void> _editTrn(String? current) async {
+    final ctrl = TextEditingController(text: current ?? '');
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: AppColors.bg,
+        title: Text('Operator TRN', style: AppText.heading(20)),
+        content: AppField(label: 'TRN (shown on receipts)', controller: ctrl),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Save')),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    try {
+      await SupabaseService.setPaymentSettings(trn: ctrl.text.trim());
+      setState(() => _f = SupabaseService.platformSettings());
+    } catch (e) {
+      AppErrors.report(e);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Map<String, dynamic>>(
+      future: _f,
+      builder: (context, snap) {
+        final s = snap.data ?? const {};
+        final provider = (s['payment_provider'] as String?) ?? 'mock';
+        final trn = (s['trn'] as String?)?.trim() ?? '';
+        final vat = (s['vat_pct'] as num?)?.toDouble() ?? 5;
+        return _Card(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('Payments', style: AppText.heading(18)),
+            const SizedBox(height: 4),
+            Text('How buyers pay. The provider is a seam — money flows through '
+                'the same held → payable → payout ledger whichever you pick.',
+                style: AppText.body(13, height: 1.5, color: AppColors.ink(0.55))),
+            const SizedBox(height: 14),
+            Wrap(spacing: 8, runSpacing: 8, children: [
+              for (final p in _providers)
+                GestureDetector(
+                  onTap: () => _setProvider(p),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 9),
+                    decoration: BoxDecoration(
+                      color: p == provider
+                          ? AppColors.accent
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(AppRadius.pill),
+                      border: Border.all(
+                          color: p == provider
+                              ? AppColors.accent
+                              : AppColors.divider),
+                    ),
+                    child: Text(_labels[p]!,
+                        style: AppText.body(14,
+                            color: p == provider
+                                ? AppColors.bg
+                                : AppColors.text)),
+                  ),
+                ),
+            ]),
+            if (provider != 'mock') ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                    color: AppColors.neutral100,
+                    borderRadius: BorderRadius.circular(12)),
+                child: Text(
+                    '$provider is selected but takes no money until its Edge '
+                    'Function and secret keys are deployed. Buyers cannot check '
+                    'out until then — switch back to Test to keep trading.',
+                    style: AppText.body(13,
+                        height: 1.5, color: AppColors.accent700)),
+              ),
+            ],
+            const SizedBox(height: 16),
+            Row(children: [
+              Expanded(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('TRN on receipts',
+                          style: AppText.body(13, color: AppColors.ink(0.55))),
+                      const SizedBox(height: 3),
+                      Text(trn.isEmpty ? 'Not set' : trn,
+                          style: AppText.body(16)),
+                    ]),
+              ),
+              Text('VAT ${vat.toStringAsFixed(0)}%',
+                  style: AppText.body(15, color: AppColors.ink(0.6))),
+              const SizedBox(width: 12),
+              AppButton(
+                  label: 'Edit TRN',
+                  variant: AppButtonVariant.secondary,
+                  block: false,
+                  minHeight: 40,
+                  fontSize: 14,
+                  onPressed: () => _editTrn(trn)),
+            ]),
+          ]),
+        );
+      },
+    );
+  }
+}
+
 // ---- Fees ------------------------------------------------------------------
 class _FeesView extends StatefulWidget {
   const _FeesView();
@@ -1111,6 +1256,10 @@ class _FeesViewState extends State<_FeesView> {
         return ListView(
           padding: const EdgeInsets.fromLTRB(32, 8, 32, 40),
           children: [
+            const _PaymentsSettingsCard(),
+            const SizedBox(height: 22),
+            Text('COMMISSION', style: AppText.eyebrow()),
+            const SizedBox(height: 10),
             Text('What My Stables keeps. A change is told to sellers before the '
                 'period it applies to; money already held pays out at the old '
                 'rate.',

@@ -194,6 +194,19 @@ class _OrderScreenState extends State<OrderScreen> {
             _totalLine('Delivery', delivery, false, freeIfZero: true),
             const SizedBox(height: 6),
             _totalLine('You paid', total, true),
+            const SizedBox(height: 8),
+            FutureBuilder<Map<String, dynamic>>(
+              future: SupabaseService.platformSettings(),
+              builder: (context, snap) {
+                final s = snap.data ?? const {};
+                final vat = (s['vat_pct'] as num?)?.toDouble() ?? 5;
+                final trn = (s['trn'] as String?)?.trim();
+                return Text(
+                    'VAT ${vat.toStringAsFixed(0)}% included'
+                    '${trn != null && trn.isNotEmpty ? ' · TRN $trn' : ''}',
+                    style: AppText.body(13, color: AppColors.ink(0.5)));
+              },
+            ),
             const SizedBox(height: 26),
             Container(
               padding: const EdgeInsets.all(16),
