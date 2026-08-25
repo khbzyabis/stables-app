@@ -1445,4 +1445,528 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get ordersTitle => 'Orders';
+
+  @override
+  String get sdOverview => 'Overview';
+
+  @override
+  String get sdOrders => 'Orders';
+
+  @override
+  String get sdListings => 'Listings';
+
+  @override
+  String get sdRequests => 'Requests';
+
+  @override
+  String get sdMoney => 'Money';
+
+  @override
+  String get sdAccount => 'Account';
+
+  @override
+  String get sdYourShop => 'Your shop';
+
+  @override
+  String get sdSeller => 'SELLER';
+
+  @override
+  String get sdHeld => 'Held';
+
+  @override
+  String get sdPayable => 'Payable';
+
+  @override
+  String get sdInReview => 'In review — not yet visible to buyers';
+
+  @override
+  String get sdHowMoney => 'How money reaches you';
+
+  @override
+  String get sdBullet1 => 'A buyer pays My Stables — never you directly.';
+
+  @override
+  String get sdBullet2 =>
+      'Goods sit in a 14-day return window; services settle the day they are done.';
+
+  @override
+  String get sdBullet3 =>
+      'Your balance moves from Held to Payable when the window closes.';
+
+  @override
+  String get sdBullet4 => 'Payouts run twice a month, on the 1st and the 15th.';
+
+  @override
+  String get sdOverviewFootnote => 'Orders and listings below are live.';
+
+  @override
+  String get sdNoOrders => 'No orders yet.';
+
+  @override
+  String get sdTagPayable => 'Payable';
+
+  @override
+  String get sdTagPaid => 'Paid out';
+
+  @override
+  String get sdTagRefunded => 'Refunded';
+
+  @override
+  String get sdTagDisputed => 'Disputed';
+
+  @override
+  String get sdTagCancelled => 'Cancelled';
+
+  @override
+  String get sdTagHeld => 'Held';
+
+  @override
+  String get sdLineDelivered => 'Delivered · in the return window';
+
+  @override
+  String get sdLineHeldUntil => 'Held until delivered';
+
+  @override
+  String get sdLineClears => 'Clears on the next payout';
+
+  @override
+  String get sdLinePaid => 'Paid out';
+
+  @override
+  String get sdLineRefunded => 'Refunded to the buyer';
+
+  @override
+  String get sdLineReturn => 'A return has been raised';
+
+  @override
+  String get sdBuyerPaid => 'buyer paid';
+
+  @override
+  String get sdFee => 'fee';
+
+  @override
+  String get sdAccept => 'Accept';
+
+  @override
+  String get sdMarkDelivered => 'Mark delivered';
+
+  @override
+  String get sdRespond => 'Respond';
+
+  @override
+  String get sdYourSide => 'Your side';
+
+  @override
+  String get sdWhatHappened => 'What happened';
+
+  @override
+  String get sdAddProduct => 'Add a product';
+
+  @override
+  String get sdYouReceive => 'you receive';
+
+  @override
+  String sdAfterPct(String rate) {
+    return 'after $rate%';
+  }
+
+  @override
+  String get sdNewProduct => 'New product';
+
+  @override
+  String get sdAddPhoto => 'Add photo';
+
+  @override
+  String get sdChangePhoto => 'Change photo';
+
+  @override
+  String get sdName => 'Name';
+
+  @override
+  String get sdPriceAed => 'Price (AED)';
+
+  @override
+  String get sdUnit => 'Unit';
+
+  @override
+  String get sdAddProductBtn => 'Add product';
+
+  @override
+  String get sdNamePriceNeeded => 'A name and valid price are needed.';
+
+  @override
+  String get sdNoRequests => 'No requests yet.';
+
+  @override
+  String get sdServiceRequest => 'Service request';
+
+  @override
+  String get sdYourQuote => 'Your quote';
+
+  @override
+  String get sdSendQuote => 'Send a quote';
+
+  @override
+  String get sdAccepted => 'Accepted';
+
+  @override
+  String get sdQuoted => 'Quoted';
+
+  @override
+  String get sdNote => 'Note';
+
+  @override
+  String get sdPayableNow => 'Payable now';
+
+  @override
+  String get sdHowPayout => 'How a payout works';
+
+  @override
+  String get sdPayoutBody =>
+      'Money is Held while the buyer can still return an item (14 days). When the window closes it becomes Payable, and lands in your bank on the next run — the 1st or the 15th, whatever cleared by then, less our commission. Services settle the day they are done.';
+
+  @override
+  String get sdPayouts => 'PAYOUTS';
+
+  @override
+  String get sdNoPayouts =>
+      'No payouts yet. Your first one lands after a return window closes.';
+
+  @override
+  String get sdPaid => 'Paid';
+
+  @override
+  String get sdDue => 'Due';
+
+  @override
+  String get sdRefunds => 'refunds';
+
+  @override
+  String get sdApprovedLive => 'Approved — live in the market';
+
+  @override
+  String get sdInReviewShort => 'In review';
+
+  @override
+  String get sdApprovedFor => 'APPROVED FOR';
+
+  @override
+  String get sdNoTrades => 'No trades recorded.';
+
+  @override
+  String get sdOnTheRoad => 'On the road?';
+
+  @override
+  String get sdOnRoadBody =>
+      'The provider phone app is the light view for out in the field — today\'s jobs, requests, orders to pack, chat and your money.';
+
+  @override
+  String get sdOpenProviderApp => 'Open the provider app';
+
+  @override
+  String get sdTransport => 'Transport';
+
+  @override
+  String get cnOverview => 'Overview';
+
+  @override
+  String get cnApplications => 'Applications';
+
+  @override
+  String get cnSellers => 'Sellers';
+
+  @override
+  String get cnStables => 'Stables';
+
+  @override
+  String get cnDisputes => 'Disputes';
+
+  @override
+  String get cnPayouts => 'Payouts';
+
+  @override
+  String get cnFees => 'Fees';
+
+  @override
+  String get cnAnnouncements => 'Announcements';
+
+  @override
+  String get cnOperator => 'OPERATOR';
+
+  @override
+  String get cnBackToApp => 'Back to app';
+
+  @override
+  String get cnNoData => 'No data — or this account is not an operator.';
+
+  @override
+  String get cnKpiStables => 'Stables';
+
+  @override
+  String get cnKpiPeople => 'People';
+
+  @override
+  String get cnKpiHorses => 'Horses';
+
+  @override
+  String get cnKpiAppsWaiting => 'Applications waiting';
+
+  @override
+  String get cnKpiLiveSellers => 'Live sellers';
+
+  @override
+  String get cnKpiOpenOrders => 'Open orders';
+
+  @override
+  String get cnNoApps => 'No applications waiting.';
+
+  @override
+  String get cnApprovedShopLive => 'Approved — shop is live.';
+
+  @override
+  String get cnRejected => 'Rejected.';
+
+  @override
+  String get cnPapers => 'PAPERS';
+
+  @override
+  String get cnNoPapers => 'No papers uploaded.';
+
+  @override
+  String get cnView => 'View';
+
+  @override
+  String get cnApprove => 'Approve';
+
+  @override
+  String get cnReject => 'Reject';
+
+  @override
+  String get cnApplicant => 'Applicant';
+
+  @override
+  String get cnNoSellers => 'No sellers yet.';
+
+  @override
+  String cnProductsN(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count products',
+      one: '1 product',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get cnLive => 'Live';
+
+  @override
+  String get cnInReview => 'In review';
+
+  @override
+  String get cnSuspend => 'Suspend';
+
+  @override
+  String get cnNoStables => 'No stables yet.';
+
+  @override
+  String cnHorsesN(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count horses',
+      one: '1 horse',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String cnPeopleN(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people',
+      one: '1 person',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get cnNoDisputes => 'No disputes. A quiet marketplace.';
+
+  @override
+  String get cnArbitrates =>
+      'My Stables arbitrates · services cannot be returned';
+
+  @override
+  String get cnWaitingOnYou => 'WAITING ON YOU';
+
+  @override
+  String get cnDecided => 'DECIDED';
+
+  @override
+  String get cnDecisionRecorded => 'Decision recorded.';
+
+  @override
+  String get cnDispute => 'Dispute';
+
+  @override
+  String get cnPaidSeller => 'Paid the seller';
+
+  @override
+  String get cnRefundedBuyer => 'Refunded the buyer';
+
+  @override
+  String get cnSplitIt => 'Split it';
+
+  @override
+  String get cnWaitingTag => 'Waiting on you';
+
+  @override
+  String get cnSellerNet => 'seller net';
+
+  @override
+  String get cnRefundBuyer => 'Refund the buyer';
+
+  @override
+  String get cnPaySeller => 'Pay the seller';
+
+  @override
+  String get cnBuyer => 'Buyer';
+
+  @override
+  String get cnSeller => 'Seller';
+
+  @override
+  String get cnRunPayoutsTitle => 'Run the payouts?';
+
+  @override
+  String get cnRunPayoutsBody =>
+      'This closes the current cycle: every payable order is swept into a batch per seller and marked paid. This cannot be undone.';
+
+  @override
+  String get cnRunPayouts => 'Run payouts';
+
+  @override
+  String cnPaidSellersN(int count, String net) {
+    return 'Paid $count sellers · AED $net.';
+  }
+
+  @override
+  String get cnPayoutsNote =>
+      'Paid twice a month, on the 1st and the 15th. Held money is still inside a return window and is not swept.';
+
+  @override
+  String cnPayableAcrossN(int count) {
+    return 'Payable now, across $count sellers';
+  }
+
+  @override
+  String get cnNothingDue =>
+      'Nothing due. Money still in a return window appears when its window closes.';
+
+  @override
+  String get cnFee => 'fee';
+
+  @override
+  String get cnRefunds => 'refunds';
+
+  @override
+  String get cnHeld => 'held';
+
+  @override
+  String get cnCommission => 'COMMISSION';
+
+  @override
+  String get cnCommissionIntro =>
+      'What My Stables keeps. A change is told to sellers before the period it applies to; money already held pays out at the old rate.';
+
+  @override
+  String cnCommissionOf(String label) {
+    return '$label commission';
+  }
+
+  @override
+  String get cnRatePct => 'Rate (%)';
+
+  @override
+  String get cnRateUpdated => 'Rate updated.';
+
+  @override
+  String get cnEdit => 'Edit';
+
+  @override
+  String get cnPayments => 'Payments';
+
+  @override
+  String get cnPaymentsSub =>
+      'How buyers pay. The provider is a seam — money flows through the same held → payable → payout ledger whichever you pick.';
+
+  @override
+  String get cnProvTest => 'Test (no real money)';
+
+  @override
+  String get cnProvTelr => 'Telr (UAE)';
+
+  @override
+  String cnProviderWarn(String provider) {
+    return '$provider is selected but takes no money until its Edge Function and secret keys are deployed. Buyers cannot check out until then — switch back to Test to keep trading.';
+  }
+
+  @override
+  String cnProviderSelected(String provider) {
+    return '$provider selected — deploy its Edge Function and keys to take real money.';
+  }
+
+  @override
+  String get cnTrnOnReceipts => 'TRN on receipts';
+
+  @override
+  String get cnNotSet => 'Not set';
+
+  @override
+  String get cnEditTrn => 'Edit TRN';
+
+  @override
+  String get cnOperatorTrn => 'Operator TRN';
+
+  @override
+  String get cnTrnField => 'TRN (shown on receipts)';
+
+  @override
+  String get cnSave => 'Save';
+
+  @override
+  String get cnPostAnnouncement => 'Post an announcement';
+
+  @override
+  String get cnLiveState => 'Live';
+
+  @override
+  String get cnHidden => 'Hidden';
+
+  @override
+  String get cnNewAnnouncement => 'New announcement';
+
+  @override
+  String get cnTitle => 'Title';
+
+  @override
+  String get cnMessage => 'Message';
+
+  @override
+  String get cnKindUpdate => 'Update';
+
+  @override
+  String get cnKindShow => 'Show';
+
+  @override
+  String get cnKindAdvert => 'Advert';
+
+  @override
+  String get cnPinTop => 'Pin to the top';
+
+  @override
+  String get cnTitleMsgNeeded => 'A title and a message are needed.';
 }

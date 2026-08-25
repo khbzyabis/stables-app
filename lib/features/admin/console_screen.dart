@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/errors.dart';
 import '../../data/supabase_service.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
@@ -35,16 +36,16 @@ enum _Section {
 class _ConsoleScreenState extends State<ConsoleScreen> {
   _Section _section = _Section.overview;
 
-  static const _labels = {
-    _Section.overview: 'Overview',
-    _Section.applications: 'Applications',
-    _Section.sellers: 'Sellers',
-    _Section.stables: 'Stables',
-    _Section.disputes: 'Disputes',
-    _Section.payouts: 'Payouts',
-    _Section.fees: 'Fees',
-    _Section.announcements: 'Announcements',
-  };
+  static Map<_Section, String> labelsFor(AppL10n l10n) => {
+        _Section.overview: l10n.cnOverview,
+        _Section.applications: l10n.cnApplications,
+        _Section.sellers: l10n.cnSellers,
+        _Section.stables: l10n.cnStables,
+        _Section.disputes: l10n.cnDisputes,
+        _Section.payouts: l10n.cnPayouts,
+        _Section.fees: l10n.cnFees,
+        _Section.announcements: l10n.cnAnnouncements,
+      };
   static const _icons = {
     _Section.overview: Icons.grid_view_rounded,
     _Section.applications: Icons.assignment_outlined,
@@ -91,6 +92,7 @@ class _ConsoleScreenState extends State<ConsoleScreen> {
   }
 
   Widget _content() {
+    final l10n = AppL10n.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -99,11 +101,11 @@ class _ConsoleScreenState extends State<ConsoleScreen> {
           child: Row(
             children: [
               Expanded(
-                child: Text(_labels[_section]!,
+                child: Text(labelsFor(l10n)[_section]!,
                     style: AppText.heading(30, height: 1)),
               ),
               IconButton(
-                tooltip: 'Back to app',
+                tooltip: l10n.cnBackToApp,
                 onPressed: () => Navigator.of(context).maybePop(),
                 icon: Icon(Icons.close, color: AppColors.ink(0.5)),
               ),
@@ -160,14 +162,14 @@ class _Sidebar extends StatelessWidget {
           const SizedBox(height: 6),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Text('OPERATOR',
+            child: Text(AppL10n.of(context).cnOperator,
                 style: AppText.body(11,
                     letterSpacing: 1.4, color: AppColors.neutral400)),
           ),
           const SizedBox(height: 22),
           for (final s in _Section.values)
             _NavItem(
-              label: _ConsoleScreenState._labels[s]!,
+              label: _ConsoleScreenState.labelsFor(AppL10n.of(context))[s]!,
               icon: _ConsoleScreenState._icons[s]!,
               active: s == section,
               onTap: () => onSelect(s),
@@ -240,7 +242,8 @@ class _TopNav extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: ChoiceChip(
-                  label: Text(_ConsoleScreenState._labels[s]!),
+                  label: Text(
+                      _ConsoleScreenState.labelsFor(AppL10n.of(context))[s]!),
                   selected: s == section,
                   onSelected: (_) => onSelect(s),
                   showCheckmark: false,
@@ -278,20 +281,20 @@ class _OverviewViewState extends State<_OverviewView> {
           return const Center(child: CircularProgressIndicator());
         }
         if (snap.hasError) AppErrors.report(snap.error!);
+        final l10n = AppL10n.of(context);
         final d = snap.data ?? const {};
         if (d.isEmpty) {
-          return _PadBody(child: Text(
-              'No data — or this account is not an operator.',
+          return _PadBody(child: Text(l10n.cnNoData,
               style: AppText.body(16, color: AppColors.ink(0.6))));
         }
         int n(String k) => (d[k] as num?)?.toInt() ?? 0;
         final tiles = <(String, String)>[
-          ('Stables', '${n('stables')}'),
-          ('People', '${n('people')}'),
-          ('Horses', '${n('horses')}'),
-          ('Applications waiting', '${n('apps_pending')}'),
-          ('Live sellers', '${n('sellers_live')} / ${n('sellers_total')}'),
-          ('Open orders', '${n('orders_open')} / ${n('orders_total')}'),
+          (l10n.cnKpiStables, '${n('stables')}'),
+          (l10n.cnKpiPeople, '${n('people')}'),
+          (l10n.cnKpiHorses, '${n('horses')}'),
+          (l10n.cnKpiAppsWaiting, '${n('apps_pending')}'),
+          (l10n.cnKpiLiveSellers, '${n('sellers_live')} / ${n('sellers_total')}'),
+          (l10n.cnKpiOpenOrders, '${n('orders_open')} / ${n('orders_total')}'),
         ];
         return ListView(
           padding: const EdgeInsets.fromLTRB(32, 8, 32, 40),
@@ -353,8 +356,10 @@ class _ApplicationsViewState extends State<_ApplicationsView> {
       await SupabaseService.decideApplication(id, approve);
       _reload();
       if (mounted) {
+        final l10n = AppL10n.of(context);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(approve ? 'Approved — shop is live.' : 'Rejected.')));
+            content:
+                Text(approve ? l10n.cnApprovedShopLive : l10n.cnRejected)));
       }
     } catch (e) {
       AppErrors.report(e);
@@ -381,7 +386,7 @@ class _ApplicationsViewState extends State<_ApplicationsView> {
         if (snap.hasError) AppErrors.report(snap.error!);
         final apps = snap.data ?? const [];
         if (apps.isEmpty) {
-          return _PadBody(child: Text('No applications waiting.',
+          return _PadBody(child: Text(AppL10n.of(context).cnNoApps,
               style: AppText.body(16, color: AppColors.ink(0.6))));
         }
         return ListView(
@@ -426,12 +431,13 @@ class _AppCardState extends State<_AppCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     final a = widget.app;
     final trades = (a['trades'] as List?)?.cast<String>() ?? const [];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text((a['trading_name'] as String?) ?? 'Applicant',
+        Text((a['trading_name'] as String?) ?? l10n.cnApplicant,
             style: AppText.heading(22)),
         if ((a['location'] as String?)?.isNotEmpty == true) ...[
           const SizedBox(height: 4),
@@ -445,14 +451,14 @@ class _AppCardState extends State<_AppCard> {
           ]),
         ],
         const SizedBox(height: 14),
-        Text('PAPERS', style: AppText.eyebrow()),
+        Text(l10n.cnPapers, style: AppText.eyebrow()),
         const SizedBox(height: 4),
         FutureBuilder<List<Map<String, dynamic>>>(
           future: _docs,
           builder: (context, snap) {
             final docs = snap.data ?? const [];
             if (docs.isEmpty) {
-              return Text('No papers uploaded.',
+              return Text(l10n.cnNoPapers,
                   style: AppText.body(14, color: AppColors.ink(0.5)));
             }
             return Column(children: [
@@ -470,7 +476,7 @@ class _AppCardState extends State<_AppCard> {
                       Expanded(
                           child: Text((d['label'] as String?) ?? 'Document',
                               style: AppText.body(15))),
-                      Text('View',
+                      Text(l10n.cnView,
                           style:
                               AppText.body(14, color: AppColors.accent700)),
                     ]),
@@ -482,14 +488,14 @@ class _AppCardState extends State<_AppCard> {
         const SizedBox(height: 14),
         Row(children: [
           AppButton(
-              label: 'Approve',
+              label: l10n.cnApprove,
               block: false,
               minHeight: 44,
               fontSize: 15,
               onPressed: widget.onApprove),
           const SizedBox(width: 10),
           AppButton(
-              label: 'Reject',
+              label: l10n.cnReject,
               variant: AppButtonVariant.secondary,
               block: false,
               minHeight: 44,
@@ -530,9 +536,10 @@ class _SellersViewState extends State<_SellersView> {
           return const Center(child: CircularProgressIndicator());
         }
         if (snap.hasError) AppErrors.report(snap.error!);
+        final l10n = AppL10n.of(context);
         final sellers = snap.data ?? const [];
         if (sellers.isEmpty) {
-          return _PadBody(child: Text('No sellers yet.',
+          return _PadBody(child: Text(l10n.cnNoSellers,
               style: AppText.body(16, color: AppColors.ink(0.6))));
         }
         return ListView(
@@ -553,7 +560,7 @@ class _SellersViewState extends State<_SellersView> {
                             if ((v['kind'] as String?)?.isNotEmpty == true) v['kind'],
                             if ((v['owner_email'] as String?)?.isNotEmpty == true)
                               v['owner_email'],
-                            '${(v['products'] as num?)?.toInt() ?? 0} products',
+                            l10n.cnProductsN((v['products'] as num?)?.toInt() ?? 0),
                           ].join(' · '),
                               style:
                                   AppText.body(14, color: AppColors.ink(0.55))),
@@ -562,15 +569,17 @@ class _SellersViewState extends State<_SellersView> {
                     ),
                     const SizedBox(width: 12),
                     AppTag(
-                        (v['approved'] as bool? ?? false) ? 'Live' : 'In review',
+                        (v['approved'] as bool? ?? false)
+                            ? l10n.cnLive
+                            : l10n.cnInReview,
                         tone: (v['approved'] as bool? ?? false)
                             ? TagTone.sage
                             : TagTone.accent),
                     const SizedBox(width: 10),
                     AppButton(
                       label: (v['approved'] as bool? ?? false)
-                          ? 'Suspend'
-                          : 'Approve',
+                          ? l10n.cnSuspend
+                          : l10n.cnApprove,
                       variant: (v['approved'] as bool? ?? false)
                           ? AppButtonVariant.secondary
                           : AppButtonVariant.primary,
@@ -604,9 +613,10 @@ class _StablesView extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         if (snap.hasError) AppErrors.report(snap.error!);
+        final l10n = AppL10n.of(context);
         final stables = snap.data ?? const [];
         if (stables.isEmpty) {
-          return _PadBody(child: Text('No stables yet.',
+          return _PadBody(child: Text(l10n.cnNoStables,
               style: AppText.body(16, color: AppColors.ink(0.6))));
         }
         return ListView(
@@ -632,8 +642,8 @@ class _StablesView extends StatelessWidget {
                       ),
                     ),
                     Text(
-                        '${(s['horses'] as num?)?.toInt() ?? 0} horses · '
-                        '${(s['people'] as num?)?.toInt() ?? 0} people',
+                        '${l10n.cnHorsesN((s['horses'] as num?)?.toInt() ?? 0)} · '
+                        '${l10n.cnPeopleN((s['people'] as num?)?.toInt() ?? 0)}',
                         style: AppText.body(14, color: AppColors.ink(0.6))),
                   ],
                 ),
@@ -676,11 +686,12 @@ class _AnnouncementsViewState extends State<_AnnouncementsView> {
     return FutureBuilder<List<Map<String, dynamic>>>(
       future: _f,
       builder: (context, snap) {
+        final l10n = AppL10n.of(context);
         final items = snap.data ?? const [];
         return ListView(
           padding: const EdgeInsets.fromLTRB(32, 8, 32, 40),
           children: [
-            AppButton(label: 'Post an announcement', onPressed: _post),
+            AppButton(label: l10n.cnPostAnnouncement, onPressed: _post),
             const SizedBox(height: 18),
             if (snap.connectionState == ConnectionState.waiting)
               const Center(child: CircularProgressIndicator()),
@@ -690,10 +701,12 @@ class _AnnouncementsViewState extends State<_AnnouncementsView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(children: [
-                      AppTag((a['kind'] as String?) ?? 'Update',
+                      AppTag((a['kind'] as String?) ?? l10n.cnKindUpdate,
                           tone: TagTone.neutral),
                       const Spacer(),
-                      Text((a['active'] as bool? ?? true) ? 'Live' : 'Hidden',
+                      Text((a['active'] as bool? ?? true)
+                              ? l10n.cnLiveState
+                              : l10n.cnHidden,
                           style: AppText.body(12, color: AppColors.ink(0.5))),
                       Switch(
                         value: a['active'] as bool? ?? true,
@@ -758,7 +771,7 @@ class _DisputesViewState extends State<_DisputesView> {
       _reload();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Decision recorded.')));
+            SnackBar(content: Text(AppL10n.of(context).cnDecisionRecorded)));
       }
     } catch (e) {
       AppErrors.report(e);
@@ -774,9 +787,10 @@ class _DisputesViewState extends State<_DisputesView> {
           return const Center(child: CircularProgressIndicator());
         }
         if (snap.hasError) AppErrors.report(snap.error!);
+        final l10n = AppL10n.of(context);
         final rows = snap.data ?? const [];
         if (rows.isEmpty) {
-          return _PadBody(child: Text('No disputes. A quiet marketplace.',
+          return _PadBody(child: Text(l10n.cnNoDisputes,
               style: AppText.body(16, color: AppColors.ink(0.6))));
         }
         final open = rows.where((d) => d['status'] == 'open').toList();
@@ -784,11 +798,11 @@ class _DisputesViewState extends State<_DisputesView> {
         return ListView(
           padding: const EdgeInsets.fromLTRB(32, 8, 32, 40),
           children: [
-            Text('My Stables arbitrates · services cannot be returned',
+            Text(l10n.cnArbitrates,
                 style: AppText.body(14, color: AppColors.ink(0.55))),
             const SizedBox(height: 16),
             if (open.isNotEmpty) ...[
-              Text('WAITING ON YOU', style: AppText.eyebrow()),
+              Text(l10n.cnWaitingOnYou, style: AppText.eyebrow()),
               const SizedBox(height: 10),
               for (final d in open) ...[
                 _Card(child: _DisputeCard(dispute: d, onDecide: _decide)),
@@ -797,7 +811,7 @@ class _DisputesViewState extends State<_DisputesView> {
               const SizedBox(height: 8),
             ],
             if (decided.isNotEmpty) ...[
-              Text('DECIDED', style: AppText.eyebrow()),
+              Text(l10n.cnDecided, style: AppText.eyebrow()),
               const SizedBox(height: 10),
               for (final d in decided) ...[
                 _Card(child: _DisputeCard(dispute: d, onDecide: _decide)),
@@ -816,15 +830,16 @@ class _DisputeCard extends StatelessWidget {
   final Map<String, dynamic> dispute;
   final Future<void> Function(String, String) onDecide;
 
-  String get _decisionLabel => switch (dispute['decision'] as String?) {
-        'pay_seller' => 'Paid the seller',
-        'refund_buyer' => 'Refunded the buyer',
-        'split' => 'Split it',
+  String _decisionLabel(AppL10n l10n) => switch (dispute['decision'] as String?) {
+        'pay_seller' => l10n.cnPaidSeller,
+        'refund_buyer' => l10n.cnRefundedBuyer,
+        'split' => l10n.cnSplitIt,
         _ => '',
       };
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     final d = dispute;
     final id = d['id'] as String;
     final open = d['status'] == 'open';
@@ -833,43 +848,43 @@ class _DisputeCard extends StatelessWidget {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(children: [
         Expanded(
-          child: Text((d['reason'] as String?) ?? 'Dispute',
+          child: Text((d['reason'] as String?) ?? l10n.cnDispute,
               style: AppText.heading(18, height: 1.2)),
         ),
         if (open)
-          const AppTag('Waiting on you', tone: TagTone.accent)
+          AppTag(l10n.cnWaitingTag, tone: TagTone.accent)
         else
-          AppTag(_decisionLabel, tone: TagTone.neutral),
+          AppTag(_decisionLabel(l10n), tone: TagTone.neutral),
       ]),
       const SizedBox(height: 6),
-      Text('${d['vendor_name'] ?? 'Seller'} · seller net AED ${net.toStringAsFixed(0)}',
+      Text('${d['vendor_name'] ?? l10n.cnSeller} · ${l10n.cnSellerNet} AED ${net.toStringAsFixed(0)}',
           style: AppText.body(13, color: AppColors.ink(0.55))),
       if ((d['buyer_says'] as String?)?.isNotEmpty == true) ...[
         const SizedBox(height: 10),
-        _Says(who: 'Buyer', text: d['buyer_says'] as String),
+        _Says(who: l10n.cnBuyer, text: d['buyer_says'] as String),
       ],
       if ((d['seller_says'] as String?)?.isNotEmpty == true) ...[
         const SizedBox(height: 8),
-        _Says(who: 'Seller', text: d['seller_says'] as String),
+        _Says(who: l10n.cnSeller, text: d['seller_says'] as String),
       ],
       if (open) ...[
         const SizedBox(height: 14),
         Wrap(spacing: 10, runSpacing: 10, children: [
           AppButton(
-              label: 'Refund the buyer',
+              label: l10n.cnRefundBuyer,
               block: false,
               minHeight: 42,
               fontSize: 14,
               onPressed: () => onDecide(id, 'refund_buyer')),
           AppButton(
-              label: 'Pay the seller',
+              label: l10n.cnPaySeller,
               variant: AppButtonVariant.secondary,
               block: false,
               minHeight: 42,
               fontSize: 14,
               onPressed: () => onDecide(id, 'pay_seller')),
           AppButton(
-              label: 'Split it',
+              label: l10n.cnSplitIt,
               variant: AppButtonVariant.secondary,
               block: false,
               minHeight: 42,
@@ -920,22 +935,21 @@ class _PayoutsViewState extends State<_PayoutsView> {
   void _reload() => setState(() => _f = SupabaseService.adminPayoutsDue());
 
   Future<void> _run() async {
+    final l10n = AppL10n.of(context);
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: AppColors.bg,
-        title: Text('Run the payouts?', style: AppText.heading(22)),
-        content: Text(
-            'This closes the current cycle: every payable order is swept into '
-            'a batch per seller and marked paid. This cannot be undone.',
+        title: Text(l10n.cnRunPayoutsTitle, style: AppText.heading(22)),
+        content: Text(l10n.cnRunPayoutsBody,
             style: AppText.body(15, height: 1.5)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel')),
+              child: Text(l10n.oCancel)),
           TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Run payouts')),
+              child: Text(l10n.cnRunPayouts)),
         ],
       ),
     );
@@ -947,7 +961,8 @@ class _PayoutsViewState extends State<_PayoutsView> {
       final net = (res['net_aed'] as num?)?.toDouble() ?? 0;
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Paid $batches sellers · AED ${net.toStringAsFixed(0)}.')));
+            content: Text(
+                l10n.cnPaidSellersN(batches, net.toStringAsFixed(0)))));
       }
       _reload();
     } catch (e) {
@@ -966,14 +981,14 @@ class _PayoutsViewState extends State<_PayoutsView> {
           return const Center(child: CircularProgressIndicator());
         }
         if (snap.hasError) AppErrors.report(snap.error!);
+        final l10n = AppL10n.of(context);
         final due = snap.data ?? const [];
         final total = due.fold<double>(
             0, (t, r) => t + ((r['net_aed'] as num?)?.toDouble() ?? 0));
         return ListView(
           padding: const EdgeInsets.fromLTRB(32, 8, 32, 40),
           children: [
-            Text('Paid twice a month, on the 1st and the 15th. Held money is '
-                'still inside a return window and is not swept.',
+            Text(l10n.cnPayoutsNote,
                 style: AppText.body(14, color: AppColors.ink(0.55))),
             const SizedBox(height: 16),
             Row(children: [
@@ -989,7 +1004,7 @@ class _PayoutsViewState extends State<_PayoutsView> {
                         Text('AED ${total.toStringAsFixed(0)}',
                             style: AppText.heading(30)),
                         const SizedBox(height: 5),
-                        Text('Payable now, across ${due.length} sellers',
+                        Text(l10n.cnPayableAcrossN(due.length),
                             style: AppText.body(14, color: AppColors.ink(0.6))),
                       ]),
                 ),
@@ -1001,15 +1016,14 @@ class _PayoutsViewState extends State<_PayoutsView> {
                     child: CircularProgressIndicator())
               else
                 AppButton(
-                    label: 'Run payouts',
+                    label: l10n.cnRunPayouts,
                     block: false,
                     onPressed: due.isEmpty ? null : _run),
             ]),
             const SizedBox(height: 18),
             if (due.isEmpty)
               _Card(
-                  child: Text('Nothing due. Money still in a return window '
-                      'appears when its window closes.',
+                  child: Text(l10n.cnNothingDue,
                       style: AppText.body(15, color: AppColors.ink(0.6))))
             else
               for (final r in due) ...[
@@ -1028,6 +1042,7 @@ class _DueRow extends StatelessWidget {
   final Map<String, dynamic> row;
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     final net = (row['net_aed'] as num?)?.toDouble() ?? 0;
     final fee = (row['fee_aed'] as num?)?.toDouble() ?? 0;
     final refunds = (row['refunds_aed'] as num?)?.toDouble() ?? 0;
@@ -1035,12 +1050,12 @@ class _DueRow extends StatelessWidget {
     return Row(children: [
       Expanded(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text((row['vendor_name'] as String?) ?? 'Seller',
+          Text((row['vendor_name'] as String?) ?? l10n.cnSeller,
               style: AppText.heading(18)),
           const SizedBox(height: 4),
-          Text('fee AED ${fee.toStringAsFixed(0)}'
-              '${refunds > 0 ? ' · refunds AED ${refunds.toStringAsFixed(0)}' : ''}'
-              '${held > 0 ? ' · held AED ${held.toStringAsFixed(0)}' : ''}',
+          Text('${l10n.cnFee} AED ${fee.toStringAsFixed(0)}'
+              '${refunds > 0 ? ' · ${l10n.cnRefunds} AED ${refunds.toStringAsFixed(0)}' : ''}'
+              '${held > 0 ? ' · ${l10n.cnHeld} AED ${held.toStringAsFixed(0)}' : ''}',
               style: AppText.body(13, color: AppColors.ink(0.55))),
         ]),
       ),
@@ -1059,11 +1074,11 @@ class _PaymentsSettingsCard extends StatefulWidget {
 class _PaymentsSettingsCardState extends State<_PaymentsSettingsCard> {
   late Future<Map<String, dynamic>> _f = SupabaseService.platformSettings();
   static const _providers = ['mock', 'stripe', 'telr'];
-  static const _labels = {
-    'mock': 'Test (no real money)',
-    'stripe': 'Stripe',
-    'telr': 'Telr (UAE)',
-  };
+  Map<String, String> _labels(AppL10n l10n) => {
+        'mock': l10n.cnProvTest,
+        'stripe': 'Stripe',
+        'telr': l10n.cnProvTelr,
+      };
 
   Future<void> _setProvider(String p) async {
     try {
@@ -1071,8 +1086,7 @@ class _PaymentsSettingsCardState extends State<_PaymentsSettingsCard> {
       setState(() => _f = SupabaseService.platformSettings());
       if (mounted && p != 'mock') {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('$p selected — deploy its Edge Function and keys to '
-                'take real money.')));
+            content: Text(AppL10n.of(context).cnProviderSelected(p))));
       }
     } catch (e) {
       AppErrors.report(e);
@@ -1081,19 +1095,20 @@ class _PaymentsSettingsCardState extends State<_PaymentsSettingsCard> {
 
   Future<void> _editTrn(String? current) async {
     final ctrl = TextEditingController(text: current ?? '');
+    final l10n = AppL10n.of(context);
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: AppColors.bg,
-        title: Text('Operator TRN', style: AppText.heading(20)),
-        content: AppField(label: 'TRN (shown on receipts)', controller: ctrl),
+        title: Text(l10n.cnOperatorTrn, style: AppText.heading(20)),
+        content: AppField(label: l10n.cnTrnField, controller: ctrl),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel')),
+              child: Text(l10n.oCancel)),
           TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Save')),
+              child: Text(l10n.cnSave)),
         ],
       ),
     );
@@ -1111,16 +1126,17 @@ class _PaymentsSettingsCardState extends State<_PaymentsSettingsCard> {
     return FutureBuilder<Map<String, dynamic>>(
       future: _f,
       builder: (context, snap) {
+        final l10n = AppL10n.of(context);
+        final labels = _labels(l10n);
         final s = snap.data ?? const {};
         final provider = (s['payment_provider'] as String?) ?? 'mock';
         final trn = (s['trn'] as String?)?.trim() ?? '';
         final vat = (s['vat_pct'] as num?)?.toDouble() ?? 5;
         return _Card(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Payments', style: AppText.heading(18)),
+            Text(l10n.cnPayments, style: AppText.heading(18)),
             const SizedBox(height: 4),
-            Text('How buyers pay. The provider is a seam — money flows through '
-                'the same held → payable → payout ledger whichever you pick.',
+            Text(l10n.cnPaymentsSub,
                 style: AppText.body(13, height: 1.5, color: AppColors.ink(0.55))),
             const SizedBox(height: 14),
             Wrap(spacing: 8, runSpacing: 8, children: [
@@ -1140,7 +1156,7 @@ class _PaymentsSettingsCardState extends State<_PaymentsSettingsCard> {
                               ? AppColors.accent
                               : AppColors.divider),
                     ),
-                    child: Text(_labels[p]!,
+                    child: Text(labels[p]!,
                         style: AppText.body(14,
                             color: p == provider
                                 ? AppColors.bg
@@ -1155,10 +1171,7 @@ class _PaymentsSettingsCardState extends State<_PaymentsSettingsCard> {
                 decoration: BoxDecoration(
                     color: AppColors.neutral100,
                     borderRadius: BorderRadius.circular(12)),
-                child: Text(
-                    '$provider is selected but takes no money until its Edge '
-                    'Function and secret keys are deployed. Buyers cannot check '
-                    'out until then — switch back to Test to keep trading.',
+                child: Text(l10n.cnProviderWarn(provider),
                     style: AppText.body(13,
                         height: 1.5, color: AppColors.accent700)),
               ),
@@ -1169,10 +1182,10 @@ class _PaymentsSettingsCardState extends State<_PaymentsSettingsCard> {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('TRN on receipts',
+                      Text(l10n.cnTrnOnReceipts,
                           style: AppText.body(13, color: AppColors.ink(0.55))),
                       const SizedBox(height: 3),
-                      Text(trn.isEmpty ? 'Not set' : trn,
+                      Text(trn.isEmpty ? l10n.cnNotSet : trn,
                           style: AppText.body(16)),
                     ]),
               ),
@@ -1180,7 +1193,7 @@ class _PaymentsSettingsCardState extends State<_PaymentsSettingsCard> {
                   style: AppText.body(15, color: AppColors.ink(0.6))),
               const SizedBox(width: 12),
               AppButton(
-                  label: 'Edit TRN',
+                  label: l10n.cnEditTrn,
                   variant: AppButtonVariant.secondary,
                   block: false,
                   minHeight: 40,
@@ -1208,22 +1221,24 @@ class _FeesViewState extends State<_FeesView> {
   Future<void> _edit(Map<String, dynamic> rate) async {
     final ctrl = TextEditingController(
         text: ((rate['rate_pct'] as num?)?.toDouble() ?? 0).toStringAsFixed(0));
+    final l10n = AppL10n.of(context);
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: AppColors.bg,
-        title: Text('${rate['label']} commission', style: AppText.heading(20)),
+        title: Text(l10n.cnCommissionOf('${rate['label']}'),
+            style: AppText.heading(20)),
         content: AppField(
-            label: 'Rate (%)',
+            label: l10n.cnRatePct,
             controller: ctrl,
             keyboardType: TextInputType.number),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel')),
+              child: Text(l10n.oCancel)),
           TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Save')),
+              child: Text(l10n.cnSave)),
         ],
       ),
     );
@@ -1236,7 +1251,7 @@ class _FeesViewState extends State<_FeesView> {
       _reload();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Rate updated.')));
+            SnackBar(content: Text(l10n.cnRateUpdated)));
       }
     } catch (e) {
       AppErrors.report(e);
@@ -1252,17 +1267,16 @@ class _FeesViewState extends State<_FeesView> {
           return const Center(child: CircularProgressIndicator());
         }
         if (snap.hasError) AppErrors.report(snap.error!);
+        final l10n = AppL10n.of(context);
         final rates = snap.data ?? const [];
         return ListView(
           padding: const EdgeInsets.fromLTRB(32, 8, 32, 40),
           children: [
             const _PaymentsSettingsCard(),
             const SizedBox(height: 22),
-            Text('COMMISSION', style: AppText.eyebrow()),
+            Text(l10n.cnCommission, style: AppText.eyebrow()),
             const SizedBox(height: 10),
-            Text('What My Stables keeps. A change is told to sellers before the '
-                'period it applies to; money already held pays out at the old '
-                'rate.',
+            Text(l10n.cnCommissionIntro,
                 style: AppText.body(14, height: 1.5, color: AppColors.ink(0.55))),
             const SizedBox(height: 16),
             for (final r in rates) ...[
@@ -1288,7 +1302,7 @@ class _FeesViewState extends State<_FeesView> {
                     style: AppText.heading(24)),
                 const SizedBox(width: 8),
                 AppButton(
-                    label: 'Edit',
+                    label: l10n.cnEdit,
                     variant: AppButtonVariant.secondary,
                     block: false,
                     minHeight: 40,
@@ -1353,7 +1367,7 @@ class _NewAnnouncementSheetState extends State<_NewAnnouncementSheet> {
   Future<void> _save() async {
     if (_title.text.trim().isEmpty || _body.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('A title and a message are needed.')));
+          SnackBar(content: Text(AppL10n.of(context).cnTitleMsgNeeded)));
       return;
     }
     setState(() => _saving = true);
@@ -1372,6 +1386,12 @@ class _NewAnnouncementSheetState extends State<_NewAnnouncementSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
+    final kindLabels = {
+      'Update': l10n.cnKindUpdate,
+      'Show': l10n.cnKindShow,
+      'Advert': l10n.cnKindAdvert,
+    };
     return Padding(
       padding: EdgeInsets.only(
           left: 28,
@@ -1382,11 +1402,11 @@ class _NewAnnouncementSheetState extends State<_NewAnnouncementSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('New announcement', style: AppText.heading(24)),
+          Text(l10n.cnNewAnnouncement, style: AppText.heading(24)),
           const SizedBox(height: 18),
-          AppField(label: 'Title', controller: _title),
+          AppField(label: l10n.cnTitle, controller: _title),
           const SizedBox(height: 16),
-          AppField(label: 'Message', controller: _body, maxLines: 3),
+          AppField(label: l10n.cnMessage, controller: _body, maxLines: 3),
           const SizedBox(height: 16),
           Wrap(spacing: 8, children: [
             for (final k in _kinds)
@@ -1401,7 +1421,7 @@ class _NewAnnouncementSheetState extends State<_NewAnnouncementSheet> {
                     border: Border.all(
                         color: k == _kind ? AppColors.accent : AppColors.divider),
                   ),
-                  child: Text(k,
+                  child: Text(kindLabels[k] ?? k,
                       style: AppText.body(14,
                           color: k == _kind ? AppColors.bg : AppColors.text)),
                 ),
@@ -1413,13 +1433,13 @@ class _NewAnnouncementSheetState extends State<_NewAnnouncementSheet> {
                 value: _pinned,
                 onChanged: (v) => setState(() => _pinned = v ?? false),
                 activeColor: AppColors.accent),
-            Text('Pin to the top', style: AppText.body(15)),
+            Text(l10n.cnPinTop, style: AppText.body(15)),
           ]),
           const SizedBox(height: 12),
           if (_saving)
             const Center(child: CircularProgressIndicator())
           else
-            AppButton(label: 'Post announcement', onPressed: _save),
+            AppButton(label: l10n.cnPostAnnouncement, onPressed: _save),
           const SizedBox(height: 8),
         ],
       ),

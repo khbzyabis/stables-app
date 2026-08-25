@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../data/errors.dart';
 import '../../data/supabase_service.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
@@ -29,14 +30,6 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
   Map<String, dynamic>? _vendor;
   _Sec _sec = _Sec.overview;
 
-  static const _labels = {
-    _Sec.overview: 'Overview',
-    _Sec.orders: 'Orders',
-    _Sec.listings: 'Listings',
-    _Sec.requests: 'Requests',
-    _Sec.money: 'Money',
-    _Sec.account: 'Account',
-  };
   static const _icons = {
     _Sec.overview: Icons.grid_view_rounded,
     _Sec.orders: Icons.receipt_long_outlined,
@@ -61,7 +54,16 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final name = (_vendor?['name'] as String?) ?? 'Your shop';
+    final l10n = AppL10n.of(context);
+    final labels = {
+      _Sec.overview: l10n.sdOverview,
+      _Sec.orders: l10n.sdOrders,
+      _Sec.listings: l10n.sdListings,
+      _Sec.requests: l10n.sdRequests,
+      _Sec.money: l10n.sdMoney,
+      _Sec.account: l10n.sdAccount,
+    };
+    final name = (_vendor?['name'] as String?) ?? l10n.sdYourShop;
     final approved = _vendor?['approved'] as bool? ?? false;
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -70,7 +72,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
         final nav = _Nav(
           wide: wide,
           sec: _sec,
-          labels: _labels,
+          labels: labels,
           icons: _icons,
           name: name,
           onSelect: (s) => setState(() => _sec = s),
@@ -79,7 +81,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _Header(
-                title: _labels[_sec]!,
+                title: labels[_sec]!,
                 approved: approved,
                 payable: _payable,
                 held: _held,
@@ -183,8 +185,8 @@ class _Nav extends StatelessWidget {
           const SizedBox(height: 4),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            child:
-                Text('SELLER', style: AppText.eyebrow(color: AppColors.accent2700)),
+            child: Text(AppL10n.of(context).sdSeller,
+                style: AppText.eyebrow(color: AppColors.accent2700)),
           ),
           const SizedBox(height: 20),
           for (final s in _Sec.values)
@@ -237,6 +239,7 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(28, 22, 20, 8),
       child: Row(
@@ -249,15 +252,14 @@ class _Header extends StatelessWidget {
                 Text(title, style: AppText.heading(28, height: 1)),
                 if (!approved) ...[
                   const SizedBox(height: 6),
-                  const AppTag('In review — not yet visible to buyers',
-                      tone: TagTone.accent),
+                  AppTag(l10n.sdInReview, tone: TagTone.accent),
                 ],
               ],
             ),
           ),
-          _Money2(label: 'Held', value: held),
+          _Money2(label: l10n.sdHeld, value: held),
           const SizedBox(width: 10),
-          _Money2(label: 'Payable', value: payable, strong: true),
+          _Money2(label: l10n.sdPayable, value: payable, strong: true),
           IconButton(
               onPressed: onClose,
               icon: Icon(Icons.close, color: AppColors.ink(0.5))),
@@ -300,6 +302,7 @@ class _Overview extends StatelessWidget {
   final Map<String, dynamic> vendor;
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     return ListView(
       padding: const EdgeInsets.fromLTRB(28, 8, 28, 40),
       children: [
@@ -311,13 +314,13 @@ class _Overview extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('How money reaches you', style: AppText.heading(20)),
+              Text(l10n.sdHowMoney, style: AppText.heading(20)),
               const SizedBox(height: 10),
-              for (final s in const [
-                'A buyer pays My Stables — never you directly.',
-                'Goods sit in a 14-day return window; services settle the day they are done.',
-                'Your balance moves from Held to Payable when the window closes.',
-                'Payouts run twice a month, on the 1st and the 15th.',
+              for (final s in [
+                l10n.sdBullet1,
+                l10n.sdBullet2,
+                l10n.sdBullet3,
+                l10n.sdBullet4,
               ])
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5),
@@ -330,8 +333,7 @@ class _Overview extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 14),
-        Text('Commission and payouts are simplified while we finish the money '
-            'model. Orders and listings below are live.',
+        Text(l10n.sdOverviewFootnote,
             style: AppText.body(13, color: AppColors.ink(0.5))),
       ],
     );
@@ -364,19 +366,21 @@ class _OrdersState extends State<_Orders> {
 
   Future<void> _respond(String disputeId) async {
     final ctrl = TextEditingController();
+    final l10n = AppL10n.of(context);
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: AppColors.bg,
-        title: Text('Your side', style: AppText.heading(22)),
-        content: AppField(label: 'What happened', controller: ctrl, maxLines: 3),
+        title: Text(l10n.sdYourSide, style: AppText.heading(22)),
+        content:
+            AppField(label: l10n.sdWhatHappened, controller: ctrl, maxLines: 3),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel')),
+              child: Text(l10n.oCancel)),
           TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Send')),
+              child: Text(l10n.oSend)),
         ],
       ),
     );
@@ -410,7 +414,7 @@ class _OrdersState extends State<_Orders> {
         }
         widget.onMoney(payable, held);
         if (orders.isEmpty) {
-          return _pad(Text('No orders yet.',
+          return _pad(Text(AppL10n.of(context).sdNoOrders,
               style: AppText.body(16, color: AppColors.ink(0.6))));
         }
         return ListView(
@@ -443,33 +447,34 @@ class _OrderRow extends StatelessWidget {
   }
 
   // The money state drives the tag on the right — held / payable / paid…
-  (String, TagTone) _moneyTag(String state) => switch (state) {
-        'payable' => ('Payable', TagTone.sage),
-        'paid' => ('Paid out', TagTone.neutral),
-        'refunded' => ('Refunded', TagTone.neutral),
-        'disputed' => ('Disputed', TagTone.accent),
-        'cancelled' => ('Cancelled', TagTone.neutral),
-        _ => ('Held', TagTone.outline),
+  (String, TagTone) _moneyTag(String state, AppL10n l10n) => switch (state) {
+        'payable' => (l10n.sdTagPayable, TagTone.sage),
+        'paid' => (l10n.sdTagPaid, TagTone.neutral),
+        'refunded' => (l10n.sdTagRefunded, TagTone.neutral),
+        'disputed' => (l10n.sdTagDisputed, TagTone.accent),
+        'cancelled' => (l10n.sdTagCancelled, TagTone.neutral),
+        _ => (l10n.sdTagHeld, TagTone.outline),
       };
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     final id = order['id'] as String;
     final status = (order['status'] as String?) ?? 'pending';
     final net = SupabaseService.orderNet(order);
     final total = (order['total_aed'] as num?)?.toDouble() ?? 0;
     final fee = (order['commission_aed'] as num?)?.toDouble() ?? 0;
     final state = SupabaseService.orderMoneyState(order);
-    final tag = _moneyTag(state);
+    final tag = _moneyTag(state, l10n);
     final line = switch (state) {
       'held' => status == 'fulfilled'
-          ? 'Delivered · in the return window'
-          : 'Held until delivered',
-      'payable' => 'Clears on the next payout',
-      'paid' => 'Paid out',
-      'refunded' => 'Refunded to the buyer',
-      'disputed' => 'A return has been raised',
-      'cancelled' => 'Cancelled',
+          ? l10n.sdLineDelivered
+          : l10n.sdLineHeldUntil,
+      'payable' => l10n.sdLineClears,
+      'paid' => l10n.sdLinePaid,
+      'refunded' => l10n.sdLineRefunded,
+      'disputed' => l10n.sdLineReturn,
+      'cancelled' => l10n.sdTagCancelled,
       _ => status,
     };
     return Row(children: [
@@ -477,7 +482,7 @@ class _OrderRow extends StatelessWidget {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('AED ${net.toStringAsFixed(0)}', style: AppText.heading(18)),
           const SizedBox(height: 4),
-          Text('$line · buyer paid AED ${total.toStringAsFixed(0)} · fee AED ${fee.toStringAsFixed(0)}',
+          Text('$line · ${l10n.sdBuyerPaid} AED ${total.toStringAsFixed(0)} · ${l10n.sdFee} AED ${fee.toStringAsFixed(0)}',
               style: AppText.body(13, color: AppColors.ink(0.55))),
         ]),
       ),
@@ -485,7 +490,7 @@ class _OrderRow extends StatelessWidget {
       if (state == 'disputed' && _openDisputeId != null) ...[
         const SizedBox(width: 10),
         AppButton(
-          label: 'Respond',
+          label: l10n.sdRespond,
           variant: AppButtonVariant.secondary,
           block: false,
           minHeight: 40,
@@ -495,7 +500,7 @@ class _OrderRow extends StatelessWidget {
       ] else if (status == 'pending' || status == 'accepted') ...[
         const SizedBox(width: 10),
         AppButton(
-          label: status == 'pending' ? 'Accept' : 'Mark delivered',
+          label: status == 'pending' ? l10n.sdAccept : l10n.sdMarkDelivered,
           block: false,
           minHeight: 40,
           fontSize: 14,
@@ -554,11 +559,12 @@ class _ListingsState extends State<_Listings> {
     return FutureBuilder<List<Map<String, dynamic>>>(
       future: _f,
       builder: (context, snap) {
+        final l10n = AppL10n.of(context);
         final products = snap.data ?? const [];
         return ListView(
           padding: const EdgeInsets.fromLTRB(28, 8, 28, 40),
           children: [
-            AppButton(label: 'Add a product', onPressed: _add),
+            AppButton(label: l10n.sdAddProduct, onPressed: _add),
             const SizedBox(height: 16),
             if (snap.connectionState == ConnectionState.waiting)
               const Center(child: CircularProgressIndicator()),
@@ -578,7 +584,7 @@ class _ListingsState extends State<_Listings> {
                             style: AppText.body(16)),
                         const SizedBox(height: 3),
                         Text(
-                            'AED ${((p['price_aed'] as num?)?.toDouble() ?? 0).toStringAsFixed(0)} · you receive AED ${(((p['price_aed'] as num?)?.toDouble() ?? 0) * (1 - _rate / 100)).toStringAsFixed(0)} (after ${_rate.toStringAsFixed(0)}%)',
+                            'AED ${((p['price_aed'] as num?)?.toDouble() ?? 0).toStringAsFixed(0)} · ${l10n.sdYouReceive} AED ${(((p['price_aed'] as num?)?.toDouble() ?? 0) * (1 - _rate / 100)).toStringAsFixed(0)} (${l10n.sdAfterPct(_rate.toStringAsFixed(0))})',
                             style: AppText.body(13, color: AppColors.ink(0.55))),
                       ]),
                 ),
@@ -634,26 +640,27 @@ class _RequestsState extends State<_Requests> {
   Future<void> _quote(String id) async {
     final priceC = TextEditingController();
     final noteC = TextEditingController();
+    final l10n = AppL10n.of(context);
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: AppColors.bg,
-        title: Text('Send a quote', style: AppText.heading(22)),
+        title: Text(l10n.sdSendQuote, style: AppText.heading(22)),
         content: Column(mainAxisSize: MainAxisSize.min, children: [
           AppField(
-              label: 'Price (AED)',
+              label: l10n.sdPriceAed,
               controller: priceC,
               keyboardType: TextInputType.number),
           const SizedBox(height: 12),
-          AppField(label: 'Note', controller: noteC),
+          AppField(label: l10n.sdNote, controller: noteC),
         ]),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel')),
+              child: Text(l10n.oCancel)),
           TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Send')),
+              child: Text(l10n.oSend)),
         ],
       ),
     );
@@ -680,7 +687,7 @@ class _RequestsState extends State<_Requests> {
           return const Center(child: CircularProgressIndicator());
         }
         if (reqs.isEmpty) {
-          return _pad(Text('No requests yet.',
+          return _pad(Text(AppL10n.of(context).sdNoRequests,
               style: AppText.body(16, color: AppColors.ink(0.6))));
         }
         return ListView(
@@ -703,13 +710,14 @@ class _ReqRow extends StatelessWidget {
   final VoidCallback onQuote;
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     final status = (req['status'] as String?) ?? 'open';
     final isTransport = req['kind'] == 'transport';
     final title = isTransport
-        ? 'Transport: ${req['from_loc'] ?? '?'} → ${req['to_loc'] ?? '?'}'
+        ? '${l10n.sdTransport}: ${req['from_loc'] ?? '?'} → ${req['to_loc'] ?? '?'}'
         : ((req['subject'] as String?)?.isNotEmpty == true
             ? req['subject'] as String
-            : 'Service request');
+            : l10n.sdServiceRequest);
     final price = (req['quote_price'] as num?)?.toDouble();
     return Row(children: [
       Expanded(
@@ -717,20 +725,20 @@ class _ReqRow extends StatelessWidget {
           Text(title, style: AppText.heading(17)),
           if (price != null) ...[
             const SizedBox(height: 4),
-            Text('Your quote: AED ${price.toStringAsFixed(0)}',
+            Text('${l10n.sdYourQuote}: AED ${price.toStringAsFixed(0)}',
                 style: AppText.body(13, color: AppColors.accent700)),
           ],
         ]),
       ),
       if (status == 'open')
         AppButton(
-            label: 'Send a quote',
+            label: l10n.sdSendQuote,
             block: false,
             minHeight: 40,
             fontSize: 14,
             onPressed: onQuote)
       else
-        AppTag(status == 'accepted' ? 'Accepted' : 'Quoted',
+        AppTag(status == 'accepted' ? l10n.sdAccepted : l10n.sdQuoted,
             tone: TagTone.sage),
     ]);
   }
@@ -753,28 +761,26 @@ class _MoneyState extends State<_Money> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     return ListView(
       padding: const EdgeInsets.fromLTRB(28, 8, 28, 40),
       children: [
         Row(children: [
           Expanded(
-              child: _big('Payable now', widget.payable, AppColors.accent2200)),
+              child:
+                  _big(l10n.sdPayableNow, widget.payable, AppColors.accent2200)),
           const SizedBox(width: 12),
-          Expanded(child: _big('Held', widget.held, AppColors.neutral100)),
+          Expanded(child: _big(l10n.sdHeld, widget.held, AppColors.neutral100)),
         ]),
         const SizedBox(height: 16),
         _card(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('How a payout works', style: AppText.heading(18)),
+          Text(l10n.sdHowPayout, style: AppText.heading(18)),
           const SizedBox(height: 6),
-          Text('Money is Held while the buyer can still return an item (14 '
-              'days). When the window closes it becomes Payable, and lands in '
-              'your bank on the next run — the 1st or the 15th, whatever '
-              'cleared by then, less our commission. Services settle the day '
-              'they are done.',
+          Text(l10n.sdPayoutBody,
               style: AppText.body(15, height: 1.5, color: AppColors.ink(0.7))),
         ])),
         const SizedBox(height: 20),
-        Text('PAYOUTS', style: AppText.eyebrow()),
+        Text(l10n.sdPayouts, style: AppText.eyebrow()),
         const SizedBox(height: 10),
         FutureBuilder<List<Map<String, dynamic>>>(
           future: _payouts,
@@ -784,8 +790,7 @@ class _MoneyState extends State<_Money> {
             }
             final rows = snap.data ?? const [];
             if (rows.isEmpty) {
-              return _card(Text('No payouts yet. Your first one lands after a '
-                  'return window closes.',
+              return _card(Text(l10n.sdNoPayouts,
                   style: AppText.body(15, color: AppColors.ink(0.6))));
             }
             return Column(children: [
@@ -817,6 +822,7 @@ class _PayoutRow extends StatelessWidget {
   final Map<String, dynamic> payout;
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     final net = (payout['net_aed'] as num?)?.toDouble() ?? 0;
     final refunds = (payout['refunds_aed'] as num?)?.toDouble() ?? 0;
     final fee = (payout['fee_aed'] as num?)?.toDouble() ?? 0;
@@ -827,12 +833,13 @@ class _PayoutRow extends StatelessWidget {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('AED ${net.toStringAsFixed(0)}', style: AppText.heading(18)),
           const SizedBox(height: 4),
-          Text('${paid ? 'Paid' : 'Due'} $paidOn · fee AED ${fee.toStringAsFixed(0)}'
-              '${refunds > 0 ? ' · refunds AED ${refunds.toStringAsFixed(0)}' : ''}',
+          Text('${paid ? l10n.sdPaid : l10n.sdDue} $paidOn · ${l10n.sdFee} AED ${fee.toStringAsFixed(0)}'
+              '${refunds > 0 ? ' · ${l10n.sdRefunds} AED ${refunds.toStringAsFixed(0)}' : ''}',
               style: AppText.body(13, color: AppColors.ink(0.55))),
         ]),
       ),
-      AppTag(paid ? 'Paid' : 'Due', tone: paid ? TagTone.neutral : TagTone.sage),
+      AppTag(paid ? l10n.sdPaid : l10n.sdDue,
+          tone: paid ? TagTone.neutral : TagTone.sage),
     ]);
   }
 }
@@ -843,23 +850,24 @@ class _Account extends StatelessWidget {
   final Map<String, dynamic> vendor;
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     final trades = (vendor['trades'] as List?)?.cast<String>() ?? const [];
     final approved = vendor['approved'] as bool? ?? false;
     return ListView(
       padding: const EdgeInsets.fromLTRB(28, 8, 28, 40),
       children: [
         _card(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text((vendor['name'] as String?) ?? 'Your shop',
+          Text((vendor['name'] as String?) ?? l10n.sdYourShop,
               style: AppText.heading(20)),
           const SizedBox(height: 6),
-          Text(approved ? 'Approved — live in the market' : 'In review',
+          Text(approved ? l10n.sdApprovedLive : l10n.sdInReviewShort,
               style: AppText.body(14,
                   color: approved ? AppColors.accent2700 : AppColors.accent700)),
           const SizedBox(height: 16),
-          Text('APPROVED FOR', style: AppText.eyebrow()),
+          Text(l10n.sdApprovedFor, style: AppText.eyebrow()),
           const SizedBox(height: 8),
           if (trades.isEmpty)
-            Text('No trades recorded.',
+            Text(l10n.sdNoTrades,
                 style: AppText.body(14, color: AppColors.ink(0.5)))
           else
             Wrap(spacing: 8, runSpacing: 8, children: [
@@ -868,14 +876,13 @@ class _Account extends StatelessWidget {
         ])),
         const SizedBox(height: 14),
         _card(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('On the road?', style: AppText.heading(18)),
+          Text(l10n.sdOnTheRoad, style: AppText.heading(18)),
           const SizedBox(height: 6),
-          Text('The provider phone app is the light view for out in the field — '
-              'today\'s jobs, requests, orders to pack, chat and your money.',
+          Text(l10n.sdOnRoadBody,
               style: AppText.body(14, height: 1.5, color: AppColors.ink(0.65))),
           const SizedBox(height: 14),
           AppButton(
-            label: 'Open the provider app',
+            label: l10n.sdOpenProviderApp,
             variant: AppButtonVariant.secondary,
             block: false,
             onPressed: () => Navigator.of(context).pushNamed(
@@ -947,7 +954,7 @@ class _NewProductSheetState extends State<_NewProductSheet> {
     final price = double.tryParse(_price.text.trim());
     if (_name.text.trim().isEmpty || price == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('A name and valid price are needed.')));
+          SnackBar(content: Text(AppL10n.of(context).sdNamePriceNeeded)));
       return;
     }
     setState(() => _saving = true);
@@ -969,6 +976,7 @@ class _NewProductSheetState extends State<_NewProductSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     return Padding(
       padding: EdgeInsets.only(
           left: 28,
@@ -979,7 +987,7 @@ class _NewProductSheetState extends State<_NewProductSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('New product', style: AppText.heading(24)),
+          Text(l10n.sdNewProduct, style: AppText.heading(24)),
           const SizedBox(height: 16),
           Row(children: [
             PhotoPlaceholder(size: 56, circle: false, radius: 12, url: _imageUrl),
@@ -990,21 +998,21 @@ class _NewProductSheetState extends State<_NewProductSheet> {
             else
               GestureDetector(
                 onTap: _pickImage,
-                child: Text(_imageUrl == null ? 'Add photo' : 'Change photo',
+                child: Text(_imageUrl == null ? l10n.sdAddPhoto : l10n.sdChangePhoto,
                     style: AppText.body(16, color: AppColors.accent700)),
               ),
           ]),
           const SizedBox(height: 16),
-          AppField(label: 'Name', controller: _name),
+          AppField(label: l10n.sdName, controller: _name),
           const SizedBox(height: 14),
           Row(children: [
             Expanded(
                 child: AppField(
-                    label: 'Price (AED)',
+                    label: l10n.sdPriceAed,
                     controller: _price,
                     keyboardType: TextInputType.number)),
             const SizedBox(width: 12),
-            Expanded(child: AppField(label: 'Unit', controller: _unit)),
+            Expanded(child: AppField(label: l10n.sdUnit, controller: _unit)),
           ]),
           const SizedBox(height: 14),
           Wrap(spacing: 8, runSpacing: 8, children: [
@@ -1032,7 +1040,7 @@ class _NewProductSheetState extends State<_NewProductSheet> {
           if (_saving)
             const Center(child: CircularProgressIndicator())
           else
-            AppButton(label: 'Add product', onPressed: _save),
+            AppButton(label: l10n.sdAddProductBtn, onPressed: _save),
           const SizedBox(height: 8),
         ],
       ),

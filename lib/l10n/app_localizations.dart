@@ -2774,6 +2774,960 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Orders'**
   String get ordersTitle;
+
+  /// No description provided for @sdOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get sdOverview;
+
+  /// No description provided for @sdOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders'**
+  String get sdOrders;
+
+  /// No description provided for @sdListings.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings'**
+  String get sdListings;
+
+  /// No description provided for @sdRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get sdRequests;
+
+  /// No description provided for @sdMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Money'**
+  String get sdMoney;
+
+  /// No description provided for @sdAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get sdAccount;
+
+  /// No description provided for @sdYourShop.
+  ///
+  /// In en, this message translates to:
+  /// **'Your shop'**
+  String get sdYourShop;
+
+  /// No description provided for @sdSeller.
+  ///
+  /// In en, this message translates to:
+  /// **'SELLER'**
+  String get sdSeller;
+
+  /// No description provided for @sdHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'Held'**
+  String get sdHeld;
+
+  /// No description provided for @sdPayable.
+  ///
+  /// In en, this message translates to:
+  /// **'Payable'**
+  String get sdPayable;
+
+  /// No description provided for @sdInReview.
+  ///
+  /// In en, this message translates to:
+  /// **'In review — not yet visible to buyers'**
+  String get sdInReview;
+
+  /// No description provided for @sdHowMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'How money reaches you'**
+  String get sdHowMoney;
+
+  /// No description provided for @sdBullet1.
+  ///
+  /// In en, this message translates to:
+  /// **'A buyer pays My Stables — never you directly.'**
+  String get sdBullet1;
+
+  /// No description provided for @sdBullet2.
+  ///
+  /// In en, this message translates to:
+  /// **'Goods sit in a 14-day return window; services settle the day they are done.'**
+  String get sdBullet2;
+
+  /// No description provided for @sdBullet3.
+  ///
+  /// In en, this message translates to:
+  /// **'Your balance moves from Held to Payable when the window closes.'**
+  String get sdBullet3;
+
+  /// No description provided for @sdBullet4.
+  ///
+  /// In en, this message translates to:
+  /// **'Payouts run twice a month, on the 1st and the 15th.'**
+  String get sdBullet4;
+
+  /// No description provided for @sdOverviewFootnote.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders and listings below are live.'**
+  String get sdOverviewFootnote;
+
+  /// No description provided for @sdNoOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'No orders yet.'**
+  String get sdNoOrders;
+
+  /// No description provided for @sdTagPayable.
+  ///
+  /// In en, this message translates to:
+  /// **'Payable'**
+  String get sdTagPayable;
+
+  /// No description provided for @sdTagPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid out'**
+  String get sdTagPaid;
+
+  /// No description provided for @sdTagRefunded.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded'**
+  String get sdTagRefunded;
+
+  /// No description provided for @sdTagDisputed.
+  ///
+  /// In en, this message translates to:
+  /// **'Disputed'**
+  String get sdTagDisputed;
+
+  /// No description provided for @sdTagCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get sdTagCancelled;
+
+  /// No description provided for @sdTagHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'Held'**
+  String get sdTagHeld;
+
+  /// No description provided for @sdLineDelivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered · in the return window'**
+  String get sdLineDelivered;
+
+  /// No description provided for @sdLineHeldUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Held until delivered'**
+  String get sdLineHeldUntil;
+
+  /// No description provided for @sdLineClears.
+  ///
+  /// In en, this message translates to:
+  /// **'Clears on the next payout'**
+  String get sdLineClears;
+
+  /// No description provided for @sdLinePaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid out'**
+  String get sdLinePaid;
+
+  /// No description provided for @sdLineRefunded.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded to the buyer'**
+  String get sdLineRefunded;
+
+  /// No description provided for @sdLineReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'A return has been raised'**
+  String get sdLineReturn;
+
+  /// No description provided for @sdBuyerPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'buyer paid'**
+  String get sdBuyerPaid;
+
+  /// No description provided for @sdFee.
+  ///
+  /// In en, this message translates to:
+  /// **'fee'**
+  String get sdFee;
+
+  /// No description provided for @sdAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get sdAccept;
+
+  /// No description provided for @sdMarkDelivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark delivered'**
+  String get sdMarkDelivered;
+
+  /// No description provided for @sdRespond.
+  ///
+  /// In en, this message translates to:
+  /// **'Respond'**
+  String get sdRespond;
+
+  /// No description provided for @sdYourSide.
+  ///
+  /// In en, this message translates to:
+  /// **'Your side'**
+  String get sdYourSide;
+
+  /// No description provided for @sdWhatHappened.
+  ///
+  /// In en, this message translates to:
+  /// **'What happened'**
+  String get sdWhatHappened;
+
+  /// No description provided for @sdAddProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a product'**
+  String get sdAddProduct;
+
+  /// No description provided for @sdYouReceive.
+  ///
+  /// In en, this message translates to:
+  /// **'you receive'**
+  String get sdYouReceive;
+
+  /// No description provided for @sdAfterPct.
+  ///
+  /// In en, this message translates to:
+  /// **'after {rate}%'**
+  String sdAfterPct(String rate);
+
+  /// No description provided for @sdNewProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'New product'**
+  String get sdNewProduct;
+
+  /// No description provided for @sdAddPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add photo'**
+  String get sdAddPhoto;
+
+  /// No description provided for @sdChangePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Change photo'**
+  String get sdChangePhoto;
+
+  /// No description provided for @sdName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get sdName;
+
+  /// No description provided for @sdPriceAed.
+  ///
+  /// In en, this message translates to:
+  /// **'Price (AED)'**
+  String get sdPriceAed;
+
+  /// No description provided for @sdUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get sdUnit;
+
+  /// No description provided for @sdAddProductBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Add product'**
+  String get sdAddProductBtn;
+
+  /// No description provided for @sdNamePriceNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'A name and valid price are needed.'**
+  String get sdNamePriceNeeded;
+
+  /// No description provided for @sdNoRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'No requests yet.'**
+  String get sdNoRequests;
+
+  /// No description provided for @sdServiceRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Service request'**
+  String get sdServiceRequest;
+
+  /// No description provided for @sdYourQuote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your quote'**
+  String get sdYourQuote;
+
+  /// No description provided for @sdSendQuote.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a quote'**
+  String get sdSendQuote;
+
+  /// No description provided for @sdAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get sdAccepted;
+
+  /// No description provided for @sdQuoted.
+  ///
+  /// In en, this message translates to:
+  /// **'Quoted'**
+  String get sdQuoted;
+
+  /// No description provided for @sdNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get sdNote;
+
+  /// No description provided for @sdPayableNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Payable now'**
+  String get sdPayableNow;
+
+  /// No description provided for @sdHowPayout.
+  ///
+  /// In en, this message translates to:
+  /// **'How a payout works'**
+  String get sdHowPayout;
+
+  /// No description provided for @sdPayoutBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Money is Held while the buyer can still return an item (14 days). When the window closes it becomes Payable, and lands in your bank on the next run — the 1st or the 15th, whatever cleared by then, less our commission. Services settle the day they are done.'**
+  String get sdPayoutBody;
+
+  /// No description provided for @sdPayouts.
+  ///
+  /// In en, this message translates to:
+  /// **'PAYOUTS'**
+  String get sdPayouts;
+
+  /// No description provided for @sdNoPayouts.
+  ///
+  /// In en, this message translates to:
+  /// **'No payouts yet. Your first one lands after a return window closes.'**
+  String get sdNoPayouts;
+
+  /// No description provided for @sdPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get sdPaid;
+
+  /// No description provided for @sdDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Due'**
+  String get sdDue;
+
+  /// No description provided for @sdRefunds.
+  ///
+  /// In en, this message translates to:
+  /// **'refunds'**
+  String get sdRefunds;
+
+  /// No description provided for @sdApprovedLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved — live in the market'**
+  String get sdApprovedLive;
+
+  /// No description provided for @sdInReviewShort.
+  ///
+  /// In en, this message translates to:
+  /// **'In review'**
+  String get sdInReviewShort;
+
+  /// No description provided for @sdApprovedFor.
+  ///
+  /// In en, this message translates to:
+  /// **'APPROVED FOR'**
+  String get sdApprovedFor;
+
+  /// No description provided for @sdNoTrades.
+  ///
+  /// In en, this message translates to:
+  /// **'No trades recorded.'**
+  String get sdNoTrades;
+
+  /// No description provided for @sdOnTheRoad.
+  ///
+  /// In en, this message translates to:
+  /// **'On the road?'**
+  String get sdOnTheRoad;
+
+  /// No description provided for @sdOnRoadBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The provider phone app is the light view for out in the field — today\'s jobs, requests, orders to pack, chat and your money.'**
+  String get sdOnRoadBody;
+
+  /// No description provided for @sdOpenProviderApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the provider app'**
+  String get sdOpenProviderApp;
+
+  /// No description provided for @sdTransport.
+  ///
+  /// In en, this message translates to:
+  /// **'Transport'**
+  String get sdTransport;
+
+  /// No description provided for @cnOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get cnOverview;
+
+  /// No description provided for @cnApplications.
+  ///
+  /// In en, this message translates to:
+  /// **'Applications'**
+  String get cnApplications;
+
+  /// No description provided for @cnSellers.
+  ///
+  /// In en, this message translates to:
+  /// **'Sellers'**
+  String get cnSellers;
+
+  /// No description provided for @cnStables.
+  ///
+  /// In en, this message translates to:
+  /// **'Stables'**
+  String get cnStables;
+
+  /// No description provided for @cnDisputes.
+  ///
+  /// In en, this message translates to:
+  /// **'Disputes'**
+  String get cnDisputes;
+
+  /// No description provided for @cnPayouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Payouts'**
+  String get cnPayouts;
+
+  /// No description provided for @cnFees.
+  ///
+  /// In en, this message translates to:
+  /// **'Fees'**
+  String get cnFees;
+
+  /// No description provided for @cnAnnouncements.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcements'**
+  String get cnAnnouncements;
+
+  /// No description provided for @cnOperator.
+  ///
+  /// In en, this message translates to:
+  /// **'OPERATOR'**
+  String get cnOperator;
+
+  /// No description provided for @cnBackToApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to app'**
+  String get cnBackToApp;
+
+  /// No description provided for @cnNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data — or this account is not an operator.'**
+  String get cnNoData;
+
+  /// No description provided for @cnKpiStables.
+  ///
+  /// In en, this message translates to:
+  /// **'Stables'**
+  String get cnKpiStables;
+
+  /// No description provided for @cnKpiPeople.
+  ///
+  /// In en, this message translates to:
+  /// **'People'**
+  String get cnKpiPeople;
+
+  /// No description provided for @cnKpiHorses.
+  ///
+  /// In en, this message translates to:
+  /// **'Horses'**
+  String get cnKpiHorses;
+
+  /// No description provided for @cnKpiAppsWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Applications waiting'**
+  String get cnKpiAppsWaiting;
+
+  /// No description provided for @cnKpiLiveSellers.
+  ///
+  /// In en, this message translates to:
+  /// **'Live sellers'**
+  String get cnKpiLiveSellers;
+
+  /// No description provided for @cnKpiOpenOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Open orders'**
+  String get cnKpiOpenOrders;
+
+  /// No description provided for @cnNoApps.
+  ///
+  /// In en, this message translates to:
+  /// **'No applications waiting.'**
+  String get cnNoApps;
+
+  /// No description provided for @cnApprovedShopLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved — shop is live.'**
+  String get cnApprovedShopLive;
+
+  /// No description provided for @cnRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected.'**
+  String get cnRejected;
+
+  /// No description provided for @cnPapers.
+  ///
+  /// In en, this message translates to:
+  /// **'PAPERS'**
+  String get cnPapers;
+
+  /// No description provided for @cnNoPapers.
+  ///
+  /// In en, this message translates to:
+  /// **'No papers uploaded.'**
+  String get cnNoPapers;
+
+  /// No description provided for @cnView.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get cnView;
+
+  /// No description provided for @cnApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get cnApprove;
+
+  /// No description provided for @cnReject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get cnReject;
+
+  /// No description provided for @cnApplicant.
+  ///
+  /// In en, this message translates to:
+  /// **'Applicant'**
+  String get cnApplicant;
+
+  /// No description provided for @cnNoSellers.
+  ///
+  /// In en, this message translates to:
+  /// **'No sellers yet.'**
+  String get cnNoSellers;
+
+  /// No description provided for @cnProductsN.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 product} other{{count} products}}'**
+  String cnProductsN(int count);
+
+  /// No description provided for @cnLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live'**
+  String get cnLive;
+
+  /// No description provided for @cnInReview.
+  ///
+  /// In en, this message translates to:
+  /// **'In review'**
+  String get cnInReview;
+
+  /// No description provided for @cnSuspend.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspend'**
+  String get cnSuspend;
+
+  /// No description provided for @cnNoStables.
+  ///
+  /// In en, this message translates to:
+  /// **'No stables yet.'**
+  String get cnNoStables;
+
+  /// No description provided for @cnHorsesN.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 horse} other{{count} horses}}'**
+  String cnHorsesN(int count);
+
+  /// No description provided for @cnPeopleN.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 person} other{{count} people}}'**
+  String cnPeopleN(int count);
+
+  /// No description provided for @cnNoDisputes.
+  ///
+  /// In en, this message translates to:
+  /// **'No disputes. A quiet marketplace.'**
+  String get cnNoDisputes;
+
+  /// No description provided for @cnArbitrates.
+  ///
+  /// In en, this message translates to:
+  /// **'My Stables arbitrates · services cannot be returned'**
+  String get cnArbitrates;
+
+  /// No description provided for @cnWaitingOnYou.
+  ///
+  /// In en, this message translates to:
+  /// **'WAITING ON YOU'**
+  String get cnWaitingOnYou;
+
+  /// No description provided for @cnDecided.
+  ///
+  /// In en, this message translates to:
+  /// **'DECIDED'**
+  String get cnDecided;
+
+  /// No description provided for @cnDecisionRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Decision recorded.'**
+  String get cnDecisionRecorded;
+
+  /// No description provided for @cnDispute.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispute'**
+  String get cnDispute;
+
+  /// No description provided for @cnPaidSeller.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid the seller'**
+  String get cnPaidSeller;
+
+  /// No description provided for @cnRefundedBuyer.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded the buyer'**
+  String get cnRefundedBuyer;
+
+  /// No description provided for @cnSplitIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Split it'**
+  String get cnSplitIt;
+
+  /// No description provided for @cnWaitingTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting on you'**
+  String get cnWaitingTag;
+
+  /// No description provided for @cnSellerNet.
+  ///
+  /// In en, this message translates to:
+  /// **'seller net'**
+  String get cnSellerNet;
+
+  /// No description provided for @cnRefundBuyer.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund the buyer'**
+  String get cnRefundBuyer;
+
+  /// No description provided for @cnPaySeller.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay the seller'**
+  String get cnPaySeller;
+
+  /// No description provided for @cnBuyer.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer'**
+  String get cnBuyer;
+
+  /// No description provided for @cnSeller.
+  ///
+  /// In en, this message translates to:
+  /// **'Seller'**
+  String get cnSeller;
+
+  /// No description provided for @cnRunPayoutsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Run the payouts?'**
+  String get cnRunPayoutsTitle;
+
+  /// No description provided for @cnRunPayoutsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This closes the current cycle: every payable order is swept into a batch per seller and marked paid. This cannot be undone.'**
+  String get cnRunPayoutsBody;
+
+  /// No description provided for @cnRunPayouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Run payouts'**
+  String get cnRunPayouts;
+
+  /// No description provided for @cnPaidSellersN.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid {count} sellers · AED {net}.'**
+  String cnPaidSellersN(int count, String net);
+
+  /// No description provided for @cnPayoutsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid twice a month, on the 1st and the 15th. Held money is still inside a return window and is not swept.'**
+  String get cnPayoutsNote;
+
+  /// No description provided for @cnPayableAcrossN.
+  ///
+  /// In en, this message translates to:
+  /// **'Payable now, across {count} sellers'**
+  String cnPayableAcrossN(int count);
+
+  /// No description provided for @cnNothingDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing due. Money still in a return window appears when its window closes.'**
+  String get cnNothingDue;
+
+  /// No description provided for @cnFee.
+  ///
+  /// In en, this message translates to:
+  /// **'fee'**
+  String get cnFee;
+
+  /// No description provided for @cnRefunds.
+  ///
+  /// In en, this message translates to:
+  /// **'refunds'**
+  String get cnRefunds;
+
+  /// No description provided for @cnHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'held'**
+  String get cnHeld;
+
+  /// No description provided for @cnCommission.
+  ///
+  /// In en, this message translates to:
+  /// **'COMMISSION'**
+  String get cnCommission;
+
+  /// No description provided for @cnCommissionIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'What My Stables keeps. A change is told to sellers before the period it applies to; money already held pays out at the old rate.'**
+  String get cnCommissionIntro;
+
+  /// No description provided for @cnCommissionOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{label} commission'**
+  String cnCommissionOf(String label);
+
+  /// No description provided for @cnRatePct.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate (%)'**
+  String get cnRatePct;
+
+  /// No description provided for @cnRateUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate updated.'**
+  String get cnRateUpdated;
+
+  /// No description provided for @cnEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get cnEdit;
+
+  /// No description provided for @cnPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
+  String get cnPayments;
+
+  /// No description provided for @cnPaymentsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'How buyers pay. The provider is a seam — money flows through the same held → payable → payout ledger whichever you pick.'**
+  String get cnPaymentsSub;
+
+  /// No description provided for @cnProvTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Test (no real money)'**
+  String get cnProvTest;
+
+  /// No description provided for @cnProvTelr.
+  ///
+  /// In en, this message translates to:
+  /// **'Telr (UAE)'**
+  String get cnProvTelr;
+
+  /// No description provided for @cnProviderWarn.
+  ///
+  /// In en, this message translates to:
+  /// **'{provider} is selected but takes no money until its Edge Function and secret keys are deployed. Buyers cannot check out until then — switch back to Test to keep trading.'**
+  String cnProviderWarn(String provider);
+
+  /// No description provided for @cnProviderSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'{provider} selected — deploy its Edge Function and keys to take real money.'**
+  String cnProviderSelected(String provider);
+
+  /// No description provided for @cnTrnOnReceipts.
+  ///
+  /// In en, this message translates to:
+  /// **'TRN on receipts'**
+  String get cnTrnOnReceipts;
+
+  /// No description provided for @cnNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get cnNotSet;
+
+  /// No description provided for @cnEditTrn.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit TRN'**
+  String get cnEditTrn;
+
+  /// No description provided for @cnOperatorTrn.
+  ///
+  /// In en, this message translates to:
+  /// **'Operator TRN'**
+  String get cnOperatorTrn;
+
+  /// No description provided for @cnTrnField.
+  ///
+  /// In en, this message translates to:
+  /// **'TRN (shown on receipts)'**
+  String get cnTrnField;
+
+  /// No description provided for @cnSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get cnSave;
+
+  /// No description provided for @cnPostAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'Post an announcement'**
+  String get cnPostAnnouncement;
+
+  /// No description provided for @cnLiveState.
+  ///
+  /// In en, this message translates to:
+  /// **'Live'**
+  String get cnLiveState;
+
+  /// No description provided for @cnHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden'**
+  String get cnHidden;
+
+  /// No description provided for @cnNewAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'New announcement'**
+  String get cnNewAnnouncement;
+
+  /// No description provided for @cnTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get cnTitle;
+
+  /// No description provided for @cnMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get cnMessage;
+
+  /// No description provided for @cnKindUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get cnKindUpdate;
+
+  /// No description provided for @cnKindShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Show'**
+  String get cnKindShow;
+
+  /// No description provided for @cnKindAdvert.
+  ///
+  /// In en, this message translates to:
+  /// **'Advert'**
+  String get cnKindAdvert;
+
+  /// No description provided for @cnPinTop.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin to the top'**
+  String get cnPinTop;
+
+  /// No description provided for @cnTitleMsgNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'A title and a message are needed.'**
+  String get cnTitleMsgNeeded;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

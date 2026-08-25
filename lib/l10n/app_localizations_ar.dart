@@ -1427,4 +1427,525 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get ordersTitle => 'الطلبات';
+
+  @override
+  String get sdOverview => 'نظرة عامة';
+
+  @override
+  String get sdOrders => 'الطلبيات';
+
+  @override
+  String get sdListings => 'المنتجات';
+
+  @override
+  String get sdRequests => 'الطلبات';
+
+  @override
+  String get sdMoney => 'المال';
+
+  @override
+  String get sdAccount => 'الحساب';
+
+  @override
+  String get sdYourShop => 'متجرك';
+
+  @override
+  String get sdSeller => 'البائع';
+
+  @override
+  String get sdHeld => 'محتجز';
+
+  @override
+  String get sdPayable => 'مستحق';
+
+  @override
+  String get sdInReview => 'قيد المراجعة — غير ظاهر للمشترين بعد';
+
+  @override
+  String get sdHowMoney => 'كيف تصلك الأموال';
+
+  @override
+  String get sdBullet1 => 'المشتري يدفع لإسطبلاتي — لا لك مباشرةً.';
+
+  @override
+  String get sdBullet2 =>
+      'تبقى البضائع في نافذة إرجاع مدتها ١٤ يومًا؛ أما الخدمات فتُسوّى يوم إتمامها.';
+
+  @override
+  String get sdBullet3 => 'ينتقل رصيدك من محتجز إلى مستحق عند إغلاق النافذة.';
+
+  @override
+  String get sdBullet4 => 'تُدفع المستحقات مرتين شهريًا، في الأول والخامس عشر.';
+
+  @override
+  String get sdOverviewFootnote => 'الطلبيات والمنتجات أدناه فعّالة.';
+
+  @override
+  String get sdNoOrders => 'لا طلبيات بعد.';
+
+  @override
+  String get sdTagPayable => 'مستحق';
+
+  @override
+  String get sdTagPaid => 'مدفوع';
+
+  @override
+  String get sdTagRefunded => 'مُسترجع';
+
+  @override
+  String get sdTagDisputed => 'متنازع عليه';
+
+  @override
+  String get sdTagCancelled => 'ملغى';
+
+  @override
+  String get sdTagHeld => 'محتجز';
+
+  @override
+  String get sdLineDelivered => 'تم التوصيل · ضمن نافذة الإرجاع';
+
+  @override
+  String get sdLineHeldUntil => 'محتجز حتى التوصيل';
+
+  @override
+  String get sdLineClears => 'يُصرف في الدفعة القادمة';
+
+  @override
+  String get sdLinePaid => 'مدفوع';
+
+  @override
+  String get sdLineRefunded => 'أُعيد للمشتري';
+
+  @override
+  String get sdLineReturn => 'تم الإبلاغ عن إرجاع';
+
+  @override
+  String get sdBuyerPaid => 'دفع المشتري';
+
+  @override
+  String get sdFee => 'العمولة';
+
+  @override
+  String get sdAccept => 'قبول';
+
+  @override
+  String get sdMarkDelivered => 'تحديد كمُسلَّم';
+
+  @override
+  String get sdRespond => 'الرد';
+
+  @override
+  String get sdYourSide => 'روايتك';
+
+  @override
+  String get sdWhatHappened => 'ماذا حدث';
+
+  @override
+  String get sdAddProduct => 'إضافة منتج';
+
+  @override
+  String get sdYouReceive => 'تستلم';
+
+  @override
+  String sdAfterPct(String rate) {
+    return 'بعد $rate٪';
+  }
+
+  @override
+  String get sdNewProduct => 'منتج جديد';
+
+  @override
+  String get sdAddPhoto => 'إضافة صورة';
+
+  @override
+  String get sdChangePhoto => 'تغيير الصورة';
+
+  @override
+  String get sdName => 'الاسم';
+
+  @override
+  String get sdPriceAed => 'السعر (درهم)';
+
+  @override
+  String get sdUnit => 'الوحدة';
+
+  @override
+  String get sdAddProductBtn => 'إضافة المنتج';
+
+  @override
+  String get sdNamePriceNeeded => 'الاسم والسعر الصحيح مطلوبان.';
+
+  @override
+  String get sdNoRequests => 'لا طلبات بعد.';
+
+  @override
+  String get sdServiceRequest => 'طلب خدمة';
+
+  @override
+  String get sdYourQuote => 'تسعيرتك';
+
+  @override
+  String get sdSendQuote => 'إرسال تسعيرة';
+
+  @override
+  String get sdAccepted => 'مقبول';
+
+  @override
+  String get sdQuoted => 'تم التسعير';
+
+  @override
+  String get sdNote => 'ملاحظة';
+
+  @override
+  String get sdPayableNow => 'المستحق الآن';
+
+  @override
+  String get sdHowPayout => 'كيف تعمل الدفعة';
+
+  @override
+  String get sdPayoutBody =>
+      'تبقى الأموال محتجزة ما دام بإمكان المشتري إرجاع المنتج (١٤ يومًا). عند إغلاق النافذة تصبح مستحقة، وتصل إلى حسابك في الدفعة القادمة — الأول أو الخامس عشر، بما تجمّع حتى ذلك الحين، بعد خصم عمولتنا. أما الخدمات فتُسوّى يوم إتمامها.';
+
+  @override
+  String get sdPayouts => 'الدفعات';
+
+  @override
+  String get sdNoPayouts => 'لا دفعات بعد. أول دفعة تصل بعد إغلاق نافذة إرجاع.';
+
+  @override
+  String get sdPaid => 'مدفوع';
+
+  @override
+  String get sdDue => 'مستحق';
+
+  @override
+  String get sdRefunds => 'مبالغ مُسترجعة';
+
+  @override
+  String get sdApprovedLive => 'معتمد — فعّال في السوق';
+
+  @override
+  String get sdInReviewShort => 'قيد المراجعة';
+
+  @override
+  String get sdApprovedFor => 'معتمد لـ';
+
+  @override
+  String get sdNoTrades => 'لا اختصاصات مسجّلة.';
+
+  @override
+  String get sdOnTheRoad => 'في الميدان؟';
+
+  @override
+  String get sdOnRoadBody =>
+      'تطبيق مزوّد الخدمة على الهاتف هو النسخة المبسّطة للعمل الميداني — مهام اليوم والطلبات والطلبيات للتجهيز والمحادثة وأموالك.';
+
+  @override
+  String get sdOpenProviderApp => 'فتح تطبيق مزوّد الخدمة';
+
+  @override
+  String get sdTransport => 'نقل';
+
+  @override
+  String get cnOverview => 'نظرة عامة';
+
+  @override
+  String get cnApplications => 'الطلبات';
+
+  @override
+  String get cnSellers => 'البائعون';
+
+  @override
+  String get cnStables => 'الإسطبلات';
+
+  @override
+  String get cnDisputes => 'النزاعات';
+
+  @override
+  String get cnPayouts => 'الدفعات';
+
+  @override
+  String get cnFees => 'الرسوم';
+
+  @override
+  String get cnAnnouncements => 'الإعلانات';
+
+  @override
+  String get cnOperator => 'المشغّل';
+
+  @override
+  String get cnBackToApp => 'العودة إلى التطبيق';
+
+  @override
+  String get cnNoData => 'لا بيانات — أو أن هذا الحساب ليس مشغّلًا.';
+
+  @override
+  String get cnKpiStables => 'الإسطبلات';
+
+  @override
+  String get cnKpiPeople => 'الأشخاص';
+
+  @override
+  String get cnKpiHorses => 'الخيول';
+
+  @override
+  String get cnKpiAppsWaiting => 'طلبات بالانتظار';
+
+  @override
+  String get cnKpiLiveSellers => 'بائعون فعّالون';
+
+  @override
+  String get cnKpiOpenOrders => 'طلبيات مفتوحة';
+
+  @override
+  String get cnNoApps => 'لا طلبات بالانتظار.';
+
+  @override
+  String get cnApprovedShopLive => 'تمت الموافقة — المتجر فعّال.';
+
+  @override
+  String get cnRejected => 'مرفوض.';
+
+  @override
+  String get cnPapers => 'الأوراق';
+
+  @override
+  String get cnNoPapers => 'لم تُرفع أوراق.';
+
+  @override
+  String get cnView => 'عرض';
+
+  @override
+  String get cnApprove => 'موافقة';
+
+  @override
+  String get cnReject => 'رفض';
+
+  @override
+  String get cnApplicant => 'مقدّم الطلب';
+
+  @override
+  String get cnNoSellers => 'لا بائعين بعد.';
+
+  @override
+  String cnProductsN(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count منتجات',
+      one: 'منتج واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get cnLive => 'فعّال';
+
+  @override
+  String get cnInReview => 'قيد المراجعة';
+
+  @override
+  String get cnSuspend => 'تعليق';
+
+  @override
+  String get cnNoStables => 'لا إسطبلات بعد.';
+
+  @override
+  String cnHorsesN(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count خيول',
+      one: 'حصان واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String cnPeopleN(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count أشخاص',
+      one: 'شخص واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get cnNoDisputes => 'لا نزاعات. سوق هادئ.';
+
+  @override
+  String get cnArbitrates => 'إسطبلاتي هي من تفصل · الخدمات لا تُرجَع';
+
+  @override
+  String get cnWaitingOnYou => 'بانتظار قرارك';
+
+  @override
+  String get cnDecided => 'مُقرَّر';
+
+  @override
+  String get cnDecisionRecorded => 'تم تسجيل القرار.';
+
+  @override
+  String get cnDispute => 'نزاع';
+
+  @override
+  String get cnPaidSeller => 'دُفع للبائع';
+
+  @override
+  String get cnRefundedBuyer => 'أُعيد للمشتري';
+
+  @override
+  String get cnSplitIt => 'تقسيمها';
+
+  @override
+  String get cnWaitingTag => 'بانتظار قرارك';
+
+  @override
+  String get cnSellerNet => 'صافي البائع';
+
+  @override
+  String get cnRefundBuyer => 'إعادة للمشتري';
+
+  @override
+  String get cnPaySeller => 'الدفع للبائع';
+
+  @override
+  String get cnBuyer => 'المشتري';
+
+  @override
+  String get cnSeller => 'البائع';
+
+  @override
+  String get cnRunPayoutsTitle => 'تشغيل الدفعات؟';
+
+  @override
+  String get cnRunPayoutsBody =>
+      'هذا يغلق الدورة الحالية: تُجمَع كل طلبية مستحقة في دفعة لكل بائع وتُحدَّد كمدفوعة. لا يمكن التراجع عن ذلك.';
+
+  @override
+  String get cnRunPayouts => 'تشغيل الدفعات';
+
+  @override
+  String cnPaidSellersN(int count, String net) {
+    return 'دُفع لـ $count بائعين · $net درهم.';
+  }
+
+  @override
+  String get cnPayoutsNote =>
+      'تُدفع مرتين شهريًا، في الأول والخامس عشر. الأموال المحتجزة ما زالت داخل نافذة إرجاع ولا تُجمَع.';
+
+  @override
+  String cnPayableAcrossN(int count) {
+    return 'المستحق الآن، عبر $count بائعين';
+  }
+
+  @override
+  String get cnNothingDue =>
+      'لا شيء مستحق. الأموال التي ما زالت في نافذة إرجاع تظهر عند إغلاق نافذتها.';
+
+  @override
+  String get cnFee => 'العمولة';
+
+  @override
+  String get cnRefunds => 'المبالغ المُسترجعة';
+
+  @override
+  String get cnHeld => 'محتجز';
+
+  @override
+  String get cnCommission => 'العمولة';
+
+  @override
+  String get cnCommissionIntro =>
+      'ما تحتفظ به إسطبلاتي. يُبلَّغ البائعون بأي تغيير قبل الفترة التي يسري فيها؛ والأموال المحتجزة تُدفع بالنسبة القديمة.';
+
+  @override
+  String cnCommissionOf(String label) {
+    return 'عمولة $label';
+  }
+
+  @override
+  String get cnRatePct => 'النسبة (٪)';
+
+  @override
+  String get cnRateUpdated => 'تم تحديث النسبة.';
+
+  @override
+  String get cnEdit => 'تعديل';
+
+  @override
+  String get cnPayments => 'المدفوعات';
+
+  @override
+  String get cnPaymentsSub =>
+      'كيف يدفع المشترون. مزوّد الدفع وحدة قابلة للاستبدال — تتدفق الأموال عبر سجل محتجز ← مستحق ← دفعة أيًّا كان اختيارك.';
+
+  @override
+  String get cnProvTest => 'اختبار (بلا أموال حقيقية)';
+
+  @override
+  String get cnProvTelr => 'تلر (الإمارات)';
+
+  @override
+  String cnProviderWarn(String provider) {
+    return '$provider مُختار لكنه لا يستقبل أي أموال حتى تُنشر دالة Edge والمفاتيح السرية الخاصة به. لا يمكن للمشترين إتمام الشراء حتى ذلك الحين — عُد إلى الاختبار لمواصلة البيع.';
+  }
+
+  @override
+  String cnProviderSelected(String provider) {
+    return '$provider مُختار — انشر دالة Edge والمفاتيح لاستقبال أموال حقيقية.';
+  }
+
+  @override
+  String get cnTrnOnReceipts => 'الرقم الضريبي على الإيصالات';
+
+  @override
+  String get cnNotSet => 'غير محدد';
+
+  @override
+  String get cnEditTrn => 'تعديل الرقم الضريبي';
+
+  @override
+  String get cnOperatorTrn => 'الرقم الضريبي للمشغّل';
+
+  @override
+  String get cnTrnField => 'الرقم الضريبي (يظهر على الإيصالات)';
+
+  @override
+  String get cnSave => 'حفظ';
+
+  @override
+  String get cnPostAnnouncement => 'نشر إعلان';
+
+  @override
+  String get cnLiveState => 'ظاهر';
+
+  @override
+  String get cnHidden => 'مخفي';
+
+  @override
+  String get cnNewAnnouncement => 'إعلان جديد';
+
+  @override
+  String get cnTitle => 'العنوان';
+
+  @override
+  String get cnMessage => 'الرسالة';
+
+  @override
+  String get cnKindUpdate => 'تحديث';
+
+  @override
+  String get cnKindShow => 'بطولة';
+
+  @override
+  String get cnKindAdvert => 'إعلان';
+
+  @override
+  String get cnPinTop => 'التثبيت في الأعلى';
+
+  @override
+  String get cnTitleMsgNeeded => 'العنوان والرسالة مطلوبان.';
 }
