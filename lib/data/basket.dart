@@ -37,6 +37,21 @@ class Basket extends ChangeNotifier {
   double get total => _lines.fold(0.0, (t, l) => t + l.lineTotal);
   bool get isEmpty => _lines.isEmpty;
 
+  /// Delivery is AED 25 per seller, waived once that seller's goods clear
+  /// AED 300 — mirrors the server rule so checkout shows the true total.
+  static const double deliveryFee = 25;
+  static const double freeDeliveryOver = 300;
+
+  double deliveryFor(List<BasketLine> lines) {
+    final sub = lines.fold(0.0, (t, l) => t + l.lineTotal);
+    return sub >= freeDeliveryOver ? 0 : deliveryFee;
+  }
+
+  double get delivery =>
+      byVendor.values.fold(0.0, (t, lines) => t + deliveryFor(lines));
+
+  double get grandTotal => total + delivery;
+
   /// Lines grouped by vendor — each vendor becomes its own order.
   Map<String, List<BasketLine>> get byVendor {
     final map = <String, List<BasketLine>>{};

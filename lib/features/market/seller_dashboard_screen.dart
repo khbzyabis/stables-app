@@ -114,7 +114,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
       case _Sec.requests:
         return _Requests(vendorId: _vendorId);
       case _Sec.money:
-        return _Money(payable: _payable, held: _held);
+        return _Money(vendorId: _vendorId, payable: _payable, held: _held);
       case _Sec.account:
         return _Account(vendor: _vendor ?? const {});
     }
@@ -361,6 +361,34 @@ class _OrdersState extends State<_Orders> {
     }
   }
 
+  Future<void> _respond(String disputeId) async {
+    final ctrl = TextEditingController();
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: AppColors.bg,
+        title: Text('Your side', style: AppText.heading(22)),
+        content: AppField(label: 'What happened', controller: ctrl, maxLines: 3),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Send')),
+        ],
+      ),
+    );
+    if (ok == true && ctrl.text.trim().isNotEmpty) {
+      try {
+        await SupabaseService.sellerRespondDispute(disputeId, ctrl.text.trim());
+        _reload();
+      } catch (e) {
+        AppErrors.report(e);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Map<String, dynamic>>>(
@@ -371,12 +399,13 @@ class _OrdersState extends State<_Orders> {
         }
         if (snap.hasError) AppErrors.report(snap.error!);
         final orders = snap.data ?? const [];
-        // Simplified money: fulfilled = payable, accepted = held.
+        // Real ledger: sum each order's net by where its money sits.
         double payable = 0, held = 0;
         for (final o in orders) {
-          final t = (o['total_aed'] as num?)?.toDouble() ?? 0;
-          if (o['status'] == 'fulfilled') payable += t;
-          if (o['status'] == 'accepted') held += t;
+          final state = SupabaseService.orderMoneyState(o);
+          final net = SupabaseService.orderNet(o);
+          if (state == 'payable') payable += net;
+          if (state == 'held' || state == 'disputed') held += net;
         }
         widget.onMoney(payable, held);
         if (orders.isEmpty) {
@@ -387,7 +416,7 @@ class _OrdersState extends State<_Orders> {
           padding: const EdgeInsets.fromLTRB(28, 8, 28, 40),
           children: [
             for (final o in orders) ...[
-              _card(_OrderRow(order: o, onAdvance: _advance)),
+              _card(_OrderRow(order: o, onAdvance: _advance, onRespond: _respond)),
               const SizedBox(height: 12),
             ],
           ],
@@ -398,35 +427,74 @@ class _OrdersState extends State<_Orders> {
 }
 
 class _OrderRow extends StatelessWidget {
-  const _OrderRow({required this.order, required this.onAdvance});
+  const _OrderRow(
+      {required this.order, required this.onAdvance, required this.onRespond});
   final Map<String, dynamic> order;
   final Future<void> Function(String, String) onAdvance;
-  (String, TagTone) get _tag => switch (order['status'] as String?) {
-        'accepted' => ('Accepted', TagTone.sage),
-        'fulfilled' => ('Fulfilled', TagTone.sage),
+  final Future<void> Function(String) onRespond;
+
+  String? get _openDisputeId {
+    final ds = (order['disputes'] as List?) ?? const [];
+    for (final d in ds) {
+      if ((d as Map)['status'] == 'open') return d['id'] as String?;
+    }
+    return null;
+  }
+
+  // The money state drives the tag on the right — held / payable / paid…
+  (String, TagTone) _moneyTag(String state) => switch (state) {
+        'payable' => ('Payable', TagTone.sage),
+        'paid' => ('Paid out', TagTone.neutral),
+        'refunded' => ('Refunded', TagTone.neutral),
+        'disputed' => ('Disputed', TagTone.accent),
         'cancelled' => ('Cancelled', TagTone.neutral),
-        _ => ('New', TagTone.accent),
+        _ => ('Held', TagTone.outline),
       };
+
   @override
   Widget build(BuildContext context) {
     final id = order['id'] as String;
     final status = (order['status'] as String?) ?? 'pending';
+    final net = SupabaseService.orderNet(order);
     final total = (order['total_aed'] as num?)?.toDouble() ?? 0;
-    final tag = _tag;
+    final fee = (order['commission_aed'] as num?)?.toDouble() ?? 0;
+    final state = SupabaseService.orderMoneyState(order);
+    final tag = _moneyTag(state);
+    final line = switch (state) {
+      'held' => status == 'fulfilled'
+          ? 'Delivered · in the return window'
+          : 'Held until delivered',
+      'payable' => 'Clears on the next payout',
+      'paid' => 'Paid out',
+      'refunded' => 'Refunded to the buyer',
+      'disputed' => 'A return has been raised',
+      'cancelled' => 'Cancelled',
+      _ => status,
+    };
     return Row(children: [
       Expanded(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('AED ${total.toStringAsFixed(0)}', style: AppText.heading(18)),
+          Text('AED ${net.toStringAsFixed(0)}', style: AppText.heading(18)),
           const SizedBox(height: 4),
-          Text('Order · ${status == 'fulfilled' ? 'payable next cycle' : status}',
+          Text('$line · buyer paid AED ${total.toStringAsFixed(0)} · fee AED ${fee.toStringAsFixed(0)}',
               style: AppText.body(13, color: AppColors.ink(0.55))),
         ]),
       ),
       AppTag(tag.$1, tone: tag.$2),
-      if (status == 'pending' || status == 'accepted') ...[
+      if (state == 'disputed' && _openDisputeId != null) ...[
         const SizedBox(width: 10),
         AppButton(
-          label: status == 'pending' ? 'Accept' : 'Mark fulfilled',
+          label: 'Respond',
+          variant: AppButtonVariant.secondary,
+          block: false,
+          minHeight: 40,
+          fontSize: 14,
+          onPressed: () => onRespond(_openDisputeId!),
+        ),
+      ] else if (status == 'pending' || status == 'accepted') ...[
+        const SizedBox(width: 10),
+        AppButton(
+          label: status == 'pending' ? 'Accept' : 'Mark delivered',
           block: false,
           minHeight: 40,
           fontSize: 14,
@@ -449,8 +517,24 @@ class _Listings extends StatefulWidget {
 class _ListingsState extends State<_Listings> {
   late Future<List<Map<String, dynamic>>> _f =
       SupabaseService.vendorProducts(widget.vendorId);
+  double _rate = 8;
   void _reload() =>
       setState(() => _f = SupabaseService.vendorProducts(widget.vendorId));
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRate();
+  }
+
+  Future<void> _loadRate() async {
+    try {
+      final r = await SupabaseService.goodsRate();
+      if (mounted) setState(() => _rate = r);
+    } catch (_) {
+      // Keep the 8% default if the rate can't be read.
+    }
+  }
 
   Future<void> _add() async {
     final ok = await showModalBottomSheet<bool>(
@@ -493,7 +577,7 @@ class _ListingsState extends State<_Listings> {
                             style: AppText.body(16)),
                         const SizedBox(height: 3),
                         Text(
-                            'AED ${((p['price_aed'] as num?)?.toDouble() ?? 0).toStringAsFixed(0)} · your net ~AED ${(((p['price_aed'] as num?)?.toDouble() ?? 0) * 0.9).toStringAsFixed(0)} (after ~10%)',
+                            'AED ${((p['price_aed'] as num?)?.toDouble() ?? 0).toStringAsFixed(0)} · you receive AED ${(((p['price_aed'] as num?)?.toDouble() ?? 0) * (1 - _rate / 100)).toStringAsFixed(0)} (after ${_rate.toStringAsFixed(0)}%)',
                             style: AppText.body(13, color: AppColors.ink(0.55))),
                       ]),
                 ),
@@ -652,33 +736,65 @@ class _ReqRow extends StatelessWidget {
 }
 
 // ---- Money -----------------------------------------------------------------
-class _Money extends StatelessWidget {
-  const _Money({required this.payable, required this.held});
+class _Money extends StatefulWidget {
+  const _Money(
+      {required this.vendorId, required this.payable, required this.held});
+  final String vendorId;
   final double payable;
   final double held;
+  @override
+  State<_Money> createState() => _MoneyState();
+}
+
+class _MoneyState extends State<_Money> {
+  late final Future<List<Map<String, dynamic>>> _payouts =
+      SupabaseService.vendorPayouts(widget.vendorId);
+
   @override
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.fromLTRB(28, 8, 28, 40),
       children: [
         Row(children: [
-          Expanded(child: _big('Payable now', payable, AppColors.accent2200)),
+          Expanded(
+              child: _big('Payable now', widget.payable, AppColors.accent2200)),
           const SizedBox(width: 12),
-          Expanded(child: _big('Held', held, AppColors.neutral100)),
+          Expanded(child: _big('Held', widget.held, AppColors.neutral100)),
         ]),
         const SizedBox(height: 16),
         _card(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('Next payout', style: AppText.heading(18)),
+          Text('How a payout works', style: AppText.heading(18)),
           const SizedBox(height: 6),
-          Text('Payouts run on the 1st and the 15th. Payable moves to your bank '
-              'on the next cycle.',
+          Text('Money is Held while the buyer can still return an item (14 '
+              'days). When the window closes it becomes Payable, and lands in '
+              'your bank on the next run — the 1st or the 15th, whatever '
+              'cleared by then, less our commission. Services settle the day '
+              'they are done.',
               style: AppText.body(15, height: 1.5, color: AppColors.ink(0.7))),
         ])),
-        const SizedBox(height: 12),
-        Text('These figures are simplified (open orders → held, fulfilled → '
-            'payable). Per-category commission and the exact ledger arrive with '
-            'the money model.',
-            style: AppText.body(13, color: AppColors.ink(0.5))),
+        const SizedBox(height: 20),
+        Text('PAYOUTS', style: AppText.eyebrow()),
+        const SizedBox(height: 10),
+        FutureBuilder<List<Map<String, dynamic>>>(
+          future: _payouts,
+          builder: (context, snap) {
+            if (snap.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final rows = snap.data ?? const [];
+            if (rows.isEmpty) {
+              return _card(Text('No payouts yet. Your first one lands after a '
+                  'return window closes.',
+                  style: AppText.body(15, color: AppColors.ink(0.6))));
+            }
+            return Column(children: [
+              for (final p in rows) ...[
+                _card(_PayoutRow(payout: p)),
+                const SizedBox(height: 10),
+              ],
+            ]);
+          },
+        ),
       ],
     );
   }
@@ -693,6 +809,31 @@ class _Money extends StatelessWidget {
           Text(label, style: AppText.body(14, color: AppColors.ink(0.6))),
         ]),
       );
+}
+
+class _PayoutRow extends StatelessWidget {
+  const _PayoutRow({required this.payout});
+  final Map<String, dynamic> payout;
+  @override
+  Widget build(BuildContext context) {
+    final net = (payout['net_aed'] as num?)?.toDouble() ?? 0;
+    final refunds = (payout['refunds_aed'] as num?)?.toDouble() ?? 0;
+    final fee = (payout['fee_aed'] as num?)?.toDouble() ?? 0;
+    final paidOn = (payout['paid_on'] as String?) ?? '';
+    final paid = payout['status'] == 'paid';
+    return Row(children: [
+      Expanded(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('AED ${net.toStringAsFixed(0)}', style: AppText.heading(18)),
+          const SizedBox(height: 4),
+          Text('${paid ? 'Paid' : 'Due'} $paidOn · fee AED ${fee.toStringAsFixed(0)}'
+              '${refunds > 0 ? ' · refunds AED ${refunds.toStringAsFixed(0)}' : ''}',
+              style: AppText.body(13, color: AppColors.ink(0.55))),
+        ]),
+      ),
+      AppTag(paid ? 'Paid' : 'Due', tone: paid ? TagTone.neutral : TagTone.sage),
+    ]);
+  }
 }
 
 // ---- Account ---------------------------------------------------------------

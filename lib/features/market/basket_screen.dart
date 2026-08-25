@@ -96,8 +96,19 @@ class _BasketScreenState extends State<BasketScreen> {
                       onChanged: () => setState(() {}),
                     ),
                   const SizedBox(height: 6),
+                  _totalRow('Items', 'AED ${basket.total.toStringAsFixed(0)}',
+                      false),
+                  _totalRow(
+                      groups.length > 1
+                          ? 'Delivery (${groups.length} sellers)'
+                          : 'Delivery',
+                      basket.delivery == 0
+                          ? 'Free'
+                          : 'AED ${basket.delivery.toStringAsFixed(0)}',
+                      false),
+                  const Hairline(),
                   _totalRow(l10n.toPay,
-                      'AED ${basket.total.toStringAsFixed(0)}', true),
+                      'AED ${basket.grandTotal.toStringAsFixed(0)}', true),
                   const SizedBox(height: 24),
                   Container(
                     padding: const EdgeInsets.all(16),
@@ -106,7 +117,9 @@ class _BasketScreenState extends State<BasketScreen> {
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Text(
-                      'Payment is arranged directly with the seller for now. '
+                      'You pay My Stables, not the seller. Goods sit in a '
+                      '14-day return window before the seller is paid. Each '
+                      'seller adds their own AED 25 delivery, free over AED 300. '
                       'Card payment is coming soon.',
                       style: AppText.body(14,
                           height: 1.5, color: AppColors.ink(0.7)),

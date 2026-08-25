@@ -648,13 +648,16 @@ class SupabaseService {
     required List<Map<String, dynamic>> items,
     String? note,
   }) async {
-    final total = items.fold<double>(
+    // Send the goods subtotal; the server trigger fills delivery, the
+    // commission, the seller's net and the buyer's total authoritatively.
+    final subtotal = items.fold<double>(
         0, (t, i) => t + (i['unit_price_aed'] as num) * (i['qty'] as num));
     final order = await _db.from('orders').insert({
       'vendor_id': vendorId,
       'stable_id': ?stableId,
       'note': ?note,
-      'total_aed': total,
+      'category_group': 'goods',
+      'subtotal_aed': subtotal,
     }).select().single();
     final orderId = order['id'] as String;
     await _db.from('order_items').insert([
@@ -675,7 +678,7 @@ class SupabaseService {
   static Future<List<Map<String, dynamic>>> myOrders() async {
     final rows = await _db
         .from('orders')
-        .select('*, vendors(name)')
+        .select('*, vendors(name), disputes(id, status, decision)')
         .eq('buyer_id', currentUser?.id ?? '')
         .order('created_at', ascending: false);
     return rows.map<Map<String, dynamic>>((r) {
@@ -868,7 +871,7 @@ class SupabaseService {
   /// Orders placed with a vendor the current person owns, newest first.
   static Future<List<Map<String, dynamic>>> vendorOrders(String vendorId) => _db
       .from('orders')
-      .select()
+      .select('*, disputes(id, status, decision, reason, buyer_says, seller_says)')
       .eq('vendor_id', vendorId)
       .order('created_at', ascending: false);
 
@@ -1013,6 +1016,121 @@ class SupabaseService {
     if (rows is! List) return const [];
     return rows.map<Map<String, dynamic>>((r) => Map<String, dynamic>.from(r as Map)).toList();
   }
+
+  // ---- Money model ----------------------------------------------------
+  /// The single rule for where an order's money sits. Mirrors the SQL
+  /// helper `order_is_payable` so the seller view and the payout sweep agree.
+  /// Returns one of: cancelled / disputed / refunded / paid / payable / held.
+  static String orderMoneyState(Map<String, dynamic> o) {
+    final status = (o['status'] as String?) ?? 'pending';
+    if (status == 'cancelled') return 'cancelled';
+    final disputes = (o['disputes'] as List?) ?? const [];
+    final hasOpen = disputes.any((d) => (d as Map)['status'] == 'open');
+    if (hasOpen) return 'disputed';
+    final net = (o['net_aed'] as num?)?.toDouble() ?? 0;
+    final refunded = (o['refunded_aed'] as num?)?.toDouble() ?? 0;
+    if (net > 0 && refunded >= net) return 'refunded';
+    if (o['payout_id'] != null) return 'paid';
+    final group = (o['category_group'] as String?) ?? 'goods';
+    if (group == 'services' || group == 'transport') {
+      return status == 'fulfilled' ? 'payable' : 'held';
+    }
+    if (status != 'fulfilled') return 'held';
+    final deliveredAt = DateTime.tryParse((o['delivered_at'] as String?) ?? '');
+    if (deliveredAt == null) return 'held';
+    final days = (o['return_window_days'] as num?)?.toInt() ?? 14;
+    final opensOn = deliveredAt.add(Duration(days: days));
+    return DateTime.now().toUtc().isAfter(opensOn.toUtc()) ? 'payable' : 'held';
+  }
+
+  /// A seller's take on an order after any refund.
+  static double orderNet(Map<String, dynamic> o) {
+    final net = (o['net_aed'] as num?)?.toDouble() ?? 0;
+    final refunded = (o['refunded_aed'] as num?)?.toDouble() ?? 0;
+    final v = net - refunded;
+    return v < 0 ? 0 : v;
+  }
+
+  /// Commission rates the operator has set, ordered for display.
+  static Future<List<Map<String, dynamic>>> commissionRates() => _db
+      .from('commission_rates')
+      .select()
+      .order('sort');
+
+  /// The goods commission % right now (for the seller's fee preview).
+  static Future<double> goodsRate() async {
+    final rows = await _db
+        .from('commission_rates')
+        .select('rate_pct')
+        .eq('category_group', 'goods')
+        .limit(1);
+    if (rows.isEmpty) return 8;
+    return (rows.first['rate_pct'] as num?)?.toDouble() ?? 8;
+  }
+
+  /// Past payouts for a vendor, newest first.
+  static Future<List<Map<String, dynamic>>> vendorPayouts(String vendorId) => _db
+      .from('payouts')
+      .select()
+      .eq('vendor_id', vendorId)
+      .order('paid_on', ascending: false);
+
+  /// Buyer raises a return / dispute (goods, inside the window).
+  static Future<Map<String, dynamic>> raiseDispute(
+      String orderId, String reason, {String? buyerSays}) async {
+    final res = await _db.rpc('raise_dispute', params: {
+      'p_order': orderId,
+      'p_reason': reason,
+      'p_buyer_says': buyerSays,
+    });
+    Analytics.capture('dispute_raised', {'order_id': orderId});
+    return Map<String, dynamic>.from(res as Map);
+  }
+
+  /// The seller adds their side of a dispute.
+  static Future<void> sellerRespondDispute(String disputeId, String text) => _db
+      .from('disputes')
+      .update({'seller_says': text})
+      .eq('id', disputeId);
+
+  // ---- Money model (operator) -----------------------------------------
+  static Future<void> setCommissionRate(String group, double pct) =>
+      _db.rpc('set_commission_rate', params: {'p_group': group, 'p_rate': pct});
+
+  static Future<List<Map<String, dynamic>>> adminPayoutsDue() async {
+    final res = await _db.rpc('admin_payouts_due');
+    if (res is! List) return const [];
+    return res.map<Map<String, dynamic>>((r) => Map<String, dynamic>.from(r as Map)).toList();
+  }
+
+  static Future<Map<String, dynamic>> runPayouts() async {
+    final res = await _db.rpc('run_payouts');
+    return Map<String, dynamic>.from(res as Map);
+  }
+
+  /// Every dispute for the operator, newest first, with order + parties.
+  static Future<List<Map<String, dynamic>>> adminDisputes() async {
+    final rows = await _db
+        .from('disputes')
+        .select('*, orders(total_aed, net_aed, vendor_id, vendors(name))')
+        .order('created_at', ascending: false);
+    return rows.map<Map<String, dynamic>>((r) {
+      final o = r['orders'] as Map?;
+      final v = o?['vendors'] as Map?;
+      return {
+        ...Map<String, dynamic>.from(r),
+        'vendor_name': v?['name'] ?? 'Seller',
+      };
+    }).toList();
+  }
+
+  static Future<void> decideDispute(String disputeId, String decision,
+          {String? note}) =>
+      _db.rpc('decide_dispute', params: {
+        'p_dispute': disputeId,
+        'p_decision': decision,
+        'p_note': note,
+      });
 
   // ---- Quote requests (service & transport providers) -----------------
   /// Kinds a shop can be. Products come from Feed…Services shops; Services and

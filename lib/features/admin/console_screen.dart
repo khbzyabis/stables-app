@@ -21,7 +21,16 @@ class ConsoleScreen extends StatefulWidget {
   State<ConsoleScreen> createState() => _ConsoleScreenState();
 }
 
-enum _Section { overview, applications, sellers, stables, announcements }
+enum _Section {
+  overview,
+  applications,
+  sellers,
+  stables,
+  disputes,
+  payouts,
+  fees,
+  announcements
+}
 
 class _ConsoleScreenState extends State<ConsoleScreen> {
   _Section _section = _Section.overview;
@@ -31,6 +40,9 @@ class _ConsoleScreenState extends State<ConsoleScreen> {
     _Section.applications: 'Applications',
     _Section.sellers: 'Sellers',
     _Section.stables: 'Stables',
+    _Section.disputes: 'Disputes',
+    _Section.payouts: 'Payouts',
+    _Section.fees: 'Fees',
     _Section.announcements: 'Announcements',
   };
   static const _icons = {
@@ -38,6 +50,9 @@ class _ConsoleScreenState extends State<ConsoleScreen> {
     _Section.applications: Icons.assignment_outlined,
     _Section.sellers: Icons.storefront_outlined,
     _Section.stables: Icons.holiday_village_outlined,
+    _Section.disputes: Icons.gavel_outlined,
+    _Section.payouts: Icons.account_balance_outlined,
+    _Section.fees: Icons.percent_outlined,
     _Section.announcements: Icons.campaign_outlined,
   };
 
@@ -101,6 +116,9 @@ class _ConsoleScreenState extends State<ConsoleScreen> {
             _Section.applications => const _ApplicationsView(),
             _Section.sellers => const _SellersView(),
             _Section.stables => const _StablesView(),
+            _Section.disputes => const _DisputesView(),
+            _Section.payouts => const _PayoutsView(),
+            _Section.fees => const _FeesView(),
             _Section.announcements => const _AnnouncementsView(),
           },
         ),
@@ -714,6 +732,420 @@ class _AnnouncementsViewState extends State<_AnnouncementsView> {
                   ],
                 ),
               ),
+              const SizedBox(height: 12),
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+// ---- Disputes --------------------------------------------------------------
+class _DisputesView extends StatefulWidget {
+  const _DisputesView();
+  @override
+  State<_DisputesView> createState() => _DisputesViewState();
+}
+
+class _DisputesViewState extends State<_DisputesView> {
+  late Future<List<Map<String, dynamic>>> _f = SupabaseService.adminDisputes();
+  void _reload() => setState(() => _f = SupabaseService.adminDisputes());
+
+  Future<void> _decide(String id, String decision) async {
+    try {
+      await SupabaseService.decideDispute(id, decision);
+      _reload();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Decision recorded.')));
+      }
+    } catch (e) {
+      AppErrors.report(e);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: _f,
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snap.hasError) AppErrors.report(snap.error!);
+        final rows = snap.data ?? const [];
+        if (rows.isEmpty) {
+          return _PadBody(child: Text('No disputes. A quiet marketplace.',
+              style: AppText.body(16, color: AppColors.ink(0.6))));
+        }
+        final open = rows.where((d) => d['status'] == 'open').toList();
+        final decided = rows.where((d) => d['status'] != 'open').toList();
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(32, 8, 32, 40),
+          children: [
+            Text('My Stables arbitrates · services cannot be returned',
+                style: AppText.body(14, color: AppColors.ink(0.55))),
+            const SizedBox(height: 16),
+            if (open.isNotEmpty) ...[
+              Text('WAITING ON YOU', style: AppText.eyebrow()),
+              const SizedBox(height: 10),
+              for (final d in open) ...[
+                _Card(child: _DisputeCard(dispute: d, onDecide: _decide)),
+                const SizedBox(height: 12),
+              ],
+              const SizedBox(height: 8),
+            ],
+            if (decided.isNotEmpty) ...[
+              Text('DECIDED', style: AppText.eyebrow()),
+              const SizedBox(height: 10),
+              for (final d in decided) ...[
+                _Card(child: _DisputeCard(dispute: d, onDecide: _decide)),
+                const SizedBox(height: 12),
+              ],
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _DisputeCard extends StatelessWidget {
+  const _DisputeCard({required this.dispute, required this.onDecide});
+  final Map<String, dynamic> dispute;
+  final Future<void> Function(String, String) onDecide;
+
+  String get _decisionLabel => switch (dispute['decision'] as String?) {
+        'pay_seller' => 'Paid the seller',
+        'refund_buyer' => 'Refunded the buyer',
+        'split' => 'Split it',
+        _ => '',
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final d = dispute;
+    final id = d['id'] as String;
+    final open = d['status'] == 'open';
+    final o = d['orders'] as Map?;
+    final net = (o?['net_aed'] as num?)?.toDouble() ?? 0;
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [
+        Expanded(
+          child: Text((d['reason'] as String?) ?? 'Dispute',
+              style: AppText.heading(18, height: 1.2)),
+        ),
+        if (open)
+          const AppTag('Waiting on you', tone: TagTone.accent)
+        else
+          AppTag(_decisionLabel, tone: TagTone.neutral),
+      ]),
+      const SizedBox(height: 6),
+      Text('${d['vendor_name'] ?? 'Seller'} · seller net AED ${net.toStringAsFixed(0)}',
+          style: AppText.body(13, color: AppColors.ink(0.55))),
+      if ((d['buyer_says'] as String?)?.isNotEmpty == true) ...[
+        const SizedBox(height: 10),
+        _Says(who: 'Buyer', text: d['buyer_says'] as String),
+      ],
+      if ((d['seller_says'] as String?)?.isNotEmpty == true) ...[
+        const SizedBox(height: 8),
+        _Says(who: 'Seller', text: d['seller_says'] as String),
+      ],
+      if (open) ...[
+        const SizedBox(height: 14),
+        Wrap(spacing: 10, runSpacing: 10, children: [
+          AppButton(
+              label: 'Refund the buyer',
+              block: false,
+              minHeight: 42,
+              fontSize: 14,
+              onPressed: () => onDecide(id, 'refund_buyer')),
+          AppButton(
+              label: 'Pay the seller',
+              variant: AppButtonVariant.secondary,
+              block: false,
+              minHeight: 42,
+              fontSize: 14,
+              onPressed: () => onDecide(id, 'pay_seller')),
+          AppButton(
+              label: 'Split it',
+              variant: AppButtonVariant.secondary,
+              block: false,
+              minHeight: 42,
+              fontSize: 14,
+              onPressed: () => onDecide(id, 'split')),
+        ]),
+      ] else if ((d['decision_note'] as String?)?.isNotEmpty == true) ...[
+        const SizedBox(height: 8),
+        Text(d['decision_note'] as String,
+            style: AppText.body(13, color: AppColors.ink(0.5))),
+      ],
+    ]);
+  }
+}
+
+class _Says extends StatelessWidget {
+  const _Says({required this.who, required this.text});
+  final String who;
+  final String text;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+          color: AppColors.neutral100, borderRadius: BorderRadius.circular(12)),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(who.toUpperCase(),
+            style: AppText.body(10,
+                letterSpacing: 0.6, color: AppColors.ink(0.5))),
+        const SizedBox(height: 3),
+        Text(text, style: AppText.body(14, height: 1.4)),
+      ]),
+    );
+  }
+}
+
+// ---- Payouts ---------------------------------------------------------------
+class _PayoutsView extends StatefulWidget {
+  const _PayoutsView();
+  @override
+  State<_PayoutsView> createState() => _PayoutsViewState();
+}
+
+class _PayoutsViewState extends State<_PayoutsView> {
+  late Future<List<Map<String, dynamic>>> _f = SupabaseService.adminPayoutsDue();
+  bool _running = false;
+  void _reload() => setState(() => _f = SupabaseService.adminPayoutsDue());
+
+  Future<void> _run() async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: AppColors.bg,
+        title: Text('Run the payouts?', style: AppText.heading(22)),
+        content: Text(
+            'This closes the current cycle: every payable order is swept into '
+            'a batch per seller and marked paid. This cannot be undone.',
+            style: AppText.body(15, height: 1.5)),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Run payouts')),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    setState(() => _running = true);
+    try {
+      final res = await SupabaseService.runPayouts();
+      final batches = (res['batches'] as num?)?.toInt() ?? 0;
+      final net = (res['net_aed'] as num?)?.toDouble() ?? 0;
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Paid $batches sellers · AED ${net.toStringAsFixed(0)}.')));
+      }
+      _reload();
+    } catch (e) {
+      AppErrors.report(e);
+    } finally {
+      if (mounted) setState(() => _running = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: _f,
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snap.hasError) AppErrors.report(snap.error!);
+        final due = snap.data ?? const [];
+        final total = due.fold<double>(
+            0, (t, r) => t + ((r['net_aed'] as num?)?.toDouble() ?? 0));
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(32, 8, 32, 40),
+          children: [
+            Text('Paid twice a month, on the 1st and the 15th. Held money is '
+                'still inside a return window and is not swept.',
+                style: AppText.body(14, color: AppColors.ink(0.55))),
+            const SizedBox(height: 16),
+            Row(children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                      color: AppColors.accent2200,
+                      borderRadius: BorderRadius.circular(16)),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('AED ${total.toStringAsFixed(0)}',
+                            style: AppText.heading(30)),
+                        const SizedBox(height: 5),
+                        Text('Payable now, across ${due.length} sellers',
+                            style: AppText.body(14, color: AppColors.ink(0.6))),
+                      ]),
+                ),
+              ),
+              const SizedBox(width: 12),
+              if (_running)
+                const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: CircularProgressIndicator())
+              else
+                AppButton(
+                    label: 'Run payouts',
+                    block: false,
+                    onPressed: due.isEmpty ? null : _run),
+            ]),
+            const SizedBox(height: 18),
+            if (due.isEmpty)
+              _Card(
+                  child: Text('Nothing due. Money still in a return window '
+                      'appears when its window closes.',
+                      style: AppText.body(15, color: AppColors.ink(0.6))))
+            else
+              for (final r in due) ...[
+                _Card(child: _DueRow(row: r)),
+                const SizedBox(height: 12),
+              ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _DueRow extends StatelessWidget {
+  const _DueRow({required this.row});
+  final Map<String, dynamic> row;
+  @override
+  Widget build(BuildContext context) {
+    final net = (row['net_aed'] as num?)?.toDouble() ?? 0;
+    final fee = (row['fee_aed'] as num?)?.toDouble() ?? 0;
+    final refunds = (row['refunds_aed'] as num?)?.toDouble() ?? 0;
+    final held = (row['held_aed'] as num?)?.toDouble() ?? 0;
+    return Row(children: [
+      Expanded(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text((row['vendor_name'] as String?) ?? 'Seller',
+              style: AppText.heading(18)),
+          const SizedBox(height: 4),
+          Text('fee AED ${fee.toStringAsFixed(0)}'
+              '${refunds > 0 ? ' · refunds AED ${refunds.toStringAsFixed(0)}' : ''}'
+              '${held > 0 ? ' · held AED ${held.toStringAsFixed(0)}' : ''}',
+              style: AppText.body(13, color: AppColors.ink(0.55))),
+        ]),
+      ),
+      Text('AED ${net.toStringAsFixed(0)}', style: AppText.heading(20)),
+    ]);
+  }
+}
+
+// ---- Fees ------------------------------------------------------------------
+class _FeesView extends StatefulWidget {
+  const _FeesView();
+  @override
+  State<_FeesView> createState() => _FeesViewState();
+}
+
+class _FeesViewState extends State<_FeesView> {
+  late Future<List<Map<String, dynamic>>> _f = SupabaseService.commissionRates();
+  void _reload() => setState(() => _f = SupabaseService.commissionRates());
+
+  Future<void> _edit(Map<String, dynamic> rate) async {
+    final ctrl = TextEditingController(
+        text: ((rate['rate_pct'] as num?)?.toDouble() ?? 0).toStringAsFixed(0));
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: AppColors.bg,
+        title: Text('${rate['label']} commission', style: AppText.heading(20)),
+        content: AppField(
+            label: 'Rate (%)',
+            controller: ctrl,
+            keyboardType: TextInputType.number),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Save')),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    final pct = double.tryParse(ctrl.text.trim());
+    if (pct == null) return;
+    try {
+      await SupabaseService.setCommissionRate(
+          rate['category_group'] as String, pct);
+      _reload();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Rate updated.')));
+      }
+    } catch (e) {
+      AppErrors.report(e);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: _f,
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snap.hasError) AppErrors.report(snap.error!);
+        final rates = snap.data ?? const [];
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(32, 8, 32, 40),
+          children: [
+            Text('What My Stables keeps. A change is told to sellers before the '
+                'period it applies to; money already held pays out at the old '
+                'rate.',
+                style: AppText.body(14, height: 1.5, color: AppColors.ink(0.55))),
+            const SizedBox(height: 16),
+            for (final r in rates) ...[
+              _Card(child: Row(children: [
+                Expanded(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text((r['label'] as String?) ?? '',
+                            style: AppText.heading(18)),
+                        const SizedBox(height: 3),
+                        Text((r['detail'] as String?) ?? '',
+                            style:
+                                AppText.body(13, color: AppColors.ink(0.55))),
+                        if ((r['note'] as String?)?.isNotEmpty == true) ...[
+                          const SizedBox(height: 2),
+                          Text(r['note'] as String,
+                              style: AppText.body(12, color: AppColors.ink(0.45))),
+                        ],
+                      ]),
+                ),
+                Text('${((r['rate_pct'] as num?)?.toDouble() ?? 0).toStringAsFixed(0)}%',
+                    style: AppText.heading(24)),
+                const SizedBox(width: 8),
+                AppButton(
+                    label: 'Edit',
+                    variant: AppButtonVariant.secondary,
+                    block: false,
+                    minHeight: 40,
+                    fontSize: 14,
+                    onPressed: () => _edit(r)),
+              ])),
               const SizedBox(height: 12),
             ],
           ],
