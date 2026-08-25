@@ -8,7 +8,7 @@ import '../../widgets/app_button.dart';
 import '../../widgets/app_tag.dart';
 import '../../widgets/hairline.dart';
 import '../auth/back_link.dart';
-import 'provider_vendor_screen.dart';
+import 'seller_dashboard_screen.dart';
 import 'seller_apply_screen.dart';
 
 /// Seller dashboard — the shops you run. Create a vendor, then manage its
@@ -97,7 +97,7 @@ class _VendorRow extends StatelessWidget {
     return InkWell(
       onTap: () async {
         await Navigator.of(context)
-            .pushNamed(ProviderVendorScreen.route, arguments: vendor);
+            .pushNamed(SellerDashboardScreen.route, arguments: vendor);
         onReturn();
       },
       child: Padding(
