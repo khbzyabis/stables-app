@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../data/portal.dart';
-import '../../data/session.dart';
 import '../../data/supabase_service.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
@@ -27,6 +26,10 @@ class PortalGate extends StatefulWidget {
 }
 
 class _PortalGateState extends State<PortalGate> {
+  // Decided once per signed-in gate build — NOT recreated on every rebuild
+  // (that, plus reading the session notifier, caused an infinite spinner).
+  Future<_GateResult>? _future;
+
   @override
   Widget build(BuildContext context) {
     final portal = Portal.current;
@@ -37,8 +40,9 @@ class _PortalGateState extends State<PortalGate> {
           ? const LandingScreen()
           : const SignInScreen();
     }
+    _future ??= _decide(portal);
     return FutureBuilder<_GateResult>(
-      future: _decide(portal),
+      future: _future,
       builder: (context, snap) {
         if (snap.connectionState == ConnectionState.waiting) {
           return const Scaffold(
@@ -68,11 +72,17 @@ class _PortalGateState extends State<PortalGate> {
     // app portal — riders and stable people
     final ok = type == 'rider';
     if (!ok) return _GateResult(false, null, type);
-    // Decide home vs create/join a stable, once the session has loaded.
-    if (!mounted) return _GateResult(true, const HomeScreen(), type);
-    final session = SessionScope.of(context);
-    await session.refresh();
-    final dest = (session.hasStable || session.hasPending)
+    // Decide home vs create/join a stable — read directly (no session notifier,
+    // which would re-trigger this build and loop forever).
+    List<Map<String, dynamic>> stables = const [];
+    List<Map<String, dynamic>> pending = const [];
+    try {
+      stables = await SupabaseService.myStables();
+    } catch (_) {}
+    try {
+      pending = await SupabaseService.myPendingRequests();
+    } catch (_) {}
+    final dest = (stables.isNotEmpty || pending.isNotEmpty)
         ? const HomeScreen()
         : const CreateStableScreen();
     return _GateResult(true, dest, type);
