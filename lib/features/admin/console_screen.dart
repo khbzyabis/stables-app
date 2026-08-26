@@ -1212,7 +1212,7 @@ class _PaymentsSettingsCardState extends State<_PaymentsSettingsCard> {
   }
 }
 
-// ---- Shows panel -----------------------------------------------------------
+// ---- Shows -----------------------------------------------------------------
 class _ShowsView extends StatefulWidget {
   const _ShowsView();
   @override
@@ -1220,121 +1220,277 @@ class _ShowsView extends StatefulWidget {
 }
 
 class _ShowsViewState extends State<_ShowsView> {
-  final _title = TextEditingController();
-  final _venue = TextEditingController();
-  final _when = TextEditingController();
-  final _status = TextEditingController();
-  bool _on = false;
-  bool _loading = true;
-  bool _saving = false;
+  late Future<List<Map<String, dynamic>>> _f = SupabaseService.adminShows();
+  void _reload() => setState(() => _f = SupabaseService.adminShows());
 
-  @override
-  void initState() {
-    super.initState();
-    _load();
+  Future<void> _editShow([Map<String, dynamic>? existing]) async {
+    final saved = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.bg,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+      builder: (_) => _ShowEditor(existing: existing),
+    );
+    if (saved == true) _reload();
   }
 
-  Future<void> _load() async {
+  Future<void> _togglePublish(Map<String, dynamic> s) async {
     try {
-      final s = await SupabaseService.platformSettings();
-      _on = s['shows_on'] == true;
-      _title.text = (s['show_title'] as String?) ?? '';
-      _venue.text = (s['show_venue'] as String?) ?? '';
-      _when.text = (s['show_when'] as String?) ?? '';
-      _status.text = (s['show_status'] as String?) ?? '';
+      await SupabaseService.updateShow(
+          s['id'] as String, {'published': !(s['published'] == true)});
+      _reload();
     } catch (e) {
       AppErrors.report(e);
     }
-    if (mounted) setState(() => _loading = false);
   }
+
+  Future<void> _delete(Map<String, dynamic> s) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: AppColors.bg,
+        title: Text('Delete this show?', style: AppText.heading(20)),
+        content: Text('"${s['title']}" will be removed for everyone.',
+            style: AppText.body(15)),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Delete')),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    try {
+      await SupabaseService.deletePlatformShow(s['id'] as String);
+      _reload();
+    } catch (e) {
+      AppErrors.report(e);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: _f,
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snap.hasError) AppErrors.report(snap.error!);
+        final shows = snap.data ?? const [];
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(32, 8, 32, 40),
+          children: [
+            Row(children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('SHOWS', style: AppText.eyebrow()),
+                    const SizedBox(height: 8),
+                    Text(
+                        'Create a show and publish it — published shows appear '
+                        'in the riders’ Market with their details and a live '
+                        'status line.',
+                        style: AppText.body(14,
+                            height: 1.5, color: AppColors.ink(0.55))),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              AppButton(
+                  label: 'Create show',
+                  block: false,
+                  onPressed: () => _editShow()),
+            ]),
+            const SizedBox(height: 18),
+            if (shows.isEmpty)
+              Text('No shows yet. Create one to show it to riders.',
+                  style: AppText.body(15, color: AppColors.ink(0.55))),
+            for (final s in shows) ...[
+              _Card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      Expanded(
+                        child: Text((s['title'] as String?) ?? 'Show',
+                            style: AppText.heading(18)),
+                      ),
+                      AppTag(s['published'] == true ? 'Published' : 'Draft',
+                          tone: s['published'] == true
+                              ? TagTone.sage
+                              : TagTone.neutral),
+                    ]),
+                    if ([s['venue'], s['when_text']]
+                        .where((v) => (v as String?)?.isNotEmpty == true)
+                        .isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                          [s['venue'], s['when_text']]
+                              .where((v) => (v as String?)?.isNotEmpty == true)
+                              .join(' · '),
+                          style:
+                              AppText.body(13, color: AppColors.ink(0.55))),
+                    ],
+                    if ((s['status'] as String?)?.isNotEmpty == true) ...[
+                      const SizedBox(height: 6),
+                      Text('Live: ${s['status']}',
+                          style:
+                              AppText.body(13, color: AppColors.accent700)),
+                    ],
+                    const SizedBox(height: 14),
+                    Row(children: [
+                      AppButton(
+                          label: 'Edit',
+                          variant: AppButtonVariant.secondary,
+                          block: false,
+                          onPressed: () => _editShow(s)),
+                      const SizedBox(width: 10),
+                      AppButton(
+                          label:
+                              s['published'] == true ? 'Unpublish' : 'Publish',
+                          variant: AppButtonVariant.secondary,
+                          block: false,
+                          onPressed: () => _togglePublish(s)),
+                      const Spacer(),
+                      IconButton(
+                          onPressed: () => _delete(s),
+                          icon: Icon(Icons.delete_outline,
+                              color: AppColors.ink(0.5))),
+                    ]),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Create / edit one show.
+class _ShowEditor extends StatefulWidget {
+  const _ShowEditor({this.existing});
+  final Map<String, dynamic>? existing;
+  @override
+  State<_ShowEditor> createState() => _ShowEditorState();
+}
+
+class _ShowEditorState extends State<_ShowEditor> {
+  late final _title =
+      TextEditingController(text: widget.existing?['title'] as String? ?? '');
+  late final _venue =
+      TextEditingController(text: widget.existing?['venue'] as String? ?? '');
+  late final _when = TextEditingController(
+      text: widget.existing?['when_text'] as String? ?? '');
+  late final _desc = TextEditingController(
+      text: widget.existing?['description'] as String? ?? '');
+  late final _status =
+      TextEditingController(text: widget.existing?['status'] as String? ?? '');
+  late bool _published = widget.existing?['published'] == true;
+  bool _saving = false;
 
   @override
   void dispose() {
     _title.dispose();
     _venue.dispose();
     _when.dispose();
+    _desc.dispose();
     _status.dispose();
     super.dispose();
   }
 
   Future<void> _save() async {
+    if (_title.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Give the show a title.')));
+      return;
+    }
     setState(() => _saving = true);
+    final fields = {
+      'title': _title.text.trim(),
+      'venue': _venue.text.trim(),
+      'when_text': _when.text.trim(),
+      'description': _desc.text.trim(),
+      'status': _status.text.trim(),
+      'published': _published,
+    };
     try {
-      await SupabaseService.setShowsPanel(
-        on: _on,
-        title: _title.text.trim(),
-        venue: _venue.text.trim(),
-        when: _when.text.trim(),
-        status: _status.text.trim(),
-      );
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Shows panel saved.')));
+      if (widget.existing == null) {
+        await SupabaseService.createShow(fields);
+      } else {
+        await SupabaseService.updateShow(widget.existing!['id'] as String, fields);
       }
+      if (mounted) Navigator.of(context).pop(true);
     } catch (e) {
       AppErrors.report(e);
       if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("Couldn't save: $e")));
+        setState(() => _saving = false);
       }
     }
-    if (mounted) setState(() => _saving = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(32, 8, 32, 40),
-      children: [
-        Text('SHOWS PANEL', style: AppText.eyebrow()),
-        const SizedBox(height: 10),
-        Text(
-            'When this is on, riders see a "This weekend" show card at the top '
-            'of the Market with the details and a live status line. Turn it off '
-            'when there is no show.',
-            style: AppText.body(14, height: 1.5, color: AppColors.ink(0.55))),
-        const SizedBox(height: 16),
-        _Card(
-          child: Row(children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Show the panel', style: AppText.heading(18)),
-                  const SizedBox(height: 3),
-                  Text(_on ? 'Visible to riders now' : 'Hidden',
-                      style: AppText.body(13,
-                          color: _on
-                              ? AppColors.accent2700
-                              : AppColors.ink(0.5))),
-                ],
-              ),
-            ),
-            Switch(
-              value: _on,
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 28,
+        right: 28,
+        top: 22,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 22,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(widget.existing == null ? 'Create show' : 'Edit show',
+                style: AppText.heading(22)),
+            const SizedBox(height: 18),
+            AppField(label: 'Show title', controller: _title),
+            const SizedBox(height: 14),
+            AppField(label: 'Venue', controller: _venue),
+            const SizedBox(height: 14),
+            AppField(
+                label: 'When (e.g. Sat 30 Aug, from 8am)', controller: _when),
+            const SizedBox(height: 14),
+            AppField(
+                label: 'Details (classes, entry info)',
+                controller: _desc,
+                maxLines: 4),
+            const SizedBox(height: 14),
+            AppField(
+                label: 'Live status (e.g. Class 2 · halfway)',
+                controller: _status),
+            const SizedBox(height: 8),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
               activeThumbColor: AppColors.accent,
-              onChanged: (v) => setState(() => _on = v),
+              title: Text('Publish to riders', style: AppText.body(16)),
+              subtitle: Text(
+                  _published ? 'Visible in the Market now' : 'Hidden until on',
+                  style: AppText.body(13, color: AppColors.ink(0.5))),
+              value: _published,
+              onChanged: (v) => setState(() => _published = v),
             ),
-          ]),
+            const SizedBox(height: 16),
+            if (_saving)
+              const Center(child: CircularProgressIndicator())
+            else
+              AppButton(label: 'Save show', onPressed: _save),
+            const SizedBox(height: 8),
+          ],
         ),
-        const SizedBox(height: 18),
-        AppField(label: 'Show title', controller: _title),
-        const SizedBox(height: 14),
-        AppField(label: 'Venue', controller: _venue),
-        const SizedBox(height: 14),
-        AppField(label: 'When (e.g. Sat 30 Aug, from 8am)', controller: _when),
-        const SizedBox(height: 14),
-        AppField(
-            label: 'Live status (e.g. Class 2 · halfway)', controller: _status),
-        const SizedBox(height: 24),
-        AppButton(
-          label: _saving ? 'Saving…' : 'Save',
-          onPressed: _saving ? null : _save,
-        ),
-      ],
+      ),
     );
   }
 }

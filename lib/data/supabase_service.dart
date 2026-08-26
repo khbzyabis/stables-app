@@ -1228,6 +1228,31 @@ class SupabaseService {
         'p_vat': vat,
       });
 
+  // ---- Platform shows (operator-created events) ------------------------
+  /// Published shows for riders, soonest first.
+  static Future<List<Map<String, dynamic>>> publishedShows() => _db
+      .from('platform_shows')
+      .select()
+      .eq('published', true)
+      .order('starts_on', ascending: true, nullsFirst: false);
+
+  /// Every show, for the operator console.
+  static Future<List<Map<String, dynamic>>> adminShows() => _db
+      .from('platform_shows')
+      .select()
+      .order('starts_on', ascending: true, nullsFirst: false);
+
+  static Future<void> createShow(Map<String, dynamic> fields) =>
+      _db.from('platform_shows').insert(fields);
+
+  static Future<void> updateShow(String id, Map<String, dynamic> fields) => _db
+      .from('platform_shows')
+      .update({...fields, 'updated_at': DateTime.now().toIso8601String()})
+      .eq('id', id);
+
+  static Future<void> deletePlatformShow(String id) =>
+      _db.from('platform_shows').delete().eq('id', id);
+
   /// Operator turns the market Shows panel on/off and edits its details.
   /// Any null field is left unchanged.
   static Future<void> setShowsPanel({
