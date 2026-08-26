@@ -8,6 +8,7 @@ import '../auth/create_stable_screen.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
+import '../../widgets/app_button.dart';
 import '../../widgets/app_tag.dart';
 import '../../widgets/bottom_tab_bar.dart';
 import '../../widgets/hairline.dart';
@@ -44,7 +45,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  AppTab _tab = AppTab.horses;
+  AppTab _tab = AppTab.home;
 
   @override
   void initState() {
@@ -55,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String _titleFor(AppL10n l10n) => switch (_tab) {
+        AppTab.home => 'Home',
         AppTab.horses => l10n.titleMyHorses,
         AppTab.board => l10n.titleNoticeboard,
         AppTab.stable => l10n.titleTheStable,
@@ -95,13 +97,38 @@ class _HomeScreenState extends State<HomeScreen> {
                                   AppText.eyebrow(color: AppColors.accent700),
                             ),
                             const SizedBox(height: 10),
-                            Text(_titleFor(l10n),
-                                style: AppText.heading(40, height: 1)),
+                            Text(
+                                _tab == AppTab.home
+                                    ? 'Hello, ${SupabaseService.displayName.split(' ').first}'
+                                    : _titleFor(l10n),
+                                style: AppText.heading(
+                                    _tab == AppTab.home ? 34 : 40,
+                                    height: 1)),
+                            if (_tab == AppTab.home) ...[
+                              const SizedBox(height: 8),
+                              Text(
+                                  session.hasStable
+                                      ? 'Your yard, all in one place'
+                                      : 'Let\'s set up your stable',
+                                  style: AppText.body(14,
+                                      color: AppColors.ink(0.6))),
+                            ],
                           ],
                         ),
                       ),
-                      const SizedBox(height: 22),
-                      _Avatar(initial: initial),
+                      const SizedBox(width: 12),
+                      if (_tab == AppTab.home) ...[
+                        _HeaderCircle(
+                          icon: Icons.notifications_none_rounded,
+                          onTap: () => setState(() => _tab = AppTab.board),
+                        ),
+                        const SizedBox(width: 10),
+                      ],
+                      GestureDetector(
+                        onTap: () =>
+                            Navigator.of(context).pushNamed(ProfileScreen.route),
+                        child: _Avatar(initial: initial),
+                      ),
                     ],
                   ),
                 ),
@@ -111,6 +138,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: (session.activeStableId == null && session.hasPending)
                       ? _PendingPanel(session: session)
                       : switch (_tab) {
+                      AppTab.home => _HomeHubTab(
+                          hasStable:
+                              session.hasStable || session.hasPending,
+                          onGoTab: (t) => setState(() => _tab = t),
+                        ),
                       AppTab.horses => _HorsesTab(stableId: session.activeStableId),
                       AppTab.board => _BoardTab(stableId: session.activeStableId),
                       AppTab.stable => _StableTab(
@@ -929,6 +961,246 @@ class _ErrorState extends StatelessWidget {
               style: AppText.heading(17, color: AppColors.accent700)),
         ),
       ],
+    );
+  }
+}
+
+// ---- Home hub --------------------------------------------------------------
+const _warmWhite = Color(0xFFFFFDF8);
+
+class _HeaderCircle extends StatelessWidget {
+  const _HeaderCircle({required this.icon, required this.onTap});
+  final IconData icon;
+  final VoidCallback onTap;
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 46,
+        height: 46,
+        decoration: const BoxDecoration(color: _warmWhite, shape: BoxShape.circle),
+        alignment: Alignment.center,
+        child: Icon(icon, size: 22, color: AppColors.text),
+      ),
+    );
+  }
+}
+
+class _HomeHubTab extends StatelessWidget {
+  const _HomeHubTab({required this.hasStable, required this.onGoTab});
+  final bool hasStable;
+  final ValueChanged<AppTab> onGoTab;
+
+  @override
+  Widget build(BuildContext context) {
+    final nav = Navigator.of(context);
+    return ListView(
+      padding: const EdgeInsets.only(top: 22, bottom: 30),
+      children: [
+        if (!hasStable) ...[
+          _FirstRun(onSetUp: () => nav.pushNamed(CreateStableScreen.route)),
+          const SizedBox(height: 18),
+        ],
+        Row(children: [
+          Expanded(
+            child: _HubCard(
+              icon: Icons.pets_outlined,
+              tone: _Tone.terra,
+              title: 'My horses',
+              caption: 'Profiles & records',
+              onTap: () => onGoTab(AppTab.horses),
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: _HubCard(
+              icon: Icons.event_available_outlined,
+              tone: _Tone.sage,
+              title: 'Schedule',
+              caption: "Today's plan",
+              onTap: () => nav.pushNamed(ScheduleScreen.route),
+            ),
+          ),
+        ]),
+        const SizedBox(height: 14),
+        Row(children: [
+          Expanded(
+            child: _HubCard(
+              icon: Icons.task_alt,
+              tone: _Tone.sage,
+              title: 'Tasks',
+              caption: 'Who does what',
+              onTap: () => nav.pushNamed(GroomDayScreen.route),
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: _HubCard(
+              icon: Icons.storefront_outlined,
+              tone: _Tone.terra,
+              title: 'Market',
+              caption: 'Feed, tack & vets',
+              onTap: () => nav.pushNamed(MarketScreen.route),
+            ),
+          ),
+        ]),
+        const SizedBox(height: 16),
+        _HubRow(
+          icon: Icons.groups_outlined,
+          tone: _Tone.sage,
+          title: 'The stable',
+          sub: 'People, roles & settings',
+          onTap: () => onGoTab(AppTab.stable),
+        ),
+        const SizedBox(height: 12),
+        _HubRow(
+          icon: Icons.help_outline,
+          tone: _Tone.terra,
+          title: 'Help & support',
+          sub: 'Answers, or report a problem',
+          onTap: () => nav.pushNamed(HelpScreen.route),
+        ),
+      ],
+    );
+  }
+}
+
+enum _Tone { terra, sage }
+
+Color _toneBg(_Tone t) =>
+    t == _Tone.terra ? const Color(0xFFF3DDC9) : AppColors.accent2200;
+Color _toneFg(_Tone t) =>
+    t == _Tone.terra ? AppColors.accent700 : AppColors.accent2700;
+
+class _HubCard extends StatelessWidget {
+  const _HubCard(
+      {required this.icon,
+      required this.tone,
+      required this.title,
+      required this.caption,
+      required this.onTap});
+  final IconData icon;
+  final _Tone tone;
+  final String title;
+  final String caption;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: _warmWhite,
+      borderRadius: BorderRadius.circular(22),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(22),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
+          constraints: const BoxConstraints(minHeight: 150),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: AppColors.divider),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 54,
+                height: 54,
+                decoration: BoxDecoration(
+                    color: _toneBg(tone),
+                    borderRadius: BorderRadius.circular(16)),
+                child: Icon(icon, color: _toneFg(tone), size: 26),
+              ),
+              const Spacer(),
+              Text(title, style: AppText.heading(19, height: 1.15)),
+              const SizedBox(height: 4),
+              Text(caption,
+                  style: AppText.body(13, color: AppColors.ink(0.55))),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HubRow extends StatelessWidget {
+  const _HubRow(
+      {required this.icon,
+      required this.tone,
+      required this.title,
+      required this.sub,
+      required this.onTap});
+  final IconData icon;
+  final _Tone tone;
+  final String title;
+  final String sub;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: _warmWhite,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: AppColors.divider),
+          ),
+          child: Row(children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                  color: _toneBg(tone), borderRadius: BorderRadius.circular(12)),
+              child: Icon(icon, color: _toneFg(tone), size: 20),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: AppText.heading(16)),
+                  const SizedBox(height: 2),
+                  Text(sub, style: AppText.body(13, color: AppColors.ink(0.55))),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: AppColors.ink(0.4)),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+class _FirstRun extends StatelessWidget {
+  const _FirstRun({required this.onSetUp});
+  final VoidCallback onSetUp;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+          color: AppColors.accent2200, borderRadius: BorderRadius.circular(18)),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text('Start here', style: AppText.heading(19)),
+        const SizedBox(height: 6),
+        Text(
+            'Create your stable or join one with an invite code — then add your '
+            'horses and your team.',
+            style: AppText.body(14, height: 1.5, color: AppColors.ink(0.7))),
+        const SizedBox(height: 14),
+        AppButton(
+            label: 'Set up your stable',
+            block: false,
+            onPressed: onSetUp),
+      ]),
     );
   }
 }

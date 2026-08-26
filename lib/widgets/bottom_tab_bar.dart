@@ -4,12 +4,10 @@ import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'app_icons.dart';
 
-enum AppTab { horses, board, stable, you }
+enum AppTab { home, horses, board, stable, you }
 
-/// The four-tab bar: Horses (two horseshoes), Board (speech bubble),
-/// Stable (barn), You (person). A fifth "Shows" item appears only when the
-/// operator has enabled the Shows feature flag (not shown in this foundation).
-/// Active tint is accent-700; inactive is ink at 45%.
+/// The floating dark tab bar: a rounded pill with five tabs. The active tab is
+/// an oval terracotta capsule. Home leads; Horses, Board, Stable and You follow.
 class BottomTabBar extends StatelessWidget {
   const BottomTabBar({
     super.key,
@@ -25,40 +23,58 @@ class BottomTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(22, 0, 22, 24),
-      child: Row(
-        children: [
-          _item(AppTab.horses, 'Horses'),
-          _item(AppTab.board, 'Board'),
-          _item(AppTab.stable, 'Stable'),
-          _item(AppTab.you, 'You'),
-        ],
+      padding: const EdgeInsets.fromLTRB(14, 0, 14, 16),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.neutral900,
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: const [
+            BoxShadow(
+                color: Color(0x33140E06), blurRadius: 24, offset: Offset(0, 10)),
+          ],
+        ),
+        padding: const EdgeInsets.all(8),
+        child: Row(
+          children: [
+            _item(AppTab.home, 'Home'),
+            _item(AppTab.horses, 'Horses'),
+            _item(AppTab.board, 'Board'),
+            _item(AppTab.stable, 'Stable'),
+            _item(AppTab.you, 'You'),
+          ],
+        ),
       ),
     );
   }
 
   Widget _item(AppTab tab, String label) {
     final active = tab == current;
-    final color = active ? AppColors.accent700 : AppColors.ink(0.45);
+    final color = active ? Colors.white : const Color(0xFFA79F91);
     final Widget icon = switch (tab) {
-      AppTab.horses => AppTabIcon.horses(color: color),
-      AppTab.board => AppTabIcon.board(color: color),
-      AppTab.stable => AppTabIcon.stable(color: color),
-      AppTab.you => AppTabIcon.me(color: color),
+      AppTab.home => Icon(Icons.home_rounded, size: 23, color: color),
+      AppTab.horses => AppTabIcon.horses(color: color, size: 23),
+      AppTab.board => AppTabIcon.board(color: color, size: 23),
+      AppTab.stable => AppTabIcon.stable(color: color, size: 23),
+      AppTab.you => AppTabIcon.me(color: color, size: 23),
     };
     return Expanded(
-      child: InkWell(
+      child: GestureDetector(
         onTap: () => onChanged(tab),
-        borderRadius: BorderRadius.circular(22),
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 56),
-          padding: const EdgeInsets.symmetric(vertical: 12),
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: active ? AppColors.accent : Colors.transparent,
+            borderRadius: BorderRadius.circular(999),
+          ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               icon,
               if (showLabels) ...[
-                const SizedBox(height: 6),
+                const SizedBox(height: 5),
                 Text(label, style: AppText.body(11, color: color)),
               ],
             ],
