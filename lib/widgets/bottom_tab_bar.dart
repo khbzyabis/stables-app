@@ -23,17 +23,17 @@ class BottomTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(14, 0, 14, 16),
+      padding: const EdgeInsets.fromLTRB(18, 0, 18, 20),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.neutral900,
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(26),
           boxShadow: const [
             BoxShadow(
-                color: Color(0x33140E06), blurRadius: 24, offset: Offset(0, 10)),
+                color: Color(0x42140E06), blurRadius: 40, offset: Offset(0, 18)),
           ],
         ),
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(7),
         child: Row(
           children: [
             _item(AppTab.home, 'Home'),
@@ -49,33 +49,52 @@ class BottomTabBar extends StatelessWidget {
 
   Widget _item(AppTab tab, String label) {
     final active = tab == current;
-    final color = active ? Colors.white : const Color(0xFFA79F91);
+    final color = active ? Colors.white : const Color(0xFF948B7D);
     final Widget icon = switch (tab) {
-      AppTab.home => Icon(Icons.home_rounded, size: 23, color: color),
-      AppTab.horses => AppTabIcon.horses(color: color, size: 23),
-      AppTab.board => AppTabIcon.board(color: color, size: 23),
-      AppTab.stable => AppTabIcon.stable(color: color, size: 23),
-      AppTab.you => AppTabIcon.me(color: color, size: 23),
+      AppTab.home => Icon(Icons.home_rounded, size: 22, color: color),
+      AppTab.horses => AppTabIcon.horses(color: color, size: 22),
+      AppTab.board => AppTabIcon.board(color: color, size: 22),
+      AppTab.stable => AppTabIcon.stable(color: color, size: 22),
+      AppTab.you => AppTabIcon.me(color: color, size: 22),
     };
     return Expanded(
       child: GestureDetector(
         onTap: () => onChanged(tab),
         behavior: HitTestBehavior.opaque,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 220),
           curve: Curves.easeOut,
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          padding: const EdgeInsets.fromLTRB(0, 12, 0, 10),
           decoration: BoxDecoration(
-            color: active ? AppColors.accent : Colors.transparent,
-            borderRadius: BorderRadius.circular(999),
+            gradient: active
+                ? const LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Color(0xFFCF7A41), AppColors.accent])
+                : null,
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: active
+                ? const [
+                    BoxShadow(
+                        color: Color(0x738C491A),
+                        blurRadius: 14,
+                        offset: Offset(0, 6)),
+                  ]
+                : null,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              icon,
+              AnimatedSlide(
+                duration: const Duration(milliseconds: 220),
+                offset: active ? const Offset(0, -0.05) : Offset.zero,
+                child: icon,
+              ),
               if (showLabels) ...[
-                const SizedBox(height: 5),
-                Text(label, style: AppText.body(11, color: color)),
+                const SizedBox(height: 7),
+                Text(label,
+                    style:
+                        AppText.body(10, color: color, letterSpacing: 0.4)),
               ],
             ],
           ),
