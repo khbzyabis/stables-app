@@ -9,32 +9,33 @@
 --
 -- Accounts are kept separate: every user carries an account_type, stamped at
 -- sign-up from the portal they used. Sign-in checks the type against the door.
--- (One email = one account; someone who is both a rider and a seller uses two
--- emails — that is the "fully separate accounts" choice.)
+--
+-- NOTE: uses a dedicated table name (portal_accounts) to avoid colliding with
+-- any pre-existing "profiles" table in the project.
 -- ============================================================
 
--- ---------- Profiles: one row per user, carrying the account type ----------
-create table if not exists public.profiles (
+-- ---------- One row per user, carrying the account type ----------
+create table if not exists public.portal_accounts (
   user_id      uuid primary key references auth.users(id) on delete cascade,
   account_type text not null default 'rider'
                check (account_type in ('rider','seller','operator')),
   created_at   timestamptz not null default now()
 );
 
-alter table public.profiles enable row level security;
+alter table public.portal_accounts enable row level security;
 
-drop policy if exists profiles_select on public.profiles;
-create policy profiles_select on public.profiles
+drop policy if exists portal_accounts_select on public.portal_accounts;
+create policy portal_accounts_select on public.portal_accounts
   for select using (user_id = auth.uid() or public.is_app_admin());
 
 -- The type is set by the sign-up trigger / operator, not the client.
-drop policy if exists profiles_update_admin on public.profiles;
-create policy profiles_update_admin on public.profiles
+drop policy if exists portal_accounts_update_admin on public.portal_accounts;
+create policy portal_accounts_update_admin on public.portal_accounts
   for update using (public.is_app_admin()) with check (public.is_app_admin());
 
--- ---------- New sign-ups get a profile, typed from their portal ----------
+-- ---------- New sign-ups get a row, typed from their portal ----------
 -- The client passes account_type in the sign-up metadata; we read it here so
--- the value is written server-side on the row (not left only in user_metadata).
+-- the value is written server-side (not left only in user_metadata).
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -46,7 +47,7 @@ declare
 begin
   t := coalesce(nullif(new.raw_user_meta_data->>'account_type', ''), 'rider');
   if t not in ('rider','seller','operator') then t := 'rider'; end if;
-  insert into public.profiles (user_id, account_type)
+  insert into public.portal_accounts (user_id, account_type)
   values (new.id, t)
   on conflict (user_id) do nothing;
   return new;
@@ -59,9 +60,9 @@ create trigger trg_handle_new_user
   for each row execute function public.handle_new_user();
 
 -- ---------- Backfill existing users ----------
--- Everyone gets a profile. Priority: app admins -> operator; anyone who owns a
+-- Everyone gets a row. Priority: app admins -> operator; anyone who owns a
 -- vendor -> seller; everyone else -> rider.
-insert into public.profiles (user_id, account_type)
+insert into public.portal_accounts (user_id, account_type)
 select u.id,
        case
          when exists (select 1 from public.app_admins a where a.user_id = u.id)
@@ -81,7 +82,7 @@ security definer
 set search_path = public
 as $$
   select coalesce(
-    (select account_type from public.profiles where user_id = auth.uid()),
+    (select account_type from public.portal_accounts where user_id = auth.uid()),
     'rider');
 $$;
 
