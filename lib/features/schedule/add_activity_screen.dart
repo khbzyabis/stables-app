@@ -78,7 +78,9 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
         who: _horse,
         note: _note.text.trim(),
       );
-      navigator.pop();
+      // Return the chosen day so the schedule can jump to it — otherwise a
+      // future-dated activity would look like "nothing happened".
+      navigator.pop(_date);
     } catch (e) {
       AppErrors.report(e);
       if (mounted) setState(() => _busy = false);

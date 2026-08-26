@@ -57,6 +57,29 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         child: FutureBuilder<List<Map<String, dynamic>>>(
           future: _future,
           builder: (context, snap) {
+            if (snap.hasError) {
+              return SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const BackLink(label: 'Stable'),
+                      const SizedBox(height: 20),
+                      Text("Couldn't load the schedule",
+                          style: AppText.heading(24)),
+                      const SizedBox(height: 10),
+                      Text('${snap.error}',
+                          style:
+                              AppText.body(14, color: AppColors.ink(0.6))),
+                      const SizedBox(height: 20),
+                      AppButton(label: 'Try again', onPressed: _reload),
+                    ],
+                  ),
+                ),
+              );
+            }
             final all = snap.data ?? const [];
             // Count per day for the strip dots, and the selected day's agenda.
             final loadByIso = <String, int>{};
@@ -150,8 +173,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     minHeight: 56,
                     fontSize: 17,
                     onPressed: () async {
-                      await Navigator.of(context)
+                      final added = await Navigator.of(context)
                           .pushNamed(AddActivityScreen.route);
+                      if (added is DateTime) {
+                        setState(() => _selected = _dateOnly(added));
+                      }
                       _reload();
                     },
                   ),

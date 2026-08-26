@@ -3,7 +3,6 @@ import '../../data/errors.dart';
 
 import '../../data/session.dart';
 import '../../data/supabase_service.dart';
-import '../../data/tasks_data.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
@@ -27,6 +26,33 @@ class _AssignTaskScreenState extends State<AssignTaskScreen> {
   final _note = TextEditingController();
   String? _who;
   bool _busy = false;
+  late final Future<List<String>> _peopleFuture = _loadPeople();
+
+  Future<List<String>> _loadPeople() async {
+    final id = SessionScope.of(context).activeStableId;
+    if (id == null) return const [];
+    try {
+      final members = await SupabaseService.members(id);
+      // Show a friendly label per real member (name, else email, else role).
+      final names = <String>[];
+      for (final m in members) {
+        final name = (m['name'] as String?)?.trim();
+        final email = (m['email'] as String?)?.trim();
+        final label = (name != null && name.isNotEmpty)
+            ? name
+            : (email != null && email.isNotEmpty)
+                ? email
+                : (m['role'] as String?) ?? 'Member';
+        if (label.isNotEmpty && !names.contains(label)) names.add(label);
+      }
+      if (names.isNotEmpty) return names;
+    } catch (_) {
+      // Fall through to the single-user fallback below.
+    }
+    // At minimum, you can assign a task to yourself.
+    final me = SupabaseService.displayName.trim();
+    return me.isEmpty ? const [] : [me];
+  }
 
   @override
   void dispose() {
@@ -90,10 +116,26 @@ class _AssignTaskScreenState extends State<AssignTaskScreen> {
             const SizedBox(height: 30),
             Text(l10n.who.toUpperCase(), style: AppText.eyebrow()),
             const SizedBox(height: 12),
-            _Chips(
-              labels: TasksData.assignees,
-              selected: _who,
-              onPick: (v) => setState(() => _who = v),
+            FutureBuilder<List<String>>(
+              future: _peopleFuture,
+              builder: (context, snap) {
+                final people = snap.data ?? const [];
+                if (snap.connectionState == ConnectionState.waiting) {
+                  return Text('Loading your team…',
+                      style: AppText.body(14, color: AppColors.ink(0.5)));
+                }
+                if (people.isEmpty) {
+                  return Text(
+                      'No one to assign yet. Invite people to your stable under '
+                      'The stable → People, then they\'ll appear here.',
+                      style: AppText.body(14, color: AppColors.ink(0.5)));
+                }
+                return _Chips(
+                  labels: people,
+                  selected: _who,
+                  onPick: (v) => setState(() => _who = v),
+                );
+              },
             ),
             const SizedBox(height: 30),
             AppField(
