@@ -17,16 +17,58 @@ import 'item_screen.dart';
 /// Screen 48 — Market (Shop). Browse real products by category, across every
 /// approved vendor. Sellers list products from the provider dashboard.
 class MarketScreen extends StatefulWidget {
-  const MarketScreen({super.key});
+  const MarketScreen({super.key, this.initialCategory});
   static const route = '/market';
+
+  /// When opened from the market home, start on this category (e.g. 'Feed',
+  /// 'Services'). Falls back to a route String argument, then 'Feed'.
+  final String? initialCategory;
 
   @override
   State<MarketScreen> createState() => _MarketScreenState();
 }
 
+/// Shared quote-request sheet, reused by the market home's service list.
+Future<void> showMarketQuoteSheet(
+    BuildContext context, Map<String, dynamic> vendor, String? stableId) async {
+  final ok = await showModalBottomSheet<bool>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: AppColors.bg,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+    ),
+    builder: (_) => _RequestQuoteSheet(vendor: vendor, stableId: stableId),
+  );
+  if (ok == true && context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Request sent. Check My quotes for the reply.'),
+      ),
+    );
+  }
+}
+
 class _MarketScreenState extends State<MarketScreen> {
-  String _cat = 'Feed';
+  late String _cat = widget.initialCategory ?? 'Feed';
   late Future<List<Map<String, dynamic>>> _future = _load();
+  bool _readArg = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Allow passing the initial category as a route argument too.
+    if (!_readArg && widget.initialCategory == null) {
+      _readArg = true;
+      final arg = ModalRoute.of(context)?.settings.arguments;
+      if (arg is String && arg.isNotEmpty && arg != _cat) {
+        setState(() {
+          _cat = arg;
+          _future = _load();
+        });
+      }
+    }
+  }
 
   bool get _isServices => _cat == 'Services';
 
@@ -41,25 +83,8 @@ class _MarketScreenState extends State<MarketScreen> {
     });
   }
 
-  Future<void> _requestQuote(Map<String, dynamic> vendor) async {
-    final stableId = SessionScope.of(context).activeStableId;
-    final ok = await showModalBottomSheet<bool>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppColors.bg,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
-      ),
-      builder: (_) => _RequestQuoteSheet(vendor: vendor, stableId: stableId),
-    );
-    if (ok == true && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Request sent. Check My quotes for the reply.'),
-        ),
-      );
-    }
-  }
+  Future<void> _requestQuote(Map<String, dynamic> vendor) => showMarketQuoteSheet(
+      context, vendor, SessionScope.of(context).activeStableId);
 
   @override
   Widget build(BuildContext context) {

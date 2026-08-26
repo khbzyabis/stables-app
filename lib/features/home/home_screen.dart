@@ -26,6 +26,7 @@ import '../settings/profile_screen.dart';
 import '../settings/stable_settings_screen.dart';
 import '../shows/shows_screen.dart';
 import '../market/market_screen.dart';
+import '../market/market_home_screen.dart';
 import '../market/payments_screen.dart';
 import '../market/my_quotes_screen.dart';
 import '../people/approvals_screen.dart';
@@ -171,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               role: session.activeStable?['role'] as String?,
                               city: session.activeStable?['city'] as String?,
                             ),
-                            AppTab.market => const MarketScreen(),
+                            AppTab.market => const MarketHomeScreen(),
                             AppTab.you => const _YouTab(),
                           },
                   ),

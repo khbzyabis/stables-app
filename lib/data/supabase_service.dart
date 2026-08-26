@@ -1228,6 +1228,13 @@ class SupabaseService {
       .eq('approved', true)
       .order('name');
 
+  /// Every approved vendor, for the market home (shops + service providers).
+  static Future<List<Map<String, dynamic>>> approvedVendors() => _db
+      .from('vendors')
+      .select()
+      .eq('approved', true)
+      .order('name');
+
   /// A stable asks a specific provider for a price.
   static Future<Map<String, dynamic>> requestQuote({
     required String kind, // 'service' | 'transport'
