@@ -553,15 +553,13 @@ class _BoardTabState extends State<_BoardTab> {
               ),
             for (final n in notices) ...[
               _Notice(
-                meta: [
-                  if (n['pinned'] == true) 'Pinned',
-                  (n['author_name'] as String?) ?? 'Someone',
-                ].join(' · '),
-                metaColor: n['pinned'] == true ? AppColors.accent700 : null,
+                author: (n['author_name'] as String?) ?? 'Someone',
+                when: _relativeTime(n['created_at'] as String?),
+                pinned: n['pinned'] == true,
                 title: n['title'] as String?,
                 body: (n['body'] as String?) ?? '',
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
             ],
             const SizedBox(height: 16),
             Align(
@@ -584,40 +582,107 @@ class _BoardTabState extends State<_BoardTab> {
 
 class _Notice extends StatelessWidget {
   const _Notice({
-    required this.meta,
+    required this.author,
+    required this.when,
+    required this.pinned,
     this.title,
     required this.body,
-    this.metaColor,
   });
-  final String meta;
+  final String author;
+  final String when;
+  final bool pinned;
   final String? title;
   final String body;
-  final Color? metaColor;
+
+  String get _initials {
+    final parts =
+        author.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    if (parts.isEmpty) return '?';
+    if (parts.length == 1) return parts.first.characters.first.toUpperCase();
+    return (parts.first.characters.first + parts.last.characters.first)
+        .toUpperCase();
+  }
 
   @override
   Widget build(BuildContext context) {
     return AppCard(
-      padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
+      padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            meta,
-            style: AppText.body(13, color: metaColor ?? AppColors.ink(0.5)),
+          Row(
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: pinned
+                        ? const Color(0xFFF3DDC9)
+                        : AppColors.accent2200,
+                    shape: BoxShape.circle),
+                child: Text(_initials,
+                    style: AppText.heading(15,
+                        color: pinned
+                            ? AppColors.accent700
+                            : AppColors.accent2700)),
+              ),
+              const SizedBox(width: 11),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(author, style: AppText.heading(15, height: 1.1)),
+                    const SizedBox(height: 2),
+                    Text(when,
+                        style: AppText.body(12.5, color: AppColors.ink(0.5))),
+                  ],
+                ),
+              ),
+              if (pinned)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                      color: const Color(0xFFF3DDC9),
+                      borderRadius: BorderRadius.circular(999)),
+                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                    Icon(Icons.push_pin, size: 12, color: AppColors.accent700),
+                    const SizedBox(width: 5),
+                    Text('Pinned',
+                        style: AppText.body(11, color: AppColors.accent700)),
+                  ]),
+                ),
+            ],
           ),
-          const SizedBox(height: 7),
           if (title != null) ...[
-            Text(title!, style: AppText.heading(23, height: 1.2)),
-            const SizedBox(height: 6),
+            const SizedBox(height: 14),
+            Text(title!, style: AppText.heading(19, height: 1.2)),
           ],
+          const SizedBox(height: 7),
           Text(
             body,
-            style: AppText.body(16, height: 1.5, color: AppColors.ink(0.85)),
+            style: AppText.body(15, height: 1.55, color: AppColors.ink(0.85)),
           ),
         ],
       ),
     );
   }
+}
+
+/// A short relative time for notices: "2h ago", "Yesterday", "Mon 26 Aug".
+String _relativeTime(String? iso) {
+  if (iso == null) return '';
+  final dt = DateTime.tryParse(iso)?.toLocal();
+  if (dt == null) return '';
+  final now = DateTime.now();
+  final diff = now.difference(dt);
+  if (diff.inMinutes < 1) return 'Just now';
+  if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+  if (diff.inHours < 24) return '${diff.inHours}h ago';
+  if (diff.inDays == 1) return 'Yesterday';
+  if (diff.inDays < 7) return DateFormat('EEEE').format(dt); // weekday
+  return DateFormat('d MMM').format(dt);
 }
 
 /// The Stable tab — a live overview strip (real counts) above the stable-wide
