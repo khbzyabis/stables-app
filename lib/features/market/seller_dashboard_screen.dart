@@ -296,46 +296,200 @@ class _Money2 extends StatelessWidget {
   }
 }
 
-// ---- Overview --------------------------------------------------------------
-class _Overview extends StatelessWidget {
+// ---- Overview (analytics) --------------------------------------------------
+class _Overview extends StatefulWidget {
   const _Overview({required this.vendor});
   final Map<String, dynamic> vendor;
   @override
+  State<_Overview> createState() => _OverviewState();
+}
+
+class _OverviewState extends State<_Overview> {
+  String get _vid => widget.vendor['id'] as String? ?? '';
+  late final Future<List<Map<String, dynamic>>> _orders =
+      SupabaseService.vendorOrders(_vid);
+  late final Future<List<Map<String, dynamic>>> _products =
+      SupabaseService.vendorProducts(_vid);
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppL10n.of(context);
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(28, 8, 28, 40),
-      children: [
-        Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(16)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(l10n.sdHowMoney, style: AppText.heading(20)),
-              const SizedBox(height: 10),
-              for (final s in [
-                l10n.sdBullet1,
-                l10n.sdBullet2,
-                l10n.sdBullet3,
-                l10n.sdBullet4,
-              ])
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text('•  ', style: AppText.body(16, color: AppColors.accent700)),
-                    Expanded(child: Text(s, style: AppText.body(15, height: 1.5))),
+    final approved = widget.vendor['approved'] as bool? ?? false;
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: _orders,
+      builder: (context, oSnap) {
+        return FutureBuilder<List<Map<String, dynamic>>>(
+          future: _products,
+          builder: (context, pSnap) {
+            final orders = oSnap.data ?? const [];
+            final products = pSnap.data ?? const [];
+            final loading = oSnap.connectionState == ConnectionState.waiting ||
+                pSnap.connectionState == ConnectionState.waiting;
+
+            // Figures
+            final now = DateTime.now();
+            final from30 = now.subtract(const Duration(days: 30));
+            double sales30 = 0, payable = 0, held = 0, allTime = 0;
+            int orders30 = 0;
+            final byMonth = <String, double>{};
+            for (final o in orders) {
+              if (o['status'] == 'cancelled') continue;
+              final net = SupabaseService.orderNet(o);
+              final st = SupabaseService.orderMoneyState(o);
+              if (st == 'payable') payable += net;
+              if (st == 'held' || st == 'disputed') held += net;
+              allTime += net;
+              final created =
+                  DateTime.tryParse((o['created_at'] as String?) ?? '');
+              if (created != null) {
+                if (created.isAfter(from30)) {
+                  sales30 += net;
+                  orders30 += 1;
+                }
+                final key =
+                    '${created.year}-${created.month.toString().padLeft(2, '0')}';
+                byMonth[key] = (byMonth[key] ?? 0) + net;
+              }
+            }
+            final liveListings =
+                products.where((p) => (p['in_stock'] as bool?) ?? true).length;
+            final lowStock = products.where((p) {
+              final q = p['stock_qty'] as int?;
+              return q != null && q <= 3;
+            }).length;
+
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(28, 8, 28, 40),
+              children: [
+                if (!approved) _pendingBanner(l10n),
+                if (!approved) const SizedBox(height: 16),
+                if (loading)
+                  const Padding(
+                      padding: EdgeInsets.only(top: 40),
+                      child: Center(child: CircularProgressIndicator()))
+                else ...[
+                  Wrap(spacing: 12, runSpacing: 12, children: [
+                    _kpi('Sales · 30 days', 'AED ${sales30.toStringAsFixed(0)}'),
+                    _kpi('Orders · 30 days', '$orders30'),
+                    _kpi('Payable now', 'AED ${payable.toStringAsFixed(0)}',
+                        bg: AppColors.accent2200),
+                    _kpi('Held', 'AED ${held.toStringAsFixed(0)}'),
+                    _kpi('Live listings', '$liveListings'),
+                    _kpi('All-time earned', 'AED ${allTime.toStringAsFixed(0)}'),
                   ]),
-                ),
-            ],
+                  if (lowStock > 0) ...[
+                    const SizedBox(height: 14),
+                    _note('$lowStock ${lowStock == 1 ? 'product is' : 'products are'} '
+                        'low on stock — top them up in Listings.',
+                        AppColors.accent700),
+                  ],
+                  const SizedBox(height: 22),
+                  Text('SALES BY MONTH', style: AppText.eyebrow()),
+                  const SizedBox(height: 12),
+                  _MiniBars(byMonth: byMonth),
+                  const SizedBox(height: 24),
+                  _card(Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(l10n.sdHowMoney, style: AppText.heading(18)),
+                        const SizedBox(height: 8),
+                        Text('${l10n.sdBullet2} ${l10n.sdBullet4}',
+                            style: AppText.body(14,
+                                height: 1.5, color: AppColors.ink(0.65))),
+                      ])),
+                ],
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _pendingBanner(AppL10n l10n) => Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+            color: AppColors.accent2200,
+            borderRadius: BorderRadius.circular(14)),
+        child: Row(children: [
+          Icon(Icons.hourglass_top_rounded, color: AppColors.accent2800),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('In review — not live yet',
+                  style: AppText.heading(16)),
+              const SizedBox(height: 3),
+              Text('Buyers can\'t see your shop until an operator approves it. '
+                  'You can set up your listings and prices while you wait.',
+                  style: AppText.body(13, height: 1.4, color: AppColors.ink(0.7))),
+            ]),
           ),
-        ),
-        const SizedBox(height: 14),
-        Text(l10n.sdOverviewFootnote,
-            style: AppText.body(13, color: AppColors.ink(0.5))),
-      ],
+        ]),
+      );
+
+  Widget _kpi(String label, String value, {Color? bg}) => Container(
+        width: 168,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+            color: bg ?? AppColors.surface,
+            borderRadius: BorderRadius.circular(14)),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(value, style: AppText.heading(24, height: 1)),
+          const SizedBox(height: 5),
+          Text(label, style: AppText.body(12, color: AppColors.ink(0.6))),
+        ]),
+      );
+
+  Widget _note(String s, Color c) =>
+      Text(s, style: AppText.body(13, height: 1.4, color: c));
+}
+
+/// A tiny dependency-free bar chart of the last six months of net sales.
+class _MiniBars extends StatelessWidget {
+  const _MiniBars({required this.byMonth});
+  final Map<String, double> byMonth;
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final months = <(String, double)>[];
+    for (var i = 5; i >= 0; i--) {
+      final d = DateTime(now.year, now.month - i, 1);
+      final key = '${d.year}-${d.month.toString().padLeft(2, '0')}';
+      const names = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ];
+      months.add((names[d.month - 1], byMonth[key] ?? 0));
+    }
+    final max = months.fold<double>(1, (m, e) => e.$2 > m ? e.$2 : m);
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+      decoration: BoxDecoration(
+          color: AppColors.surface, borderRadius: BorderRadius.circular(16)),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          for (final m in months)
+            Expanded(
+              child: Column(children: [
+                Text(m.$2 >= 1 ? m.$2.toStringAsFixed(0) : '',
+                    style: AppText.body(10, color: AppColors.ink(0.5))),
+                const SizedBox(height: 4),
+                Container(
+                  height: 90 * (m.$2 / max).clamp(0.02, 1.0),
+                  margin: const EdgeInsets.symmetric(horizontal: 6),
+                  decoration: BoxDecoration(
+                    color: m.$2 > 0 ? AppColors.accent : AppColors.neutral200,
+                    borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(6)),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(m.$1, style: AppText.body(11, color: AppColors.ink(0.55))),
+              ]),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -554,6 +708,49 @@ class _ListingsState extends State<_Listings> {
     if (ok == true) _reload();
   }
 
+  Widget _stockLabel(int? qty) {
+    if (qty == null) {
+      return Text('Stock: not tracked · tap to set',
+          style: AppText.body(12, color: AppColors.accent700));
+    }
+    final low = qty <= 3;
+    return Text('Stock: $qty${low ? ' · low' : ''} · tap to change',
+        style: AppText.body(12,
+            color: low ? AppColors.accent700 : AppColors.ink(0.5)));
+  }
+
+  Future<void> _editStock(Map<String, dynamic> p) async {
+    final ctrl = TextEditingController(
+        text: (p['stock_qty'] as int?)?.toString() ?? '');
+    final result = await showDialog<String?>(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: AppColors.bg,
+        title: Text('Stock on hand', style: AppText.heading(20)),
+        content: AppField(
+            label: 'Quantity (leave empty for untracked)',
+            controller: ctrl,
+            keyboardType: TextInputType.number),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context, null),
+              child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, ctrl.text.trim()),
+              child: const Text('Save')),
+        ],
+      ),
+    );
+    if (result == null) return;
+    try {
+      await SupabaseService.setProductStockQty(
+          p['id'] as String, result.isEmpty ? null : int.tryParse(result));
+      _reload();
+    } catch (e) {
+      AppErrors.report(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Map<String, dynamic>>>(
@@ -586,6 +783,11 @@ class _ListingsState extends State<_Listings> {
                         Text(
                             'AED ${((p['price_aed'] as num?)?.toDouble() ?? 0).toStringAsFixed(0)} · ${l10n.sdYouReceive} AED ${(((p['price_aed'] as num?)?.toDouble() ?? 0) * (1 - _rate / 100)).toStringAsFixed(0)} (${l10n.sdAfterPct(_rate.toStringAsFixed(0))})',
                             style: AppText.body(13, color: AppColors.ink(0.55))),
+                        const SizedBox(height: 4),
+                        GestureDetector(
+                          onTap: () => _editStock(p),
+                          child: _stockLabel(p['stock_qty'] as int?),
+                        ),
                       ]),
                 ),
                 Switch(
@@ -920,6 +1122,7 @@ class _NewProductSheetState extends State<_NewProductSheet> {
   final _name = TextEditingController();
   final _price = TextEditingController();
   final _unit = TextEditingController();
+  final _stock = TextEditingController();
   String _category = 'Feed';
   String? _imageUrl;
   bool _imgBusy = false;
@@ -930,6 +1133,7 @@ class _NewProductSheetState extends State<_NewProductSheet> {
     _name.dispose();
     _price.dispose();
     _unit.dispose();
+    _stock.dispose();
     super.dispose();
   }
 
@@ -966,6 +1170,7 @@ class _NewProductSheetState extends State<_NewProductSheet> {
         category: _category,
         unit: _unit.text.trim(),
         imageUrl: _imageUrl,
+        stockQty: int.tryParse(_stock.text.trim()),
       );
       if (mounted) Navigator.of(context).pop(true);
     } catch (e) {
@@ -1013,6 +1218,12 @@ class _NewProductSheetState extends State<_NewProductSheet> {
                     keyboardType: TextInputType.number)),
             const SizedBox(width: 12),
             Expanded(child: AppField(label: l10n.sdUnit, controller: _unit)),
+            const SizedBox(width: 12),
+            Expanded(
+                child: AppField(
+                    label: 'Stock',
+                    controller: _stock,
+                    keyboardType: TextInputType.number)),
           ]),
           const SizedBox(height: 14),
           Wrap(spacing: 8, runSpacing: 8, children: [

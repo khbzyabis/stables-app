@@ -860,6 +860,7 @@ class SupabaseService {
     String? unit,
     String? description,
     String? imageUrl,
+    int? stockQty,
   }) =>
       _db.from('products').insert({
         'vendor_id': vendorId,
@@ -869,11 +870,19 @@ class SupabaseService {
         'unit': ?unit,
         'description': ?description,
         'image_url': ?imageUrl,
+        'stock_qty': ?stockQty,
       }).select().single();
 
   static Future<void> setProductStock(String productId, bool inStock) => _db
       .from('products')
       .update({'in_stock': inStock})
+      .eq('id', productId);
+
+  /// Set the inventory count (null clears tracking). Also flips in_stock to
+  /// match zero / non-zero so buyers see it consistently.
+  static Future<void> setProductStockQty(String productId, int? qty) => _db
+      .from('products')
+      .update({'stock_qty': qty, if (qty != null) 'in_stock': qty > 0})
       .eq('id', productId);
 
   static Future<void> deleteProduct(String productId) =>

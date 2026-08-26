@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../data/errors.dart';
 
 import '../../data/portal.dart';
@@ -166,10 +168,43 @@ class _SignInScreenState extends State<SignInScreen> {
                   Navigator.of(context).pushNamed(CreateStableScreen.route),
             ),
           ],
+          // Cross-door signpost (web only) so people don't need to know /sell.
+          if (kIsWeb && portal == AppPortal.app) ...[
+            const SizedBox(height: 30),
+            const _Hair(),
+            const SizedBox(height: 20),
+            _LinkText(
+              'Own a shop or offer a service? Sell on My Stables →',
+              onTap: () => _goto('/sell'),
+            ),
+          ],
+          if (kIsWeb && portal == AppPortal.seller) ...[
+            const SizedBox(height: 30),
+            const _Hair(),
+            const SizedBox(height: 20),
+            _LinkText(
+              '← Not a seller? Open the rider app',
+              muted: true,
+              onTap: () => _goto('/'),
+            ),
+          ],
         ],
       ),
     );
   }
+
+  void _goto(String path) {
+    // Same-tab navigation to another front door; reloads at the new URL so the
+    // portal is re-detected at boot.
+    launchUrl(Uri.parse(path), webOnlyWindowName: '_self');
+  }
+}
+
+class _Hair extends StatelessWidget {
+  const _Hair();
+  @override
+  Widget build(BuildContext context) =>
+      Container(height: 1, color: AppColors.divider);
 }
 
 class _RevealButton extends StatelessWidget {

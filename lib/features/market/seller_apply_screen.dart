@@ -10,7 +10,7 @@ import '../../widgets/app_button.dart';
 import '../../widgets/app_field.dart';
 import '../../widgets/hairline.dart';
 import '../auth/back_link.dart';
-import 'provider_vendor_screen.dart';
+import 'seller_dashboard_screen.dart';
 
 /// Apply to sell (P0a–P0c). Pick trades, upload the papers each needs, accept
 /// the seller agreement. Submitting creates a pending shop the operator reviews.
@@ -317,7 +317,7 @@ class _SellerApplyScreenState extends State<SellerApplyScreen> {
           onPressed: () {
             if (_createdVendor != null) {
               Navigator.of(context).pushReplacementNamed(
-                  ProviderVendorScreen.route,
+                  SellerDashboardScreen.route,
                   arguments: _createdVendor);
             } else {
               Navigator.of(context).maybePop();
