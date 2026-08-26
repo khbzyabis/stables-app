@@ -383,6 +383,12 @@ class _ShopCard extends StatelessWidget {
                     end: Alignment.bottomRight,
                     colors: [Color(0xFFE7C9A9), Color(0xFFD69A68)]),
               ),
+              child: (vendor['image_url'] as String?)?.isNotEmpty == true
+                  ? Image.network(vendor['image_url'] as String,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      errorBuilder: (_, _, _) => const SizedBox())
+                  : null,
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(13, 11, 13, 14),

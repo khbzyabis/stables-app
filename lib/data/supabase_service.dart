@@ -1248,6 +1248,10 @@ class SupabaseService {
       .eq('approved', true)
       .order('name');
 
+  /// Set a shop's cover/logo image URL (already uploaded to the photos bucket).
+  static Future<void> setVendorImage(String vendorId, String url) =>
+      _db.from('vendors').update({'image_url': url}).eq('id', vendorId);
+
   /// Every approved vendor, for the market home (shops + service providers).
   static Future<List<Map<String, dynamic>>> approvedVendors() => _db
       .from('vendors')

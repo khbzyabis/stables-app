@@ -10,6 +10,7 @@ import '../../widgets/app_button.dart';
 import '../../widgets/app_field.dart';
 import '../../widgets/app_tag.dart';
 import '../../widgets/photo_placeholder.dart';
+import '../../widgets/photo_picker.dart';
 import '../provider_app/provider_app_screen.dart';
 
 /// Seller Dashboard — an approved seller's desktop workspace. Sidebar splits
@@ -1062,6 +1063,8 @@ class _Account extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(28, 8, 28, 40),
       children: [
+        _ShopPhotoCard(vendor: vendor),
+        const SizedBox(height: 14),
         _card(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text((vendor['name'] as String?) ?? l10n.sdYourShop,
               style: AppText.heading(20)),
@@ -1105,6 +1108,73 @@ class _Account extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+/// The shop's cover/logo — shown to buyers on the storefront and market home.
+class _ShopPhotoCard extends StatefulWidget {
+  const _ShopPhotoCard({required this.vendor});
+  final Map<String, dynamic> vendor;
+  @override
+  State<_ShopPhotoCard> createState() => _ShopPhotoCardState();
+}
+
+class _ShopPhotoCardState extends State<_ShopPhotoCard> {
+  late String? _url = widget.vendor['image_url'] as String?;
+  bool _busy = false;
+
+  Future<void> _pick() async {
+    final id = widget.vendor['id'] as String?;
+    if (id == null) return;
+    setState(() => _busy = true);
+    final url = await pickAndUploadPhoto(context, 'shops');
+    if (url != null) {
+      try {
+        await SupabaseService.setVendorImage(id, url);
+        widget.vendor['image_url'] = url; // keep the in-memory shop in sync
+        if (mounted) setState(() => _url = url);
+      } catch (e) {
+        AppErrors.report(e);
+        if (mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text("Couldn't save: $e")));
+        }
+      }
+    }
+    if (mounted) setState(() => _busy = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _card(Row(children: [
+      _busy
+          ? const SizedBox(
+              width: 72,
+              height: 72,
+              child: Center(child: CircularProgressIndicator(strokeWidth: 2.4)))
+          : PhotoField(
+              url: _url,
+              onPick: _pick,
+              size: 72,
+              circle: false,
+              label: 'Add',
+            ),
+      const SizedBox(width: 16),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Shop photo', style: AppText.heading(18)),
+            const SizedBox(height: 5),
+            Text(
+                'Buyers see this on your shop page and in the market. A clear '
+                'logo or storefront works best.',
+                style:
+                    AppText.body(13.5, height: 1.45, color: AppColors.ink(0.6))),
+          ],
+        ),
+      ),
+    ]));
   }
 }
 

@@ -82,15 +82,23 @@ class _ShopScreenState extends State<ShopScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 14, 20, 40),
                 children: [
                   // Cover
-                  Container(
-                    height: 120,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24),
-                      gradient: const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [Color(0xFFE7C9A9), Color(0xFFD69A68)],
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(24),
+                    child: Container(
+                      height: 120,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [Color(0xFFE7C9A9), Color(0xFFD69A68)],
+                        ),
                       ),
+                      child: (v['image_url'] as String?)?.isNotEmpty == true
+                          ? Image.network(v['image_url'] as String,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              errorBuilder: (_, _, _) => const SizedBox())
+                          : null,
                     ),
                   ),
                   const SizedBox(height: 16),
