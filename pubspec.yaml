@@ -54,6 +54,38 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  # App-store readiness: generate launcher icons and the native splash screen
+  # from the brand assets in assets/branding/. Run after `flutter pub get`:
+  #   dart run flutter_launcher_icons
+  #   dart run flutter_native_splash:create
+  flutter_launcher_icons: ^0.14.1
+  flutter_native_splash: ^2.4.1
+
+# Launcher icon: terracotta full-bleed for iOS/web, adaptive (cream monogram on
+# terracotta) for Android. Swap the PNGs in assets/branding/ for a real logo and
+# re-run the generator to rebrand.
+flutter_launcher_icons:
+  image_path: "assets/branding/icon_1024.png"
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  web:
+    generate: true
+    background_color: "#c67139"
+    theme_color: "#c67139"
+  adaptive_icon_background: "#c67139"
+  adaptive_icon_foreground: "assets/branding/icon_foreground.png"
+
+# Native splash: cream background with the terracotta monogram, matching the
+# in-app splash screen.
+flutter_native_splash:
+  color: "#f5ead8"
+  image: assets/branding/splash_logo.png
+  android_12:
+    color: "#f5ead8"
+    image: assets/branding/splash_logo.png
+  ios: true
+  web: false
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
