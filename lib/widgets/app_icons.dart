@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/widgets.dart';
 
 /// The two custom marks from the design (two horseshoes for Horses, a barn for
@@ -46,10 +48,18 @@ class _IconPainter extends CustomPainter {
 
     switch (kind) {
       case _Kind.horses:
-        paint.strokeWidth = 2.2 * s;
-        // Two rounded "U" horseshoe shapes, side by side.
-        canvas.drawPath(_roundedU(13.5, 7.2, 7.2, 5.4, s), paint);
-        canvas.drawPath(_roundedU(3.3, 13.6, 7.2, 5.4, s), paint);
+        paint.strokeWidth = 2.4 * s;
+        // A single horseshoe: an arch over the top with two short feet, open at
+        // the bottom — reads clearly as a horseshoe (not two bumps).
+        canvas.drawArc(
+          Rect.fromCircle(center: Offset(12 * s, 15 * s), radius: 7 * s),
+          math.pi,
+          math.pi,
+          false,
+          paint,
+        );
+        canvas.drawLine(Offset(5 * s, 15 * s), Offset(5 * s, 20 * s), paint);
+        canvas.drawLine(Offset(19 * s, 15 * s), Offset(19 * s, 20 * s), paint);
       case _Kind.board:
         paint.strokeWidth = 2.75 * s;
         final p = Path()
@@ -90,25 +100,6 @@ class _IconPainter extends CustomPainter {
           ..cubicTo(16.4 * s, 15 * s, 20 * s, 17 * s, 20 * s, 21 * s);
         canvas.drawPath(body, paint);
     }
-  }
-
-  /// A rounded-top "U": an open shape with a rounded cap, echoing a horseshoe.
-  Path _roundedU(double x, double y, double w, double h, double s) {
-    final r = w / 2;
-    final left = x * s;
-    final top = y * s;
-    final width = w * s;
-    final height = h * s;
-    final path = Path()
-      ..moveTo(left, top + height)
-      ..lineTo(left, top + r)
-      ..arcToPoint(
-        Offset(left + width, top + r),
-        radius: Radius.circular(r),
-        clockwise: true,
-      )
-      ..lineTo(left + width, top + height);
-    return path;
   }
 
   @override

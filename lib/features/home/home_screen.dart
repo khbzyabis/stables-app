@@ -1160,7 +1160,12 @@ class _HomeHubTab extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 22),
+        Padding(
+          padding: const EdgeInsets.only(left: 2, bottom: 12),
+          child: Text('YOUR STABLE',
+              style: AppText.eyebrow(color: AppColors.ink(0.5))),
+        ),
         _HubRow(
           icon: Icons.groups_outlined,
           tone: _Tone.sage,
