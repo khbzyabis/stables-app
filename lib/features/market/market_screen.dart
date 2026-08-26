@@ -99,10 +99,30 @@ class _MarketScreenState extends State<MarketScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(32, 18, 32, 0),
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (Navigator.of(context).canPop()) ...[
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Material(
+                        color: AppColors.warmWhite,
+                        shape: const CircleBorder(),
+                        child: InkWell(
+                          customBorder: const CircleBorder(),
+                          onTap: () => Navigator.of(context).pop(),
+                          child: SizedBox(
+                            width: 42,
+                            height: 42,
+                            child: Icon(Icons.arrow_back,
+                                size: 20, color: AppColors.text),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
