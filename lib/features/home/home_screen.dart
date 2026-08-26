@@ -751,7 +751,7 @@ class _StableTabState extends State<_StableTab> {
         final loading = snap.connectionState == ConnectionState.waiting;
         final pending = c['pending'] ?? 0;
         return ListView(
-          padding: EdgeInsets.zero,
+          padding: const EdgeInsets.only(top: 22),
           children: [
             // Overview stat tiles.
             Row(
@@ -780,26 +780,25 @@ class _StableTabState extends State<_StableTab> {
               ),
             ],
             const SizedBox(height: 20),
-            const Hairline(),
             _NavRow(
               title: l10n.openSchedule,
               subtitle: l10n.scheduleSub,
               onTap: () => _go(ScheduleScreen.route),
             ),
-            const Hairline(),
+            const SizedBox(height: 12),
             _NavRow(
               title: l10n.openTasks,
               subtitle: l10n.tasksSub,
               onTap: () => _go(GroomDayScreen.route),
             ),
-            const Hairline(),
+            const SizedBox(height: 12),
             if (f['market'] ?? true) ...[
               _NavRow(
                 title: l10n.market,
                 subtitle: l10n.marketSub,
                 onTap: () => _go(MarketScreen.route),
               ),
-              const Hairline(),
+              const SizedBox(height: 12),
             ],
             if (f['transport'] ?? true) ...[
               _NavRow(
@@ -807,7 +806,7 @@ class _StableTabState extends State<_StableTab> {
                 subtitle: l10n.transportSub,
                 onTap: () => _go(RequestTransportScreen.route),
               ),
-              const Hairline(),
+              const SizedBox(height: 12),
             ],
             _NavRow(
               title: l10n.people,
@@ -816,7 +815,7 @@ class _StableTabState extends State<_StableTab> {
                   : '${c['people'] ?? 0} in this stable',
               onTap: () => _go(PeopleScreen.route),
             ),
-            const Hairline(),
+            const SizedBox(height: 12),
             if (_isAdmin) ...[
               _NavRow(
                 title: l10n.needsYou,
@@ -825,14 +824,14 @@ class _StableTabState extends State<_StableTab> {
                     : l10n.nothingJoins,
                 onTap: () => _go(ApprovalsScreen.route),
               ),
-              const Hairline(),
+              const SizedBox(height: 12),
             ],
             _NavRow(
               title: l10n.contacts,
               subtitle: 'Farrier, vet, dentist, feed merchant',
               onTap: () => _go(ContactsScreen.route),
             ),
-            const Hairline(),
+            const SizedBox(height: 12),
             _NavRow(
               title: l10n.stableSettings,
               subtitle: loading
@@ -844,7 +843,7 @@ class _StableTabState extends State<_StableTab> {
                     ].join(' · '),
               onTap: () => _go(StableSettingsScreen.route),
             ),
-            const Hairline(),
+            const SizedBox(height: 8),
           ],
         );
       },
@@ -871,8 +870,9 @@ class _StatTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
         decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
+          color: AppColors.warmWhite,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: AppColors.divider),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -933,28 +933,26 @@ class _NavRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return AppCard(
       onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: AppText.heading(23, height: 1.1)),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: AppText.body(15, color: AppColors.ink(0.6)),
-                  ),
-                ],
-              ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: AppText.heading(18, height: 1.1)),
+                const SizedBox(height: 3),
+                Text(
+                  subtitle,
+                  style: AppText.body(13.5, color: AppColors.ink(0.6)),
+                ),
+              ],
             ),
-            Icon(Icons.chevron_right, color: AppColors.ink(0.4)),
-          ],
-        ),
+          ),
+          Icon(Icons.chevron_right, color: AppColors.ink(0.4)),
+        ],
       ),
     );
   }
@@ -982,97 +980,103 @@ class _YouTabState extends State<_YouTab> {
       ('bn', l10n.langBengali),
       ('ne', l10n.langNepali),
     ];
+    const gap = SizedBox(height: 12);
     return ListView(
-      padding: EdgeInsets.zero,
+      padding: const EdgeInsets.only(top: 22),
       children: [
-        const Hairline(),
         _NavRow(
           title: l10n.yourProfile,
           subtitle: SupabaseService.currentUser?.email ?? 'Your account',
           onTap: () => Navigator.of(context).pushNamed(ProfileScreen.route),
         ),
-        const Hairline(),
+        gap,
         _NavRow(
           title: l10n.myStables,
           subtitle: l10n.rolePerStable,
           onTap: () => Navigator.of(context).pushNamed(MyStablesScreen.route),
         ),
-        const Hairline(),
+        gap,
         _NavRow(
           title: l10n.tackBox,
           subtitle: '9 items across 7 groups',
           onTap: () => Navigator.of(context).pushNamed(TackBoxScreen.route),
         ),
-        const Hairline(),
+        gap,
         _NavRow(
           title: 'My orders',
           subtitle: 'What you have ordered from the market',
           onTap: () => Navigator.of(context).pushNamed(PaymentsScreen.route),
         ),
-        const Hairline(),
+        gap,
         _NavRow(
           title: 'My quotes',
           subtitle: 'Prices from service and transport providers',
           onTap: () => Navigator.of(context).pushNamed(MyQuotesScreen.route),
         ),
-        const Hairline(),
+        gap,
         _NavRow(
           title: l10n.help,
           subtitle: 'Answers, or tell us what is wrong',
           onTap: () => Navigator.of(context).pushNamed(HelpScreen.route),
         ),
-        const Hairline(),
+        gap,
         _NavRow(
           title: l10n.notices,
           subtitle: 'From My Stables — shows, updates and adverts',
           onTap: () => Navigator.of(context).pushNamed(BoardScreen.route),
         ),
-        const Hairline(),
+        gap,
         _NavRow(
           title: l10n.shows,
           subtitle: 'Entries, start lists and results',
           onTap: () => Navigator.of(context).pushNamed(ShowsScreen.route),
         ),
-        const Hairline(),
-        const SizedBox(height: 30),
-        Text(l10n.language.toUpperCase(), style: AppText.eyebrow()),
-        const SizedBox(height: 12),
-        HairlineList(
-          children: [
-            for (final (code, name) in languages)
-              InkWell(
-                onTap: () => controller.setLocale(Locale(code)),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 18),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          name,
-                          style: AppText.heading(
-                            19,
-                            weight: code == current
-                                ? FontWeight.w600
-                                : FontWeight.w500,
+        const SizedBox(height: 26),
+        Padding(
+          padding: const EdgeInsets.only(left: 2, bottom: 12),
+          child: Text(l10n.language.toUpperCase(),
+              style: AppText.eyebrow(color: AppColors.ink(0.5))),
+        ),
+        AppCard(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: Column(
+            children: [
+              for (final (code, name) in languages)
+                InkWell(
+                  onTap: () => controller.setLocale(Locale(code)),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            name,
+                            style: AppText.heading(
+                              17,
+                              weight: code == current
+                                  ? FontWeight.w600
+                                  : FontWeight.w500,
+                            ),
                           ),
                         ),
-                      ),
-                      if (code == 'ar' || code == 'ur') ...[
-                        const AppTag('RTL', tone: TagTone.neutral),
-                        const SizedBox(width: 12),
+                        if (code == 'ar' || code == 'ur') ...[
+                          const AppTag('RTL', tone: TagTone.neutral),
+                          const SizedBox(width: 12),
+                        ],
+                        if (code == current)
+                          const Icon(
+                            Icons.check,
+                            color: AppColors.accent2600,
+                            size: 22,
+                          ),
                       ],
-                      if (code == current)
-                        const Icon(
-                          Icons.check,
-                          color: AppColors.accent2600,
-                          size: 22,
-                        ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
+        const SizedBox(height: 20),
       ],
     );
   }
