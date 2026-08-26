@@ -4,7 +4,7 @@ import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'app_icons.dart';
 
-enum AppTab { home, horses, board, stable, you }
+enum AppTab { home, horses, board, stable, market, you }
 
 /// The floating dark tab bar: a rounded pill with five tabs. The active tab is
 /// an oval terracotta capsule. Home leads; Horses, Board, Stable and You follow.
@@ -39,7 +39,7 @@ class BottomTabBar extends StatelessWidget {
             _item(AppTab.home, 'Home'),
             _item(AppTab.horses, 'Horses'),
             _item(AppTab.board, 'Board'),
-            _item(AppTab.stable, 'Stable'),
+            _item(AppTab.market, 'Market'),
             _item(AppTab.you, 'You'),
           ],
         ),
@@ -55,6 +55,7 @@ class BottomTabBar extends StatelessWidget {
       AppTab.horses => AppTabIcon.horses(color: color, size: 22),
       AppTab.board => AppTabIcon.board(color: color, size: 22),
       AppTab.stable => AppTabIcon.stable(color: color, size: 22),
+      AppTab.market => Icon(Icons.storefront_outlined, size: 22, color: color),
       AppTab.you => AppTabIcon.me(color: color, size: 22),
     };
     return Expanded(

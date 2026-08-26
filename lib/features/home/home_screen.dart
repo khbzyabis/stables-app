@@ -63,6 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
     AppTab.horses => l10n.titleMyHorses,
     AppTab.board => l10n.titleNoticeboard,
     AppTab.stable => l10n.titleTheStable,
+    AppTab.market => l10n.market,
     AppTab.you => l10n.titleYou,
   };
 
@@ -84,7 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Header
+                // Header — hidden on the Market tab, which brings its own.
+                if (_tab != AppTab.market)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(32, 20, 32, 0),
                   child: Row(
@@ -144,7 +146,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(32, 24, 32, 0),
+                    // Market brings its own full-bleed screen; the other tabs
+                    // sit under the shared header with the usual side padding.
+                    padding: _tab == AppTab.market
+                        ? EdgeInsets.zero
+                        : const EdgeInsets.fromLTRB(32, 24, 32, 0),
                     child:
                         (session.activeStableId == null && session.hasPending)
                         ? _PendingPanel(session: session)
@@ -165,6 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               role: session.activeStable?['role'] as String?,
                               city: session.activeStable?['city'] as String?,
                             ),
+                            AppTab.market => const MarketScreen(),
                             AppTab.you => const _YouTab(),
                           },
                   ),
@@ -1155,7 +1162,7 @@ class _HomeHubTab extends StatelessWidget {
                 tone: _Tone.terra,
                 title: 'Market',
                 caption: 'Feed, tack & vets',
-                onTap: () => nav.pushNamed(MarketScreen.route),
+                onTap: () => onGoTab(AppTab.market),
               ),
             ),
           ],
