@@ -7,7 +7,6 @@ import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/app_tag.dart';
 import '../../widgets/hairline.dart';
-import '../auth/back_link.dart';
 import 'seller_dashboard_screen.dart';
 import 'seller_apply_screen.dart';
 
@@ -48,8 +47,16 @@ class _ProviderScreenState extends State<ProviderScreen> {
             return ListView(
               padding: const EdgeInsets.fromLTRB(32, 18, 32, 40),
               children: [
-                const BackLink(label: 'You'),
-                const SizedBox(height: 16),
+                Row(children: [
+                  const Spacer(),
+                  TextButton.icon(
+                    onPressed: () => SupabaseService.signOut(),
+                    icon: Icon(Icons.logout, size: 18, color: AppColors.ink(0.6)),
+                    label: Text('Sign out',
+                        style: AppText.body(15, color: AppColors.ink(0.6))),
+                  ),
+                ]),
+                const SizedBox(height: 8),
                 Text('Sell on the market', style: AppText.heading(34, height: 1.05)),
                 const SizedBox(height: 12),
                 Text(

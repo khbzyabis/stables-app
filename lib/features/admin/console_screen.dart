@@ -104,10 +104,11 @@ class _ConsoleScreenState extends State<ConsoleScreen> {
                 child: Text(labelsFor(l10n)[_section]!,
                     style: AppText.heading(30, height: 1)),
               ),
-              IconButton(
-                tooltip: l10n.cnBackToApp,
-                onPressed: () => Navigator.of(context).maybePop(),
-                icon: Icon(Icons.close, color: AppColors.ink(0.5)),
+              TextButton.icon(
+                onPressed: () => SupabaseService.signOut(),
+                icon: Icon(Icons.logout, size: 18, color: AppColors.ink(0.6)),
+                label: Text('Sign out',
+                    style: AppText.body(15, color: AppColors.ink(0.6))),
               ),
             ],
           ),

@@ -1092,6 +1092,13 @@ class _Account extends StatelessWidget {
                 arguments: vendor),
           ),
         ])),
+        const SizedBox(height: 14),
+        AppButton(
+          label: 'Sign out',
+          variant: AppButtonVariant.secondary,
+          block: false,
+          onPressed: () => SupabaseService.signOut(),
+        ),
       ],
     );
   }

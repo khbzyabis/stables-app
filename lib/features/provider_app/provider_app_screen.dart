@@ -1087,6 +1087,12 @@ class _MoneyTabState extends State<_MoneyTab> {
                       Text(l10n.paMoneyFootnote,
                           style: AppText.body(14,
                               height: 1.5, color: AppColors.ink(0.6))),
+                      const SizedBox(height: 26),
+                      AppButton(
+                        label: 'Sign out',
+                        variant: AppButtonVariant.secondary,
+                        onPressed: () => SupabaseService.signOut(),
+                      ),
                     ],
                   ],
                 );
