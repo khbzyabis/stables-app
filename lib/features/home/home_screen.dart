@@ -10,6 +10,7 @@ import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/app_card.dart';
+import '../../widgets/app_icons.dart';
 import '../../widgets/app_tag.dart';
 import '../../widgets/bottom_tab_bar.dart';
 import '../../widgets/hairline.dart';
@@ -1116,7 +1117,7 @@ class _HomeHubTab extends StatelessWidget {
           children: [
             Expanded(
               child: _HubCard(
-                icon: Icons.pets_outlined,
+                iconBuilder: (c, s) => AppTabIcon.horses(color: c, size: s + 2),
                 tone: _Tone.terra,
                 title: 'My horses',
                 caption: 'Profiles & records',
@@ -1189,13 +1190,16 @@ Color _toneFg(_Tone t) =>
 
 class _HubCard extends StatelessWidget {
   const _HubCard({
-    required this.icon,
+    this.icon,
+    this.iconBuilder,
     required this.tone,
     required this.title,
     required this.caption,
     required this.onTap,
-  });
-  final IconData icon;
+  }) : assert(icon != null || iconBuilder != null);
+  final IconData? icon;
+  // For custom-drawn marks (e.g. the horseshoe) that aren't an IconData.
+  final Widget Function(Color color, double size)? iconBuilder;
   final _Tone tone;
   final String title;
   final String caption;
@@ -1226,7 +1230,10 @@ class _HubCard extends StatelessWidget {
                   color: _toneBg(tone),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(icon, color: _toneFg(tone), size: 26),
+                alignment: Alignment.center,
+                child: iconBuilder != null
+                    ? iconBuilder!(_toneFg(tone), 26)
+                    : Icon(icon, color: _toneFg(tone), size: 26),
               ),
               const Spacer(),
               Text(title, style: AppText.heading(19, height: 1.15)),
