@@ -9,6 +9,7 @@ import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import 'basket_screen.dart';
 import 'market_screen.dart';
+import 'shop_screen.dart';
 
 /// The Market landing page — where the Market tab lands. Admin announcements,
 /// shop-by-category, the shops, and the service providers. Each tap dives into
@@ -140,8 +141,8 @@ class _MarketHomeScreenState extends State<MarketHomeScreen> {
                       separatorBuilder: (_, _) => const SizedBox(width: 12),
                       itemBuilder: (context, i) => _ShopCard(
                         vendor: shops[i],
-                        onTap: () => _openCategory(
-                            (shops[i]['kind'] as String?) ?? 'Feed'),
+                        onTap: () => Navigator.of(context)
+                            .pushNamed(ShopScreen.route, arguments: shops[i]),
                       ),
                     ),
                   ),

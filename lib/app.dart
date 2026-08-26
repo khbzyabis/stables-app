@@ -61,6 +61,7 @@ import 'features/market/compare_quotes_screen.dart';
 import 'features/market/declined_screen.dart';
 import 'features/market/item_screen.dart';
 import 'features/market/market_screen.dart';
+import 'features/market/shop_screen.dart';
 import 'features/market/order_screen.dart';
 import 'features/market/payments_screen.dart';
 import 'features/market/provider_screen.dart';
@@ -247,6 +248,7 @@ class _MyStablesAppState extends State<MyStablesApp> {
                 AssignTaskScreen.route: (_) => const AssignTaskScreen(),
                 TaskProgressScreen.route: (_) => const TaskProgressScreen(),
                 MarketScreen.route: (_) => const MarketScreen(),
+                ShopScreen.route: (_) => const ShopScreen(),
                 ItemScreen.route: (_) => const ItemScreen(),
                 BasketScreen.route: (_) => const BasketScreen(),
                 OrderScreen.route: (_) => const OrderScreen(),

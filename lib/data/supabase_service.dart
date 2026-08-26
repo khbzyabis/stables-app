@@ -665,6 +665,26 @@ class SupabaseService {
     }).toList();
   }
 
+  /// In-stock products for one shop's buyer-facing storefront page.
+  static Future<List<Map<String, dynamic>>> shopProducts(
+      String vendorId) async {
+    final rows = await _db
+        .from('products')
+        .select('*, vendors(name, city, kind)')
+        .eq('vendor_id', vendorId)
+        .eq('in_stock', true)
+        .order('category')
+        .order('created_at', ascending: false);
+    return rows.map<Map<String, dynamic>>((r) {
+      final v = r['vendors'] as Map?;
+      return {
+        ...Map<String, dynamic>.from(r),
+        'vendor_name': v?['name'] ?? 'Seller',
+        'vendor_city': v?['city'],
+      };
+    }).toList();
+  }
+
   // ---- Marketplace: orders (buyer side) -------------------------------
   /// Place one order for a single vendor. [items] are maps with keys
   /// product_id, name, unit_price_aed, qty. Returns the created order row.
