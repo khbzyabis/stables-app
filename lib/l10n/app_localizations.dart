@@ -3728,6 +3728,234 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'A title and a message are needed.'**
   String get cnTitleMsgNeeded;
+
+  /// No description provided for @ldSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get ldSignIn;
+
+  /// No description provided for @ldHeroEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'UAE equestrian, in one place'**
+  String get ldHeroEyebrow;
+
+  /// No description provided for @ldHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Run your yard.\nSupply your yard.'**
+  String get ldHeroTitle;
+
+  /// No description provided for @ldHeroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'My Stables brings horse care, your team, and the equestrian market together — one app for riders and yards, and a place for shops, farriers, vets and transport to reach them.'**
+  String get ldHeroBody;
+
+  /// No description provided for @ldOpenApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the app'**
+  String get ldOpenApp;
+
+  /// No description provided for @ldSell.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell on My Stables'**
+  String get ldSell;
+
+  /// No description provided for @ldTrust1.
+  ///
+  /// In en, this message translates to:
+  /// **'Built for UAE yards'**
+  String get ldTrust1;
+
+  /// No description provided for @ldTrust2.
+  ///
+  /// In en, this message translates to:
+  /// **'Six languages · Arabic & RTL'**
+  String get ldTrust2;
+
+  /// No description provided for @ldTrust3.
+  ///
+  /// In en, this message translates to:
+  /// **'VAT-ready receipts'**
+  String get ldTrust3;
+
+  /// No description provided for @ldTrust4.
+  ///
+  /// In en, this message translates to:
+  /// **'Money held safe until delivery'**
+  String get ldTrust4;
+
+  /// No description provided for @ldFeaturesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything the yard needs'**
+  String get ldFeaturesTitle;
+
+  /// No description provided for @ldFeat1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Horses & records'**
+  String get ldFeat1Title;
+
+  /// No description provided for @ldFeat1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Profiles, health, feed charts, tack and documents — the whole horse in one place.'**
+  String get ldFeat1Body;
+
+  /// No description provided for @ldFeat2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule & tasks'**
+  String get ldFeat2Title;
+
+  /// No description provided for @ldFeat2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Who is riding, mucking, feeding — every day, assigned and ticked off.'**
+  String get ldFeat2Body;
+
+  /// No description provided for @ldFeat3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'The market'**
+  String get ldFeat3Title;
+
+  /// No description provided for @ldFeat3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Feed, tack and rugs, plus farriers, vets, physios and transport — from approved sellers.'**
+  String get ldFeat3Body;
+
+  /// No description provided for @ldFeat4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Money held safe'**
+  String get ldFeat4Title;
+
+  /// No description provided for @ldFeat4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyers pay My Stables; sellers are paid after a 14-day window. Disputes are arbitrated.'**
+  String get ldFeat4Body;
+
+  /// No description provided for @ldFeat5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your whole team'**
+  String get ldFeat5Title;
+
+  /// No description provided for @ldFeat5Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Owners, grooms, vets and managers — each with exactly the access they need.'**
+  String get ldFeat5Body;
+
+  /// No description provided for @ldFeat6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Six languages'**
+  String get ldFeat6Title;
+
+  /// No description provided for @ldFeat6Body.
+  ///
+  /// In en, this message translates to:
+  /// **'English, Arabic, Hindi, Urdu, Bengali and Nepali — the yard as it really is.'**
+  String get ldFeat6Body;
+
+  /// No description provided for @ldAudRidersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'For riders & stables'**
+  String get ldAudRidersTitle;
+
+  /// No description provided for @ldAudRidersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep every horse, person and day in order — and order supplies without leaving the yard.'**
+  String get ldAudRidersBody;
+
+  /// No description provided for @ldAudSellersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'For sellers & providers'**
+  String get ldAudSellersTitle;
+
+  /// No description provided for @ldAudSellersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Shops, feed, farriers, vets, physios and transport — reach every yard, take orders, and get paid on a clear schedule.'**
+  String get ldAudSellersBody;
+
+  /// No description provided for @ldHowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Up and running in minutes'**
+  String get ldHowTitle;
+
+  /// No description provided for @ldStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your stable'**
+  String get ldStep1Title;
+
+  /// No description provided for @ldStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign up, name your yard, invite your team.'**
+  String get ldStep1Body;
+
+  /// No description provided for @ldStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add horses & the day'**
+  String get ldStep2Title;
+
+  /// No description provided for @ldStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Build profiles and the daily schedule everyone shares.'**
+  String get ldStep2Body;
+
+  /// No description provided for @ldStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Order from the market'**
+  String get ldStep3Title;
+
+  /// No description provided for @ldStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Feed, tack and services from approved sellers — paid safely.'**
+  String get ldStep3Body;
+
+  /// No description provided for @ldCtaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bring your yard together'**
+  String get ldCtaTitle;
+
+  /// No description provided for @ldCtaBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Free to start. Set up your stable today.'**
+  String get ldCtaBody;
+
+  /// No description provided for @ldCopyright.
+  ///
+  /// In en, this message translates to:
+  /// **'© 2026 My Stables · UAE'**
+  String get ldCopyright;
+
+  /// No description provided for @ldOperatorSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Operator sign-in'**
+  String get ldOperatorSignIn;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
@@ -83,7 +84,7 @@ class _TopBar extends StatelessWidget {
           const _Logo(),
           const Spacer(),
           AppButton(
-            label: 'Sign in',
+            label: AppL10n.of(context).ldSignIn,
             variant: AppButtonVariant.secondary,
             block: false,
             minHeight: 44,
@@ -123,23 +124,22 @@ class _Hero extends StatelessWidget {
   final VoidCallback onSell;
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     final copy = Column(
       crossAxisAlignment:
           wide ? CrossAxisAlignment.start : CrossAxisAlignment.center,
       children: [
-        Text('UAE equestrian, in one place',
+        Text(l10n.ldHeroEyebrow,
             style: AppText.eyebrow(color: AppColors.accent700)),
         const SizedBox(height: 16),
-        Text('Run your yard.\nSupply your yard.',
+        Text(l10n.ldHeroTitle,
             textAlign: wide ? TextAlign.start : TextAlign.center,
             style: AppText.heading(wide ? 54 : 40, height: 1.02)),
         const SizedBox(height: 18),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 460),
           child: Text(
-            'My Stables brings horse care, your team, and the equestrian '
-            'market together — one app for riders and yards, and a place for '
-            'shops, farriers, vets and transport to reach them.',
+            l10n.ldHeroBody,
             textAlign: wide ? TextAlign.start : TextAlign.center,
             style: AppText.body(18, height: 1.55, color: AppColors.ink(0.7)),
           ),
@@ -148,11 +148,11 @@ class _Hero extends StatelessWidget {
         Wrap(spacing: 12, runSpacing: 12, children: [
           SizedBox(
               width: 220,
-              child: AppButton(label: 'Open the app', onPressed: onApp)),
+              child: AppButton(label: l10n.ldOpenApp, onPressed: onApp)),
           SizedBox(
             width: 220,
             child: AppButton(
-                label: 'Sell on My Stables',
+                label: l10n.ldSell,
                 variant: AppButtonVariant.secondary,
                 onPressed: onSell),
           ),
@@ -207,11 +207,12 @@ class _TrustStrip extends StatelessWidget {
   const _TrustStrip();
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     final items = [
-      'Built for UAE yards',
-      'Six languages · Arabic & RTL',
-      'VAT-ready receipts',
-      'Money held safe until delivery',
+      l10n.ldTrust1,
+      l10n.ldTrust2,
+      l10n.ldTrust3,
+      l10n.ldTrust4,
     ];
     return _wrap(
       context,
@@ -243,35 +244,29 @@ class _TrustStrip extends StatelessWidget {
 class _Features extends StatelessWidget {
   const _Features({required this.wide});
   final bool wide;
-  static const _items = [
-    (Icons.pets_outlined, 'Horses & records',
-        'Profiles, health, feed charts, tack and documents — the whole horse in one place.'),
-    (Icons.event_available_outlined, 'Schedule & tasks',
-        'Who is riding, mucking, feeding — every day, assigned and ticked off.'),
-    (Icons.storefront_outlined, 'The market',
-        'Feed, tack and rugs, plus farriers, vets, physios and transport — from approved sellers.'),
-    (Icons.shield_outlined, 'Money held safe',
-        'Buyers pay My Stables; sellers are paid after a 14-day window. Disputes are arbitrated.'),
-    (Icons.groups_outlined, 'Your whole team',
-        'Owners, grooms, vets and managers — each with exactly the access they need.'),
-    (Icons.translate_outlined, 'Six languages',
-        'English, Arabic, Hindi, Urdu, Bengali and Nepali — the yard as it really is.'),
-  ];
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
+    final items = [
+      (Icons.pets_outlined, l10n.ldFeat1Title, l10n.ldFeat1Body),
+      (Icons.event_available_outlined, l10n.ldFeat2Title, l10n.ldFeat2Body),
+      (Icons.storefront_outlined, l10n.ldFeat3Title, l10n.ldFeat3Body),
+      (Icons.shield_outlined, l10n.ldFeat4Title, l10n.ldFeat4Body),
+      (Icons.groups_outlined, l10n.ldFeat5Title, l10n.ldFeat5Body),
+      (Icons.translate_outlined, l10n.ldFeat6Title, l10n.ldFeat6Body),
+    ];
     final cols = wide ? 3 : 1;
     return _wrap(
       context,
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 44),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('Everything the yard needs',
-              style: AppText.heading(wide ? 34 : 28)),
+          Text(l10n.ldFeaturesTitle, style: AppText.heading(wide ? 34 : 28)),
           const SizedBox(height: 24),
           _Grid(
             cols: cols,
             children: [
-              for (final f in _items)
+              for (final f in items)
                 _FeatureCard(icon: f.$1, title: f.$2, body: f.$3),
             ],
           ),
@@ -313,22 +308,19 @@ class _Audiences extends StatelessWidget {
   final VoidCallback onSell;
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
     final cards = [
       _AudienceCard(
-        title: 'For riders & stables',
-        body:
-            'Keep every horse, person and day in order — and order supplies '
-            'without leaving the yard.',
-        cta: 'Open the app',
+        title: l10n.ldAudRidersTitle,
+        body: l10n.ldAudRidersBody,
+        cta: l10n.ldOpenApp,
         onTap: onApp,
         primary: true,
       ),
       _AudienceCard(
-        title: 'For sellers & providers',
-        body:
-            'Shops, feed, farriers, vets, physios and transport — reach every '
-            'yard, take orders, and get paid on a clear schedule.',
-        cta: 'Sell on My Stables',
+        title: l10n.ldAudSellersTitle,
+        body: l10n.ldAudSellersBody,
+        cta: l10n.ldSell,
         onTap: onSell,
       ),
     ];
@@ -391,25 +383,25 @@ class _AudienceCard extends StatelessWidget {
 class _HowItWorks extends StatelessWidget {
   const _HowItWorks({required this.wide});
   final bool wide;
-  static const _steps = [
-    ('1', 'Create your stable', 'Sign up, name your yard, invite your team.'),
-    ('2', 'Add horses & the day', 'Build profiles and the daily schedule everyone shares.'),
-    ('3', 'Order from the market', 'Feed, tack and services from approved sellers — paid safely.'),
-  ];
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
+    final steps = [
+      ('1', l10n.ldStep1Title, l10n.ldStep1Body),
+      ('2', l10n.ldStep2Title, l10n.ldStep2Body),
+      ('3', l10n.ldStep3Title, l10n.ldStep3Body),
+    ];
     return _wrap(
       context,
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 44),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('Up and running in minutes',
-              style: AppText.heading(wide ? 34 : 28)),
+          Text(l10n.ldHowTitle, style: AppText.heading(wide ? 34 : 28)),
           const SizedBox(height: 24),
           _Grid(
             cols: wide ? 3 : 1,
             children: [
-              for (final s in _steps)
+              for (final s in steps)
                 Container(
                   padding: const EdgeInsets.all(22),
                   decoration: BoxDecoration(
@@ -459,22 +451,23 @@ class _CtaBand extends StatelessWidget {
             color: AppColors.neutral900,
             borderRadius: BorderRadius.circular(24)),
         child: Column(children: [
-          Text('Bring your yard together',
+          Text(AppL10n.of(context).ldCtaTitle,
               textAlign: TextAlign.center,
               style: AppText.heading(30, color: AppColors.neutral100)),
           const SizedBox(height: 10),
-          Text('Free to start. Set up your stable today.',
+          Text(AppL10n.of(context).ldCtaBody,
               textAlign: TextAlign.center,
               style: AppText.body(16, color: AppColors.neutral300)),
           const SizedBox(height: 24),
           Wrap(spacing: 12, runSpacing: 12, alignment: WrapAlignment.center, children: [
             SizedBox(
                 width: 220,
-                child: AppButton(label: 'Open the app', onPressed: onApp)),
+                child: AppButton(
+                    label: AppL10n.of(context).ldOpenApp, onPressed: onApp)),
             SizedBox(
                 width: 220,
                 child: AppButton(
-                    label: 'Sell on My Stables',
+                    label: AppL10n.of(context).ldSell,
                     variant: AppButtonVariant.secondary,
                     onPressed: onSell)),
           ]),
@@ -503,11 +496,11 @@ class _Footer extends StatelessWidget {
             runSpacing: 12,
             children: [
               const _Logo(),
-              Text('© 2026 My Stables · UAE',
+              Text(AppL10n.of(context).ldCopyright,
                   style: AppText.body(13, color: AppColors.ink(0.5))),
               GestureDetector(
                 onTap: onAdmin,
-                child: Text('Operator sign-in',
+                child: Text(AppL10n.of(context).ldOperatorSignIn,
                     style: AppText.body(13, color: AppColors.ink(0.5))),
               ),
             ],

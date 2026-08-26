@@ -1969,4 +1969,129 @@ class AppL10nUr extends AppL10n {
 
   @override
   String get cnTitleMsgNeeded => 'A title and a message are needed.';
+
+  @override
+  String get ldSignIn => 'Sign in';
+
+  @override
+  String get ldHeroEyebrow => 'UAE equestrian, in one place';
+
+  @override
+  String get ldHeroTitle => 'Run your yard.\nSupply your yard.';
+
+  @override
+  String get ldHeroBody =>
+      'My Stables brings horse care, your team, and the equestrian market together — one app for riders and yards, and a place for shops, farriers, vets and transport to reach them.';
+
+  @override
+  String get ldOpenApp => 'Open the app';
+
+  @override
+  String get ldSell => 'Sell on My Stables';
+
+  @override
+  String get ldTrust1 => 'Built for UAE yards';
+
+  @override
+  String get ldTrust2 => 'Six languages · Arabic & RTL';
+
+  @override
+  String get ldTrust3 => 'VAT-ready receipts';
+
+  @override
+  String get ldTrust4 => 'Money held safe until delivery';
+
+  @override
+  String get ldFeaturesTitle => 'Everything the yard needs';
+
+  @override
+  String get ldFeat1Title => 'Horses & records';
+
+  @override
+  String get ldFeat1Body =>
+      'Profiles, health, feed charts, tack and documents — the whole horse in one place.';
+
+  @override
+  String get ldFeat2Title => 'Schedule & tasks';
+
+  @override
+  String get ldFeat2Body =>
+      'Who is riding, mucking, feeding — every day, assigned and ticked off.';
+
+  @override
+  String get ldFeat3Title => 'The market';
+
+  @override
+  String get ldFeat3Body =>
+      'Feed, tack and rugs, plus farriers, vets, physios and transport — from approved sellers.';
+
+  @override
+  String get ldFeat4Title => 'Money held safe';
+
+  @override
+  String get ldFeat4Body =>
+      'Buyers pay My Stables; sellers are paid after a 14-day window. Disputes are arbitrated.';
+
+  @override
+  String get ldFeat5Title => 'Your whole team';
+
+  @override
+  String get ldFeat5Body =>
+      'Owners, grooms, vets and managers — each with exactly the access they need.';
+
+  @override
+  String get ldFeat6Title => 'Six languages';
+
+  @override
+  String get ldFeat6Body =>
+      'English, Arabic, Hindi, Urdu, Bengali and Nepali — the yard as it really is.';
+
+  @override
+  String get ldAudRidersTitle => 'For riders & stables';
+
+  @override
+  String get ldAudRidersBody =>
+      'Keep every horse, person and day in order — and order supplies without leaving the yard.';
+
+  @override
+  String get ldAudSellersTitle => 'For sellers & providers';
+
+  @override
+  String get ldAudSellersBody =>
+      'Shops, feed, farriers, vets, physios and transport — reach every yard, take orders, and get paid on a clear schedule.';
+
+  @override
+  String get ldHowTitle => 'Up and running in minutes';
+
+  @override
+  String get ldStep1Title => 'Create your stable';
+
+  @override
+  String get ldStep1Body => 'Sign up, name your yard, invite your team.';
+
+  @override
+  String get ldStep2Title => 'Add horses & the day';
+
+  @override
+  String get ldStep2Body =>
+      'Build profiles and the daily schedule everyone shares.';
+
+  @override
+  String get ldStep3Title => 'Order from the market';
+
+  @override
+  String get ldStep3Body =>
+      'Feed, tack and services from approved sellers — paid safely.';
+
+  @override
+  String get ldCtaTitle => 'Bring your yard together';
+
+  @override
+  String get ldCtaBody => 'Free to start. Set up your stable today.';
+
+  @override
+  String get ldCopyright => '© 2026 My Stables · UAE';
+
+  @override
+  String get ldOperatorSignIn => 'Operator sign-in';
 }

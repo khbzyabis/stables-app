@@ -111,15 +111,15 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             if (_tab == AppTab.home) ...[
                               const SizedBox(height: 8),
-                              Text(
-                                session.hasStable
-                                    ? 'Your yard, all in one place'
-                                    : 'Let\'s set up your stable',
-                                style: AppText.body(
-                                  14,
-                                  color: AppColors.ink(0.6),
-                                ),
-                              ),
+                              session.hasStable && session.activeStableId != null
+                                  ? _StatusLine(stableId: session.activeStableId!)
+                                  : Text(
+                                      'Let\'s set up your stable',
+                                      style: AppText.body(
+                                        14,
+                                        color: AppColors.ink(0.6),
+                                      ),
+                                    ),
                             ],
                           ],
                         ),
@@ -1026,6 +1026,54 @@ class _ErrorState extends StatelessWidget {
 
 // ---- Home hub --------------------------------------------------------------
 const _warmWhite = AppColors.warmWhite;
+
+/// The live one-line summary under the home greeting — open tasks and notices
+/// for the active stable. Reloads when the stable changes; shows a calm
+/// fallback while loading or when there's nothing outstanding.
+class _StatusLine extends StatefulWidget {
+  const _StatusLine({required this.stableId});
+  final String stableId;
+
+  @override
+  State<_StatusLine> createState() => _StatusLineState();
+}
+
+class _StatusLineState extends State<_StatusLine> {
+  late Future<({int openTasks, int notices})> _future =
+      SupabaseService.homeSummary(widget.stableId);
+
+  @override
+  void didUpdateWidget(covariant _StatusLine old) {
+    super.didUpdateWidget(old);
+    if (old.stableId != widget.stableId) {
+      _future = SupabaseService.homeSummary(widget.stableId);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final style = AppText.body(14, color: AppColors.ink(0.6));
+    return FutureBuilder<({int openTasks, int notices})>(
+      future: _future,
+      builder: (context, snap) {
+        final s = snap.data;
+        if (s == null) {
+          return Text('Your yard, all in one place', style: style);
+        }
+        final parts = <String>[
+          if (s.openTasks > 0)
+            '${s.openTasks} ${s.openTasks == 1 ? 'task' : 'tasks'} to do',
+          if (s.notices > 0)
+            '${s.notices} ${s.notices == 1 ? 'notice' : 'notices'}',
+        ];
+        return Text(
+          parts.isEmpty ? 'All caught up — nothing outstanding' : parts.join(' · '),
+          style: style,
+        );
+      },
+    );
+  }
+}
 
 class _HeaderCircle extends StatelessWidget {
   const _HeaderCircle({required this.icon, required this.onTap});

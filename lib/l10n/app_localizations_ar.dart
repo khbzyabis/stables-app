@@ -1948,4 +1948,128 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get cnTitleMsgNeeded => 'العنوان والرسالة مطلوبان.';
+
+  @override
+  String get ldSignIn => 'تسجيل الدخول';
+
+  @override
+  String get ldHeroEyebrow => 'الفروسية في الإمارات، في مكان واحد';
+
+  @override
+  String get ldHeroTitle => 'أدِر إسطبلك.\nوزوِّد إسطبلك.';
+
+  @override
+  String get ldHeroBody =>
+      'يجمع «My Stables» رعاية الخيول وفريقك وسوق الفروسية في مكان واحد — تطبيق واحد للفرسان والإسطبلات، ومنصّة تصل من خلالها المتاجر والبياطرة والأطباء البيطريون وخدمات النقل إليهم.';
+
+  @override
+  String get ldOpenApp => 'افتح التطبيق';
+
+  @override
+  String get ldSell => 'البيع على My Stables';
+
+  @override
+  String get ldTrust1 => 'مصمّم لإسطبلات الإمارات';
+
+  @override
+  String get ldTrust2 => 'ست لغات · العربية ومن اليمين لليسار';
+
+  @override
+  String get ldTrust3 => 'فواتير جاهزة لضريبة القيمة المضافة';
+
+  @override
+  String get ldTrust4 => 'الأموال محفوظة حتى التسليم';
+
+  @override
+  String get ldFeaturesTitle => 'كل ما يحتاجه الإسطبل';
+
+  @override
+  String get ldFeat1Title => 'الخيول والسجلات';
+
+  @override
+  String get ldFeat1Body =>
+      'الملفات والصحة وجداول التغذية والعُدّة والمستندات — الحصان بأكمله في مكان واحد.';
+
+  @override
+  String get ldFeat2Title => 'الجدول والمهام';
+
+  @override
+  String get ldFeat2Body =>
+      'من يركب ومن ينظّف ومن يُطعم — كل يوم، موزّع ومُنجَز.';
+
+  @override
+  String get ldFeat3Title => 'السوق';
+
+  @override
+  String get ldFeat3Body =>
+      'العلف والعُدّة والأغطية، إضافةً إلى البياطرة والأطباء البيطريين والمعالجين وخدمات النقل — من بائعين معتمدين.';
+
+  @override
+  String get ldFeat4Title => 'الأموال محفوظة بأمان';
+
+  @override
+  String get ldFeat4Body =>
+      'يدفع المشترون إلى My Stables؛ ويُدفع للبائعين بعد مهلة 14 يومًا. وتُحلّ النزاعات بالتحكيم.';
+
+  @override
+  String get ldFeat5Title => 'فريقك بالكامل';
+
+  @override
+  String get ldFeat5Body =>
+      'المُلّاك والسّياس والأطباء البيطريون والمديرون — لكلٍّ منهم الصلاحيات التي يحتاجها بالضبط.';
+
+  @override
+  String get ldFeat6Title => 'ست لغات';
+
+  @override
+  String get ldFeat6Body =>
+      'الإنجليزية والعربية والهندية والأردية والبنغالية والنيبالية — الإسطبل كما هو حقًّا.';
+
+  @override
+  String get ldAudRidersTitle => 'للفرسان والإسطبلات';
+
+  @override
+  String get ldAudRidersBody =>
+      'حافظ على تنظيم كل حصان وشخص ويوم — واطلب المستلزمات دون مغادرة الإسطبل.';
+
+  @override
+  String get ldAudSellersTitle => 'للبائعين ومزوّدي الخدمات';
+
+  @override
+  String get ldAudSellersBody =>
+      'متاجر وعلف وبياطرة وأطباء بيطريون ومعالجون وخدمات نقل — صِل إلى كل إسطبل، واستقبل الطلبات، واحصل على مستحقاتك وفق جدول واضح.';
+
+  @override
+  String get ldHowTitle => 'جاهز للعمل في دقائق';
+
+  @override
+  String get ldStep1Title => 'أنشئ إسطبلك';
+
+  @override
+  String get ldStep1Body => 'سجّل، وسمِّ إسطبلك، وادعُ فريقك.';
+
+  @override
+  String get ldStep2Title => 'أضِف الخيول واليوم';
+
+  @override
+  String get ldStep2Body => 'أنشئ الملفات والجدول اليومي الذي يشاركه الجميع.';
+
+  @override
+  String get ldStep3Title => 'اطلب من السوق';
+
+  @override
+  String get ldStep3Body =>
+      'العلف والعُدّة والخدمات من بائعين معتمدين — بدفع آمن.';
+
+  @override
+  String get ldCtaTitle => 'اجمع إسطبلك معًا';
+
+  @override
+  String get ldCtaBody => 'البداية مجانية. جهّز إسطبلك اليوم.';
+
+  @override
+  String get ldCopyright => '© 2026 My Stables · الإمارات';
+
+  @override
+  String get ldOperatorSignIn => 'دخول المشغّل';
 }

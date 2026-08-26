@@ -357,6 +357,23 @@ class SupabaseService {
       .eq('stable_id', stableId)
       .order('created_at');
 
+  /// A quick two-number summary for the home header: how many tasks are still
+  /// open, and how many notices are on the board. Best-effort — returns zeros
+  /// on any error so the header never breaks.
+  static Future<({int openTasks, int notices})> homeSummary(
+      String stableId) async {
+    var open = 0;
+    var noticeCount = 0;
+    try {
+      final ts = await tasks(stableId);
+      open = ts.where((t) => t['done'] != true).length;
+    } catch (_) {}
+    try {
+      noticeCount = (await notices(stableId)).length;
+    } catch (_) {}
+    return (openTasks: open, notices: noticeCount);
+  }
+
   static Future<Map<String, dynamic>> addTask({
     required String stableId,
     required String title,
