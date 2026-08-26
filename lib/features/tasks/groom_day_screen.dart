@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../data/errors.dart';
 
 import '../../data/session.dart';
@@ -6,7 +7,7 @@ import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
-import '../../widgets/hairline.dart';
+import '../../widgets/app_card.dart';
 import '../auth/back_link.dart';
 import 'assign_task_screen.dart';
 
@@ -72,8 +73,10 @@ class _GroomDayScreenState extends State<GroomDayScreen> {
               children: [
                 const BackLink(label: 'Stable'),
                 const SizedBox(height: 14),
-                Text(session.activeStableName.toUpperCase(),
-                    style: AppText.eyebrow(color: AppColors.accent700)),
+                Text(
+                  session.activeStableName.toUpperCase(),
+                  style: AppText.eyebrow(color: AppColors.accent700),
+                ),
                 const SizedBox(height: 10),
                 Text(l10n.yourTasks, style: AppText.heading(40, height: 1)),
                 const SizedBox(height: 10),
@@ -85,20 +88,25 @@ class _GroomDayScreenState extends State<GroomDayScreen> {
                 else ...[
                   Text(
                     l10n.taskProgress(
-                        doneCount, tasks.length, tasks.length - doneCount),
+                      doneCount,
+                      tasks.length,
+                      tasks.length - doneCount,
+                    ),
                     style: AppText.body(17, color: AppColors.ink(0.65)),
                   ),
                   const SizedBox(height: 22),
                   _ProgressBar(fraction: fraction),
-                  const SizedBox(height: 30),
-                  const Hairline(),
+                  const SizedBox(height: 26),
                   if (tasks.isEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 24),
                       child: Text(
                         'No tasks yet. Add one below — whoever it is for can tick it off, and everyone sees it update.',
-                        style: AppText.body(16,
-                            height: 1.5, color: AppColors.ink(0.6)),
+                        style: AppText.body(
+                          16,
+                          height: 1.5,
+                          color: AppColors.ink(0.6),
+                        ),
                       ),
                     ),
                   for (final t in tasks) ...[
@@ -107,23 +115,29 @@ class _GroomDayScreenState extends State<GroomDayScreen> {
                       busy: _pending.contains(t['id']),
                       onToggle: () => _toggle(t),
                     ),
-                    const Hairline(),
+                    const SizedBox(height: 10),
                   ],
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 14),
                   GestureDetector(
                     onTap: () async {
                       await Navigator.of(context)
                           .pushNamed(AssignTaskScreen.route);
                       _reload();
                     },
-                    child: Text('+ ${l10n.newTask}',
-                        style:
-                            AppText.heading(17, color: AppColors.accent700)),
+                    child: Text(
+                      '+ ${l10n.newTask}',
+                      style: AppText.heading(17, color: AppColors.accent700),
+                    ),
                   ),
                   const SizedBox(height: 16),
-                  Text(l10n.ticksVisible,
-                      style: AppText.body(15,
-                          height: 1.5, color: AppColors.ink(0.55))),
+                  Text(
+                    l10n.ticksVisible,
+                    style: AppText.body(
+                      15,
+                      height: 1.5,
+                      color: AppColors.ink(0.55),
+                    ),
+                  ),
                 ],
               ],
             );
@@ -156,8 +170,11 @@ class _ProgressBar extends StatelessWidget {
 }
 
 class _TaskRow extends StatelessWidget {
-  const _TaskRow(
-      {required this.task, required this.busy, required this.onToggle});
+  const _TaskRow({
+    required this.task,
+    required this.busy,
+    required this.onToggle,
+  });
   final Map<String, dynamic> task;
   final bool busy;
   final VoidCallback onToggle;
@@ -171,8 +188,9 @@ class _TaskRow extends StatelessWidget {
       if ((task['due'] as String?)?.isNotEmpty == true) task['due'] as String,
     ].join(' · ');
     final note = task['note'] as String?;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 18),
+    return AppCard(
+      onTap: busy ? null : onToggle,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -191,14 +209,21 @@ class _TaskRow extends StatelessWidget {
                 ),
                 if (meta.isNotEmpty) ...[
                   const SizedBox(height: 4),
-                  Text(meta,
-                      style: AppText.body(14,
-                          height: 1.4, color: AppColors.ink(0.55))),
+                  Text(
+                    meta,
+                    style: AppText.body(
+                      14,
+                      height: 1.4,
+                      color: AppColors.ink(0.55),
+                    ),
+                  ),
                 ],
                 if (note != null && note.isNotEmpty && !done) ...[
                   const SizedBox(height: 6),
-                  Text(note,
-                      style: AppText.body(14, color: AppColors.accent700)),
+                  Text(
+                    note,
+                    style: AppText.body(14, color: AppColors.accent700),
+                  ),
                 ],
               ],
             ),
@@ -230,8 +255,9 @@ class _Checkbox extends StatelessWidget {
             width: 1.5,
           ),
         ),
-        child:
-            done ? const Icon(Icons.check, size: 17, color: AppColors.bg) : null,
+        child: done
+            ? const Icon(Icons.check, size: 17, color: AppColors.bg)
+            : null,
       ),
     );
   }

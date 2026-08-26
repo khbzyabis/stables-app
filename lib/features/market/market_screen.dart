@@ -8,8 +8,8 @@ import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
+import '../../widgets/app_card.dart';
 import '../../widgets/app_field.dart';
-import '../../widgets/hairline.dart';
 import '../../widgets/photo_placeholder.dart';
 import 'basket_screen.dart';
 import 'item_screen.dart';
@@ -48,12 +48,16 @@ class _MarketScreenState extends State<MarketScreen> {
       isScrollControlled: true,
       backgroundColor: AppColors.bg,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      ),
       builder: (_) => _RequestQuoteSheet(vendor: vendor, stableId: stableId),
     );
     if (ok == true && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Request sent. Check My quotes for the reply.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Request sent. Check My quotes for the reply.'),
+        ),
+      );
     }
   }
 
@@ -81,10 +85,17 @@ class _MarketScreenState extends State<MarketScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(l10n.deliversTo(stableName),
-                                style: AppText.eyebrow(color: AppColors.accent700)),
+                            Text(
+                              l10n.deliversTo(stableName),
+                              style: AppText.eyebrow(
+                                color: AppColors.accent700,
+                              ),
+                            ),
                             const SizedBox(height: 9),
-                            Text(l10n.market, style: AppText.heading(36, height: 1)),
+                            Text(
+                              l10n.market,
+                              style: AppText.heading(36, height: 1),
+                            ),
                           ],
                         ),
                       ),
@@ -126,40 +137,46 @@ class _MarketScreenState extends State<MarketScreen> {
                   return ListView(
                     padding: const EdgeInsets.fromLTRB(32, 22, 32, 0),
                     children: [
-                      const Hairline(),
                       if (items.isEmpty)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 26),
                           child: Text(
                             _isServices
                                 ? 'No service providers yet. Farriers, vets and '
-                                    'physios who set up a Services shop appear here.'
+                                      'physios who set up a Services shop appear here.'
                                 : 'Nothing in $_cat yet. Sellers add products from '
-                                    '"Sell on the market" (under You). Anything '
-                                    'they list shows up here.',
-                            style: AppText.body(16,
-                                height: 1.5, color: AppColors.ink(0.6)),
+                                      '"Sell on the market" (under You). Anything '
+                                      'they list shows up here.',
+                            style: AppText.body(
+                              16,
+                              height: 1.5,
+                              color: AppColors.ink(0.6),
+                            ),
                           ),
                         ),
                       if (_isServices)
                         for (final v in items) ...[
                           _ServiceRow(
-                              vendor: v, onRequest: () => _requestQuote(v)),
-                          const Hairline(),
+                            vendor: v,
+                            onRequest: () => _requestQuote(v),
+                          ),
+                          const SizedBox(height: 10),
                         ]
                       else
                         for (final item in items) ...[
-                          _ItemRow(
-                            item: item,
-                            onReturn: () => setState(() {}),
-                          ),
-                          const Hairline(),
+                          _ItemRow(item: item, onReturn: () => setState(() {})),
+                          const SizedBox(height: 10),
                         ],
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 20),
-                        child: Text(l10n.everyApproved,
-                            style: AppText.body(14,
-                                height: 1.5, color: AppColors.ink(0.5))),
+                        child: Text(
+                          l10n.everyApproved,
+                          style: AppText.body(
+                            14,
+                            height: 1.5,
+                            color: AppColors.ink(0.5),
+                          ),
+                        ),
                       ),
                     ],
                   );
@@ -188,11 +205,16 @@ class _BasketButton extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.shopping_bag_outlined,
-                  color: AppColors.accent700, size: 22),
+              const Icon(
+                Icons.shopping_bag_outlined,
+                color: AppColors.accent700,
+                size: 22,
+              ),
               const SizedBox(width: 7),
-              Text('$count',
-                  style: AppText.heading(15, color: AppColors.accent700)),
+              Text(
+                '$count',
+                style: AppText.heading(15, color: AppColors.accent700),
+              ),
             ],
           ),
         );
@@ -202,8 +224,11 @@ class _BasketButton extends StatelessWidget {
 }
 
 class _CatChip extends StatelessWidget {
-  const _CatChip(
-      {required this.label, required this.selected, required this.onTap});
+  const _CatChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
   final String label;
   final bool selected;
   final VoidCallback onTap;
@@ -218,11 +243,16 @@ class _CatChip extends StatelessWidget {
           color: selected ? AppColors.accent : Colors.transparent,
           borderRadius: BorderRadius.circular(AppRadius.pill),
           border: Border.all(
-              color: selected ? AppColors.accent : AppColors.divider),
+            color: selected ? AppColors.accent : AppColors.divider,
+          ),
         ),
-        child: Text(label,
-            style: AppText.body(14,
-                color: selected ? AppColors.bg : AppColors.text)),
+        child: Text(
+          label,
+          style: AppText.body(
+            14,
+            color: selected ? AppColors.bg : AppColors.text,
+          ),
+        ),
       ),
     );
   }
@@ -237,48 +267,53 @@ class _ItemRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final price = (item['price_aed'] as num?)?.toDouble() ?? 0;
     final unit = item['unit'] as String?;
-    return InkWell(
+    return AppCard(
       onTap: () async {
         await Navigator.of(context)
             .pushNamed(ItemScreen.route, arguments: item);
         onReturn();
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Row(
-          children: [
-            PhotoPlaceholder(
-                size: 64,
-                circle: false,
-                radius: 16,
-                url: item['image_url'] as String?),
-            const SizedBox(width: 15),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text((item['name'] as String?) ?? 'Product',
-                      style: AppText.body(17, height: 1.3)),
-                  const SizedBox(height: 4),
-                  Text((item['vendor_name'] as String?) ?? 'Seller',
-                      style: AppText.body(14, color: AppColors.ink(0.55))),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+      padding: const EdgeInsets.all(14),
+      child: Row(
+        children: [
+          PhotoPlaceholder(
+            size: 64,
+            circle: false,
+            radius: 16,
+            url: item['image_url'] as String?,
+          ),
+          const SizedBox(width: 15),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('AED ${price.toStringAsFixed(0)}',
-                    style: AppText.heading(17)),
-                if (unit != null && unit.isNotEmpty) ...[
-                  const SizedBox(height: 3),
-                  Text(unit, style: AppText.body(13, color: AppColors.ink(0.5))),
-                ],
+                Text(
+                  (item['name'] as String?) ?? 'Product',
+                  style: AppText.body(17, height: 1.3),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  (item['vendor_name'] as String?) ?? 'Seller',
+                  style: AppText.body(14, color: AppColors.ink(0.55)),
+                ),
               ],
             ),
-          ],
-        ),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                'AED ${price.toStringAsFixed(0)}',
+                style: AppText.heading(17),
+              ),
+              if (unit != null && unit.isNotEmpty) ...[
+                const SizedBox(height: 3),
+                Text(unit, style: AppText.body(13, color: AppColors.ink(0.5))),
+              ],
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -295,20 +330,24 @@ class _ServiceRow extends StatelessWidget {
       if ((vendor['city'] as String?)?.isNotEmpty == true) vendor['city'],
       if ((vendor['about'] as String?)?.isNotEmpty == true) vendor['about'],
     ].join(' · ');
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
+    return AppCard(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text((vendor['name'] as String?) ?? 'Provider',
-                    style: AppText.body(17, height: 1.3)),
+                Text(
+                  (vendor['name'] as String?) ?? 'Provider',
+                  style: AppText.body(17, height: 1.3),
+                ),
                 if (bits.isNotEmpty) ...[
                   const SizedBox(height: 4),
-                  Text(bits,
-                      style: AppText.body(14, color: AppColors.ink(0.55))),
+                  Text(
+                    bits,
+                    style: AppText.body(14, color: AppColors.ink(0.55)),
+                  ),
                 ],
               ],
             ),
@@ -316,8 +355,10 @@ class _ServiceRow extends StatelessWidget {
           const SizedBox(width: 12),
           GestureDetector(
             onTap: onRequest,
-            child: Text('Ask for a price',
-                style: AppText.heading(15, color: AppColors.accent700)),
+            child: Text(
+              'Ask for a price',
+              style: AppText.heading(15, color: AppColors.accent700),
+            ),
           ),
         ],
       ),
@@ -349,7 +390,8 @@ class _RequestQuoteSheetState extends State<_RequestQuoteSheet> {
   Future<void> _save() async {
     if (_subject.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Say what you need a price for.')));
+        const SnackBar(content: Text('Say what you need a price for.')),
+      );
       return;
     }
     setState(() => _saving = true);
@@ -385,12 +427,18 @@ class _RequestQuoteSheetState extends State<_RequestQuoteSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Ask ${(widget.vendor['name'] as String?) ?? 'the provider'} for a price',
-              style: AppText.heading(22, height: 1.15)),
+          Text(
+            'Ask ${(widget.vendor['name'] as String?) ?? 'the provider'} for a price',
+            style: AppText.heading(22, height: 1.15),
+          ),
           const SizedBox(height: 18),
           AppField(label: 'What do you need?', controller: _subject),
           const SizedBox(height: 16),
-          AppField(label: 'Details (optional)', controller: _detail, maxLines: 3),
+          AppField(
+            label: 'Details (optional)',
+            controller: _detail,
+            maxLines: 3,
+          ),
           const SizedBox(height: 22),
           if (_saving)
             const Center(child: CircularProgressIndicator())

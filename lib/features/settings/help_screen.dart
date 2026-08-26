@@ -5,7 +5,7 @@ import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
-import '../../widgets/hairline.dart';
+import '../../widgets/app_card.dart';
 import '../auth/back_link.dart';
 import 'report_problem_screen.dart';
 
@@ -36,19 +36,20 @@ class _HelpScreenState extends State<HelpScreen> {
             const SizedBox(height: 20),
             Text(l10n.help, style: AppText.heading(40, height: 1)),
             const SizedBox(height: 10),
-            Text('Most of it is answered here. If not, we read every message.',
-                style: AppText.body(16, height: 1.5, color: AppColors.ink(0.6))),
-            const SizedBox(height: 26),
-            const Hairline(),
+            Text(
+              'Most of it is answered here. If not, we read every message.',
+              style: AppText.body(16, height: 1.5, color: AppColors.ink(0.6)),
+            ),
+            const SizedBox(height: 24),
             for (var i = 0; i < CommsData.help.length; i++) ...[
               _HelpTile(
                 item: CommsData.help[i],
                 open: _open == i,
                 onTap: () => setState(() => _open = _open == i ? null : i),
               ),
-              const Hairline(),
+              const SizedBox(height: 10),
             ],
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
             AppButton(
               label: l10n.somethingWrong,
               onPressed: () =>
@@ -64,8 +65,9 @@ class _HelpScreenState extends State<HelpScreen> {
             ),
             const SizedBox(height: 20),
             Text(
-                'We reply within a working day. For a horse that needs a vet now, call the vet — the number is under Contacts.',
-                style: AppText.body(15, height: 1.55, color: AppColors.ink(0.55))),
+              'We reply within a working day. For a horse that needs a vet now, call the vet — the number is under Contacts.',
+              style: AppText.body(15, height: 1.55, color: AppColors.ink(0.55)),
+            ),
           ],
         ),
       ),
@@ -74,40 +76,48 @@ class _HelpScreenState extends State<HelpScreen> {
 }
 
 class _HelpTile extends StatelessWidget {
-  const _HelpTile(
-      {required this.item, required this.open, required this.onTap});
+  const _HelpTile({
+    required this.item,
+    required this.open,
+    required this.onTap,
+  });
   final HelpItem item;
   final bool open;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return AppCard(
       onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 18),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(item.question, style: AppText.body(17, height: 1.4)),
-                  if (open) ...[
-                    const SizedBox(height: 10),
-                    Text(item.answer,
-                        style: AppText.body(16,
-                            height: 1.6, color: AppColors.ink(0.7))),
-                  ],
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(item.question, style: AppText.body(17, height: 1.4)),
+                if (open) ...[
+                  const SizedBox(height: 10),
+                  Text(
+                    item.answer,
+                    style: AppText.body(
+                      16,
+                      height: 1.6,
+                      color: AppColors.ink(0.7),
+                    ),
+                  ),
                 ],
-              ),
+              ],
             ),
-            const SizedBox(width: 12),
-            Text(open ? '–' : '+',
-                style: AppText.body(20, color: AppColors.ink(0.45))),
-          ],
-        ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            open ? '–' : '+',
+            style: AppText.body(20, color: AppColors.ink(0.45)),
+          ),
+        ],
       ),
     );
   }

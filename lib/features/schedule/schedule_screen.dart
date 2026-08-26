@@ -8,8 +8,8 @@ import '../../models/schedule.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
+import '../../widgets/app_card.dart';
 import '../../widgets/app_tag.dart';
-import '../../widgets/hairline.dart';
 import '../auth/back_link.dart';
 import 'add_activity_screen.dart';
 
@@ -40,9 +40,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   void _reload() => setState(() => _future = _load());
 
   EventKind _kindOf(String? name) => EventKind.values.firstWhere(
-        (e) => e.name == name,
-        orElse: () => EventKind.riding,
-      );
+    (e) => e.name == name,
+    orElse: () => EventKind.riding,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -82,12 +82,15 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                       const BackLink(label: 'Stable'),
                       const SizedBox(height: 14),
                       Text(
-                          '${SessionScope.of(context).activeStableName} · ${DateFormat('MMMM').format(_selected)}'
-                              .toUpperCase(),
-                          style: AppText.eyebrow(color: AppColors.accent700)),
+                        '${SessionScope.of(context).activeStableName} · ${DateFormat('MMMM').format(_selected)}'
+                            .toUpperCase(),
+                        style: AppText.eyebrow(color: AppColors.accent700),
+                      ),
                       const SizedBox(height: 10),
-                      Text(DateFormat('EEEE').format(_selected),
-                          style: AppText.heading(40, height: 1)),
+                      Text(
+                        DateFormat('EEEE').format(_selected),
+                        style: AppText.heading(40, height: 1),
+                      ),
                       const SizedBox(height: 28),
                       Row(
                         children: [
@@ -118,20 +121,23 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                   child: snap.connectionState == ConnectionState.waiting
                       ? const Center(child: CircularProgressIndicator())
                       : ListView(
-                          padding: const EdgeInsets.fromLTRB(32, 30, 32, 0),
+                          padding: const EdgeInsets.fromLTRB(32, 26, 32, 0),
                           children: [
-                            const Hairline(),
                             for (final e in agenda) ...[
                               _AgendaRow(activity: e, kind: _kindOf(e['kind'])),
-                              const Hairline(),
+                              const SizedBox(height: 10),
                             ],
                             if (agenda.isEmpty)
                               Padding(
                                 padding: const EdgeInsets.only(top: 26),
-                                child: Text(l10n.quietStable,
-                                    style: AppText.body(16,
-                                        height: 1.5,
-                                        color: AppColors.ink(0.55))),
+                                child: Text(
+                                  l10n.quietStable,
+                                  style: AppText.body(
+                                    16,
+                                    height: 1.5,
+                                    color: AppColors.ink(0.55),
+                                  ),
+                                ),
                               ),
                             const SizedBox(height: 30),
                           ],
@@ -160,11 +166,12 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 }
 
 class _DayButton extends StatelessWidget {
-  const _DayButton(
-      {required this.date,
-      required this.selected,
-      required this.load,
-      required this.onTap});
+  const _DayButton({
+    required this.date,
+    required this.selected,
+    required this.load,
+    required this.onTap,
+  });
   final DateTime date;
   final bool selected;
   final int load;
@@ -184,9 +191,14 @@ class _DayButton extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text(DateFormat('E').format(date).substring(0, 2).toUpperCase(),
-                style: AppText.body(11,
-                    color: fg.withValues(alpha: 0.7), letterSpacing: 0.6)),
+            Text(
+              DateFormat('E').format(date).substring(0, 2).toUpperCase(),
+              style: AppText.body(
+                11,
+                color: fg.withValues(alpha: 0.7),
+                letterSpacing: 0.6,
+              ),
+            ),
             const SizedBox(height: 3),
             Text('${date.day}', style: AppText.heading(19, color: fg)),
             const SizedBox(height: 5),
@@ -219,8 +231,11 @@ class _DayButton extends StatelessWidget {
 }
 
 class _FilterRow extends StatelessWidget {
-  const _FilterRow(
-      {required this.selected, required this.allLabel, required this.onPick});
+  const _FilterRow({
+    required this.selected,
+    required this.allLabel,
+    required this.onPick,
+  });
   final EventKind? selected;
   final String allLabel;
   final ValueChanged<EventKind?> onPick;
@@ -250,12 +265,17 @@ class _FilterRow extends StatelessWidget {
         decoration: BoxDecoration(
           color: active ? AppColors.accent : Colors.transparent,
           borderRadius: BorderRadius.circular(AppRadius.pill),
-          border:
-              Border.all(color: active ? AppColors.accent : AppColors.divider),
+          border: Border.all(
+            color: active ? AppColors.accent : AppColors.divider,
+          ),
         ),
-        child: Text(label,
-            style: AppText.body(14,
-                color: active ? AppColors.bg : AppColors.text)),
+        child: Text(
+          label,
+          style: AppText.body(
+            14,
+            color: active ? AppColors.bg : AppColors.text,
+          ),
+        ),
       ),
     );
   }
@@ -274,8 +294,8 @@ class _AgendaRow extends StatelessWidget {
       if ((activity['note'] as String?)?.isNotEmpty == true)
         activity['note'] as String,
     ].join(' · ');
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
+    return AppCard(
+      padding: const EdgeInsets.fromLTRB(16, 18, 16, 18),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -284,12 +304,16 @@ class _AgendaRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text((activity['at_time'] as String?) ?? '',
-                    style: AppText.heading(18, height: 1.1)),
+                Text(
+                  (activity['at_time'] as String?) ?? '',
+                  style: AppText.heading(18, height: 1.1),
+                ),
                 if ((activity['duration'] as String?)?.isNotEmpty == true) ...[
                   const SizedBox(height: 3),
-                  Text(activity['duration'] as String,
-                      style: AppText.body(13, color: AppColors.ink(0.45))),
+                  Text(
+                    activity['duration'] as String,
+                    style: AppText.body(13, color: AppColors.ink(0.45)),
+                  ),
                 ],
               ],
             ),
@@ -306,12 +330,16 @@ class _AgendaRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text((activity['title'] as String?) ?? kind.label,
-                      style: AppText.heading(20, height: 1.2)),
+                  Text(
+                    (activity['title'] as String?) ?? kind.label,
+                    style: AppText.heading(20, height: 1.2),
+                  ),
                   if (meta.isNotEmpty) ...[
                     const SizedBox(height: 4),
-                    Text(meta,
-                        style: AppText.body(15, color: AppColors.ink(0.6))),
+                    Text(
+                      meta,
+                      style: AppText.body(15, color: AppColors.ink(0.6)),
+                    ),
                   ],
                 ],
               ),

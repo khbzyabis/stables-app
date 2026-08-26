@@ -11,6 +11,7 @@ abstract final class AppColors {
   // Core roles.
   static const bg = Color(0xFFF5EAD8); // page ground, every screen
   static const surface = Color(0xFFEBDDC5); // raised surfaces
+  static const warmWhite = Color(0xFFFFFDF8); // card fill (hub + list cards)
   static const text = Color(0xFF201E1D); // all body text
   static const accent = Color(0xFFC67139); // terracotta — the single action
   static const accent2 = Color(0xFF7A8A5E); // sage — status, confirmation

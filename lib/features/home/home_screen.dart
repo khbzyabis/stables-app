@@ -9,6 +9,7 @@ import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
+import '../../widgets/app_card.dart';
 import '../../widgets/app_tag.dart';
 import '../../widgets/bottom_tab_bar.dart';
 import '../../widgets/hairline.dart';
@@ -52,16 +53,17 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     // Load the person's stables the first time home opens.
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => SessionScope.of(context).refresh());
+      (_) => SessionScope.of(context).refresh(),
+    );
   }
 
   String _titleFor(AppL10n l10n) => switch (_tab) {
-        AppTab.home => 'Home',
-        AppTab.horses => l10n.titleMyHorses,
-        AppTab.board => l10n.titleNoticeboard,
-        AppTab.stable => l10n.titleTheStable,
-        AppTab.you => l10n.titleYou,
-      };
+    AppTab.home => 'Home',
+    AppTab.horses => l10n.titleMyHorses,
+    AppTab.board => l10n.titleNoticeboard,
+    AppTab.stable => l10n.titleTheStable,
+    AppTab.you => l10n.titleYou,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -93,25 +95,31 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             Text(
                               l10n.stableAndDay(session.activeStableName, day),
-                              style:
-                                  AppText.eyebrow(color: AppColors.accent700),
+                              style: AppText.eyebrow(
+                                color: AppColors.accent700,
+                              ),
                             ),
                             const SizedBox(height: 10),
                             Text(
-                                _tab == AppTab.home
-                                    ? 'Hello, ${SupabaseService.displayName.split(' ').first}'
-                                    : _titleFor(l10n),
-                                style: AppText.heading(
-                                    _tab == AppTab.home ? 34 : 40,
-                                    height: 1)),
+                              _tab == AppTab.home
+                                  ? 'Hello, ${SupabaseService.displayName.split(' ').first}'
+                                  : _titleFor(l10n),
+                              style: AppText.heading(
+                                _tab == AppTab.home ? 34 : 40,
+                                height: 1,
+                              ),
+                            ),
                             if (_tab == AppTab.home) ...[
                               const SizedBox(height: 8),
                               Text(
-                                  session.hasStable
-                                      ? 'Your yard, all in one place'
-                                      : 'Let\'s set up your stable',
-                                  style: AppText.body(14,
-                                      color: AppColors.ink(0.6))),
+                                session.hasStable
+                                    ? 'Your yard, all in one place'
+                                    : 'Let\'s set up your stable',
+                                style: AppText.body(
+                                  14,
+                                  color: AppColors.ink(0.6),
+                                ),
+                              ),
                             ],
                           ],
                         ),
@@ -126,7 +134,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                       GestureDetector(
                         onTap: () =>
-                            Navigator.of(context).pushNamed(ProfileScreen.route),
+                            Navigator.of(context)
+                                .pushNamed(ProfileScreen.route),
                         child: _Avatar(initial: initial),
                       ),
                     ],
@@ -135,23 +144,28 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(32, 24, 32, 0),
-                    child: (session.activeStableId == null && session.hasPending)
-                      ? _PendingPanel(session: session)
-                      : switch (_tab) {
-                      AppTab.home => _HomeHubTab(
-                          hasStable:
-                              session.hasStable || session.hasPending,
-                          onGoTab: (t) => setState(() => _tab = t),
-                        ),
-                      AppTab.horses => _HorsesTab(stableId: session.activeStableId),
-                      AppTab.board => _BoardTab(stableId: session.activeStableId),
-                      AppTab.stable => _StableTab(
-                          stableId: session.activeStableId,
-                          role: session.activeStable?['role'] as String?,
-                          city: session.activeStable?['city'] as String?,
-                        ),
-                      AppTab.you => const _YouTab(),
-                    },
+                    child:
+                        (session.activeStableId == null && session.hasPending)
+                        ? _PendingPanel(session: session)
+                        : switch (_tab) {
+                            AppTab.home => _HomeHubTab(
+                              hasStable:
+                                  session.hasStable || session.hasPending,
+                              onGoTab: (t) => setState(() => _tab = t),
+                            ),
+                            AppTab.horses => _HorsesTab(
+                              stableId: session.activeStableId,
+                            ),
+                            AppTab.board => _BoardTab(
+                              stableId: session.activeStableId,
+                            ),
+                            AppTab.stable => _StableTab(
+                              stableId: session.activeStableId,
+                              role: session.activeStable?['role'] as String?,
+                              city: session.activeStable?['city'] as String?,
+                            ),
+                            AppTab.you => const _YouTab(),
+                          },
                   ),
                 ),
                 BottomTabBar(
@@ -181,8 +195,10 @@ class _Avatar extends StatelessWidget {
         color: AppColors.accent2300,
         shape: BoxShape.circle,
       ),
-      child: Text(initial,
-          style: AppText.heading(17, color: AppColors.accent2900)),
+      child: Text(
+        initial,
+        style: AppText.heading(17, color: AppColors.accent2900),
+      ),
     );
   }
 }
@@ -232,32 +248,39 @@ class _HorsesTabState extends State<_HorsesTab> {
             child: Padding(
               padding: EdgeInsets.only(top: 60),
               child: CircularProgressIndicator(
-                  color: AppColors.accent, strokeWidth: 2.4),
+                color: AppColors.accent,
+                strokeWidth: 2.4,
+              ),
             ),
           );
         }
         if (snap.hasError) {
-          return _ErrorState(message: snap.error.toString(), onRetry: () async => _reload());
+          return _ErrorState(
+            message: snap.error.toString(),
+            onRetry: () async => _reload(),
+          );
         }
         final horses = snap.data ?? const [];
         return ListView(
-          padding: EdgeInsets.zero,
+          padding: const EdgeInsets.only(top: 22),
           children: [
-            const Hairline(),
             if (horses.isEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 26),
                 child: Text(
                   'No horses yet. Add your first one below — it saves to this stable and everyone in it can see it.',
-                  style:
-                      AppText.body(16, height: 1.5, color: AppColors.ink(0.6)),
+                  style: AppText.body(
+                    16,
+                    height: 1.5,
+                    color: AppColors.ink(0.6),
+                  ),
                 ),
               ),
             for (final h in horses) ...[
               _RealHorseRow(horse: h, onReturn: _reload),
-              const Hairline(),
+              const SizedBox(height: 10),
             ],
-            const SizedBox(height: 26),
+            const SizedBox(height: 16),
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: _TextAction(
@@ -290,37 +313,41 @@ class _RealHorseRow extends StatelessWidget {
         if ((horse[k] as String?)?.isNotEmpty == true) horse[k] as String,
       if ((horse['box'] as String?)?.isNotEmpty == true) 'Box ${horse['box']}',
     ];
-    return InkWell(
+    return AppCard(
       onTap: () async {
         await Navigator.of(context)
             .pushNamed(HorseRecordScreen.route, arguments: horse);
         onReturn();
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Row(
-          children: [
-            PhotoPlaceholder(size: 66, url: horse['photo_url'] as String?),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text((horse['name'] as String?) ?? 'Horse',
-                      style: AppText.heading(23, height: 1.1)),
-                  if (bits.isNotEmpty) ...[
-                    const SizedBox(height: 4),
-                    Text(bits.join(' · '),
-                        style: AppText.body(15, color: AppColors.ink(0.6))),
-                  ],
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          PhotoPlaceholder(size: 66, url: horse['photo_url'] as String?),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  (horse['name'] as String?) ?? 'Horse',
+                  style: AppText.heading(23, height: 1.1),
+                ),
+                if (bits.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    bits.join(' · '),
+                    style: AppText.body(15, color: AppColors.ink(0.6)),
+                  ),
                 ],
-              ),
+              ],
             ),
-            const SizedBox(width: 12),
-            AppTag(well ? l10n.statusWell : l10n.statusWatch,
-                tone: well ? TagTone.sage : TagTone.neutral),
-          ],
-        ),
+          ),
+          const SizedBox(width: 12),
+          AppTag(
+            well ? l10n.statusWell : l10n.statusWatch,
+            tone: well ? TagTone.sage : TagTone.neutral,
+          ),
+        ],
       ),
     );
   }
@@ -371,25 +398,32 @@ class _BoardTabState extends State<_BoardTab> {
             child: Padding(
               padding: EdgeInsets.only(top: 60),
               child: CircularProgressIndicator(
-                  color: AppColors.accent, strokeWidth: 2.4),
+                color: AppColors.accent,
+                strokeWidth: 2.4,
+              ),
             ),
           );
         }
         if (snap.hasError) {
-          return _ErrorState(message: snap.error.toString(), onRetry: () async => _reload());
+          return _ErrorState(
+            message: snap.error.toString(),
+            onRetry: () async => _reload(),
+          );
         }
         final notices = snap.data ?? const [];
         return ListView(
-          padding: EdgeInsets.zero,
+          padding: const EdgeInsets.only(top: 22),
           children: [
-            const Hairline(),
             if (notices.isEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 26),
                 child: Text(
                   'Nothing on the board yet. Post the first notice — everyone in the stable will see it.',
-                  style:
-                      AppText.body(16, height: 1.5, color: AppColors.ink(0.6)),
+                  style: AppText.body(
+                    16,
+                    height: 1.5,
+                    color: AppColors.ink(0.6),
+                  ),
                 ),
               ),
             for (final n in notices) ...[
@@ -398,14 +432,13 @@ class _BoardTabState extends State<_BoardTab> {
                   if (n['pinned'] == true) 'Pinned',
                   (n['author_name'] as String?) ?? 'Someone',
                 ].join(' · '),
-                metaColor:
-                    n['pinned'] == true ? AppColors.accent700 : null,
+                metaColor: n['pinned'] == true ? AppColors.accent700 : null,
                 title: n['title'] as String?,
                 body: (n['body'] as String?) ?? '',
               ),
-              const Hairline(),
+              const SizedBox(height: 10),
             ],
-            const SizedBox(height: 26),
+            const SizedBox(height: 16),
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: _TextAction(
@@ -438,21 +471,24 @@ class _Notice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
+    return AppCard(
+      padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(meta,
-              style: AppText.body(13,
-                  color: metaColor ?? AppColors.ink(0.5))),
+          Text(
+            meta,
+            style: AppText.body(13, color: metaColor ?? AppColors.ink(0.5)),
+          ),
           const SizedBox(height: 7),
           if (title != null) ...[
             Text(title!, style: AppText.heading(23, height: 1.2)),
             const SizedBox(height: 6),
           ],
-          Text(body,
-              style: AppText.body(16, height: 1.5, color: AppColors.ink(0.85))),
+          Text(
+            body,
+            style: AppText.body(16, height: 1.5, color: AppColors.ink(0.85)),
+          ),
         ],
       ),
     );
@@ -530,16 +566,19 @@ class _StableTabState extends State<_StableTab> {
             Row(
               children: [
                 _StatTile(
-                    label: 'Horses',
-                    value: loading ? '—' : '${c['horses'] ?? 0}'),
+                  label: 'Horses',
+                  value: loading ? '—' : '${c['horses'] ?? 0}',
+                ),
                 const SizedBox(width: 12),
                 _StatTile(
-                    label: 'People',
-                    value: loading ? '—' : '${c['people'] ?? 0}'),
+                  label: 'People',
+                  value: loading ? '—' : '${c['people'] ?? 0}',
+                ),
                 const SizedBox(width: 12),
                 _StatTile(
-                    label: 'Open tasks',
-                    value: loading ? '—' : '${c['open_tasks'] ?? 0}'),
+                  label: 'Open tasks',
+                  value: loading ? '—' : '${c['open_tasks'] ?? 0}',
+                ),
               ],
             ),
             if (_isAdmin && pending > 0) ...[
@@ -625,9 +664,7 @@ class _StableTabState extends State<_StableTab> {
 /// The overview counts + feature flags for the active stable, loaded together.
 class _StableSnapshot {
   const _StableSnapshot({required this.counts, required this.features});
-  const _StableSnapshot.empty()
-      : counts = const {},
-        features = const {};
+  const _StableSnapshot.empty() : counts = const {}, features = const {};
   final Map<String, int> counts;
   final Map<String, bool> features;
 }
@@ -651,8 +688,7 @@ class _StatTile extends StatelessWidget {
           children: [
             Text(value, style: AppText.heading(30, height: 1)),
             const SizedBox(height: 4),
-            Text(label,
-                style: AppText.body(13, color: AppColors.ink(0.6))),
+            Text(label, style: AppText.body(13, color: AppColors.ink(0.6))),
           ],
         ),
       ),
@@ -695,8 +731,11 @@ class _PendingBanner extends StatelessWidget {
 }
 
 class _NavRow extends StatelessWidget {
-  const _NavRow(
-      {required this.title, required this.subtitle, required this.onTap});
+  const _NavRow({
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
   final String title;
   final String subtitle;
   final VoidCallback onTap;
@@ -715,8 +754,10 @@ class _NavRow extends StatelessWidget {
                 children: [
                   Text(title, style: AppText.heading(23, height: 1.1)),
                   const SizedBox(height: 4),
-                  Text(subtitle,
-                      style: AppText.body(15, color: AppColors.ink(0.6))),
+                  Text(
+                    subtitle,
+                    style: AppText.body(15, color: AppColors.ink(0.6)),
+                  ),
                 ],
               ),
             ),
@@ -815,19 +856,26 @@ class _YouTabState extends State<_YouTab> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: Text(name,
-                            style: AppText.heading(19,
-                                weight: code == current
-                                    ? FontWeight.w600
-                                    : FontWeight.w500)),
+                        child: Text(
+                          name,
+                          style: AppText.heading(
+                            19,
+                            weight: code == current
+                                ? FontWeight.w600
+                                : FontWeight.w500,
+                          ),
+                        ),
                       ),
                       if (code == 'ar' || code == 'ur') ...[
                         const AppTag('RTL', tone: TagTone.neutral),
                         const SizedBox(width: 12),
                       ],
                       if (code == current)
-                        const Icon(Icons.check,
-                            color: AppColors.accent2600, size: 22),
+                        const Icon(
+                          Icons.check,
+                          color: AppColors.accent2600,
+                          size: 22,
+                        ),
                     ],
                   ),
                 ),
@@ -877,18 +925,23 @@ class _PendingPanelState extends State<_PendingPanel> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Waiting for approval',
-                  style: AppText.heading(22, color: AppColors.accent900)),
+              Text(
+                'Waiting for approval',
+                style: AppText.heading(22, color: AppColors.accent900),
+              ),
               const SizedBox(height: 8),
               Text(
                 names.length == 1
                     ? 'You asked to join ${names.first}. An owner or manager '
-                        'needs to approve you — it will open up here the moment '
-                        'they do.'
+                          'needs to approve you — it will open up here the moment '
+                          'they do.'
                     : 'You asked to join: ${names.join(", ")}. An owner or '
-                        'manager needs to approve you.',
-                style: AppText.body(16,
-                    height: 1.5, color: AppColors.accent900),
+                          'manager needs to approve you.',
+                style: AppText.body(
+                  16,
+                  height: 1.5,
+                  color: AppColors.accent900,
+                ),
               ),
             ],
           ),
@@ -899,22 +952,25 @@ class _PendingPanelState extends State<_PendingPanel> {
         else
           GestureDetector(
             onTap: _check,
-            child: Text('Check again',
-                style: AppText.heading(17, color: AppColors.accent700)),
+            child: Text(
+              'Check again',
+              style: AppText.heading(17, color: AppColors.accent700),
+            ),
           ),
         const SizedBox(height: 22),
         const Hairline(),
         const SizedBox(height: 22),
-        Text('Or start your own',
-            style: AppText.heading(18, height: 1.2)),
+        Text('Or start your own', style: AppText.heading(18, height: 1.2)),
         const SizedBox(height: 8),
         GestureDetector(
           onTap: () async {
             await Navigator.of(context).pushNamed(CreateStableScreen.route);
             _check();
           },
-          child: Text('Create my own stable',
-              style: AppText.body(16, color: AppColors.accent700)),
+          child: Text(
+            'Create my own stable',
+            style: AppText.body(16, color: AppColors.accent700),
+          ),
         ),
       ],
     );
@@ -930,8 +986,7 @@ class _TextAction extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Text(label,
-          style: AppText.body(16, color: AppColors.accent700)),
+      child: Text(label, style: AppText.body(16, color: AppColors.accent700)),
     );
   }
 }
@@ -947,8 +1002,10 @@ class _ErrorState extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 40),
-        Text("Couldn't reach the stable",
-            style: AppText.heading(23, height: 1.1)),
+        Text(
+          "Couldn't reach the stable",
+          style: AppText.heading(23, height: 1.1),
+        ),
         const SizedBox(height: 8),
         Text(
           message ?? 'Check your connection and try again.',
@@ -957,8 +1014,10 @@ class _ErrorState extends StatelessWidget {
         const SizedBox(height: 20),
         GestureDetector(
           onTap: () => onRetry(),
-          child: Text('Try again',
-              style: AppText.heading(17, color: AppColors.accent700)),
+          child: Text(
+            'Try again',
+            style: AppText.heading(17, color: AppColors.accent700),
+          ),
         ),
       ],
     );
@@ -966,7 +1025,7 @@ class _ErrorState extends StatelessWidget {
 }
 
 // ---- Home hub --------------------------------------------------------------
-const _warmWhite = Color(0xFFFFFDF8);
+const _warmWhite = AppColors.warmWhite;
 
 class _HeaderCircle extends StatelessWidget {
   const _HeaderCircle({required this.icon, required this.onTap});
@@ -979,7 +1038,10 @@ class _HeaderCircle extends StatelessWidget {
       child: Container(
         width: 46,
         height: 46,
-        decoration: const BoxDecoration(color: _warmWhite, shape: BoxShape.circle),
+        decoration: const BoxDecoration(
+          color: _warmWhite,
+          shape: BoxShape.circle,
+        ),
         alignment: Alignment.center,
         child: Icon(icon, size: 22, color: AppColors.text),
       ),
@@ -1002,49 +1064,53 @@ class _HomeHubTab extends StatelessWidget {
           _FirstRun(onSetUp: () => nav.pushNamed(CreateStableScreen.route)),
           const SizedBox(height: 18),
         ],
-        Row(children: [
-          Expanded(
-            child: _HubCard(
-              icon: Icons.pets_outlined,
-              tone: _Tone.terra,
-              title: 'My horses',
-              caption: 'Profiles & records',
-              onTap: () => onGoTab(AppTab.horses),
+        Row(
+          children: [
+            Expanded(
+              child: _HubCard(
+                icon: Icons.pets_outlined,
+                tone: _Tone.terra,
+                title: 'My horses',
+                caption: 'Profiles & records',
+                onTap: () => onGoTab(AppTab.horses),
+              ),
             ),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: _HubCard(
-              icon: Icons.event_available_outlined,
-              tone: _Tone.sage,
-              title: 'Schedule',
-              caption: "Today's plan",
-              onTap: () => nav.pushNamed(ScheduleScreen.route),
+            const SizedBox(width: 14),
+            Expanded(
+              child: _HubCard(
+                icon: Icons.event_available_outlined,
+                tone: _Tone.sage,
+                title: 'Schedule',
+                caption: "Today's plan",
+                onTap: () => nav.pushNamed(ScheduleScreen.route),
+              ),
             ),
-          ),
-        ]),
+          ],
+        ),
         const SizedBox(height: 14),
-        Row(children: [
-          Expanded(
-            child: _HubCard(
-              icon: Icons.task_alt,
-              tone: _Tone.sage,
-              title: 'Tasks',
-              caption: 'Who does what',
-              onTap: () => nav.pushNamed(GroomDayScreen.route),
+        Row(
+          children: [
+            Expanded(
+              child: _HubCard(
+                icon: Icons.task_alt,
+                tone: _Tone.sage,
+                title: 'Tasks',
+                caption: 'Who does what',
+                onTap: () => nav.pushNamed(GroomDayScreen.route),
+              ),
             ),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: _HubCard(
-              icon: Icons.storefront_outlined,
-              tone: _Tone.terra,
-              title: 'Market',
-              caption: 'Feed, tack & vets',
-              onTap: () => nav.pushNamed(MarketScreen.route),
+            const SizedBox(width: 14),
+            Expanded(
+              child: _HubCard(
+                icon: Icons.storefront_outlined,
+                tone: _Tone.terra,
+                title: 'Market',
+                caption: 'Feed, tack & vets',
+                onTap: () => nav.pushNamed(MarketScreen.route),
+              ),
             ),
-          ),
-        ]),
+          ],
+        ),
         const SizedBox(height: 16),
         _HubRow(
           icon: Icons.groups_outlined,
@@ -1074,12 +1140,13 @@ Color _toneFg(_Tone t) =>
     t == _Tone.terra ? AppColors.accent700 : AppColors.accent2700;
 
 class _HubCard extends StatelessWidget {
-  const _HubCard(
-      {required this.icon,
-      required this.tone,
-      required this.title,
-      required this.caption,
-      required this.onTap});
+  const _HubCard({
+    required this.icon,
+    required this.tone,
+    required this.title,
+    required this.caption,
+    required this.onTap,
+  });
   final IconData icon;
   final _Tone tone;
   final String title;
@@ -1108,15 +1175,18 @@ class _HubCard extends StatelessWidget {
                 width: 54,
                 height: 54,
                 decoration: BoxDecoration(
-                    color: _toneBg(tone),
-                    borderRadius: BorderRadius.circular(16)),
+                  color: _toneBg(tone),
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Icon(icon, color: _toneFg(tone), size: 26),
               ),
               const Spacer(),
               Text(title, style: AppText.heading(19, height: 1.15)),
               const SizedBox(height: 4),
-              Text(caption,
-                  style: AppText.body(13, color: AppColors.ink(0.55))),
+              Text(
+                caption,
+                style: AppText.body(13, color: AppColors.ink(0.55)),
+              ),
             ],
           ),
         ),
@@ -1126,12 +1196,13 @@ class _HubCard extends StatelessWidget {
 }
 
 class _HubRow extends StatelessWidget {
-  const _HubRow(
-      {required this.icon,
-      required this.tone,
-      required this.title,
-      required this.sub,
-      required this.onTap});
+  const _HubRow({
+    required this.icon,
+    required this.tone,
+    required this.title,
+    required this.sub,
+    required this.onTap,
+  });
   final IconData icon;
   final _Tone tone;
   final String title;
@@ -1152,27 +1223,34 @@ class _HubRow extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: AppColors.divider),
           ),
-          child: Row(children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                  color: _toneBg(tone), borderRadius: BorderRadius.circular(12)),
-              child: Icon(icon, color: _toneFg(tone), size: 20),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: AppText.heading(16)),
-                  const SizedBox(height: 2),
-                  Text(sub, style: AppText.body(13, color: AppColors.ink(0.55))),
-                ],
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: _toneBg(tone),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: _toneFg(tone), size: 20),
               ),
-            ),
-            Icon(Icons.chevron_right, color: AppColors.ink(0.4)),
-          ]),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: AppText.heading(16)),
+                    const SizedBox(height: 2),
+                    Text(
+                      sub,
+                      style: AppText.body(13, color: AppColors.ink(0.55)),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: AppColors.ink(0.4)),
+            ],
+          ),
         ),
       ),
     );
@@ -1187,20 +1265,27 @@ class _FirstRun extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-          color: AppColors.accent2200, borderRadius: BorderRadius.circular(18)),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Start here', style: AppText.heading(19)),
-        const SizedBox(height: 6),
-        Text(
+        color: AppColors.accent2200,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Start here', style: AppText.heading(19)),
+          const SizedBox(height: 6),
+          Text(
             'Create your stable or join one with an invite code — then add your '
             'horses and your team.',
-            style: AppText.body(14, height: 1.5, color: AppColors.ink(0.7))),
-        const SizedBox(height: 14),
-        AppButton(
+            style: AppText.body(14, height: 1.5, color: AppColors.ink(0.7)),
+          ),
+          const SizedBox(height: 14),
+          AppButton(
             label: 'Set up your stable',
             block: false,
-            onPressed: onSetUp),
-      ]),
+            onPressed: onSetUp,
+          ),
+        ],
+      ),
     );
   }
 }
