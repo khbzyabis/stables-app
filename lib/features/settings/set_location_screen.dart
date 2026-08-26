@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
@@ -7,8 +9,9 @@ import '../../widgets/app_button.dart';
 import '../../widgets/hairline.dart';
 import '../auth/back_link.dart';
 
-/// Screen 46 — set the stable's location. A stylised map with a draggable pin,
-/// the resolved address, and a choice of how precisely to show it.
+/// Screen 46 — set the stable's location. A real, pannable map (OpenStreetMap
+/// tiles tinted to the app's warm palette), a centre pin, and a choice of how
+/// precisely to show it.
 class SetLocationScreen extends StatefulWidget {
   const SetLocationScreen({super.key});
   static const route = '/set-location';
@@ -18,7 +21,15 @@ class SetLocationScreen extends StatefulWidget {
 }
 
 class _SetLocationScreenState extends State<SetLocationScreen> {
+  static const _default = LatLng(24.8231, 55.2708); // Seih Al Salam, Dubai
+  final _map = MapController();
+  LatLng _center = _default;
   bool _public = false;
+
+  void _recenter() {
+    _map.move(_default, 13);
+    setState(() => _center = _default);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,21 +42,22 @@ class _SetLocationScreenState extends State<SetLocationScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(32, 84, 32, 0),
+              padding: const EdgeInsets.fromLTRB(32, 20, 32, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const BackLink(label: 'Serc'),
-                  const SizedBox(height: 18),
+                  const BackLink(label: 'Stable'),
+                  const SizedBox(height: 14),
                   Text(l10n.whereIsStable,
-                      style: AppText.heading(34, height: 1.05)),
-                  const SizedBox(height: 16),
+                      style: AppText.heading(32, height: 1.05)),
+                  const SizedBox(height: 14),
                   Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppColors.neutral100,
+                      color: AppColors.warmWhite,
                       borderRadius: BorderRadius.circular(AppRadius.md),
+                      border: Border.all(color: AppColors.divider),
                     ),
                     child: Row(
                       children: [
@@ -60,72 +72,95 @@ class _SetLocationScreenState extends State<SetLocationScreen> {
                             ),
                           ),
                         ),
-                        Icon(Icons.search,
-                            size: 20, color: AppColors.ink(0.45)),
+                        Icon(Icons.search, size: 20, color: AppColors.ink(0.45)),
                       ],
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             Expanded(
-              child: Container(
-                color: AppColors.neutral200,
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: CustomPaint(painter: _MapPainter()),
-                    ),
-                    const Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: 40),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _Pin(),
-                            SizedBox(
-                                height: 16,
-                                child: VerticalDivider(
-                                    color: AppColors.accent, width: 2)),
-                          ],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: Stack(
+                    children: [
+                      // The map, gently warmed to the palette.
+                      Positioned.fill(
+                        child: ColorFiltered(
+                          colorFilter: const ColorFilter.mode(
+                              Color(0xFFF1E4C9), BlendMode.modulate),
+                          child: FlutterMap(
+                            mapController: _map,
+                            options: MapOptions(
+                              initialCenter: _center,
+                              initialZoom: 13,
+                              onPositionChanged: (pos, _) =>
+                                  setState(() => _center = pos.center),
+                              interactionOptions: const InteractionOptions(
+                                flags: InteractiveFlag.pinchZoom |
+                                    InteractiveFlag.drag |
+                                    InteractiveFlag.doubleTapZoom,
+                              ),
+                            ),
+                            children: [
+                              TileLayer(
+                                urlTemplate:
+                                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                userAgentPackageName: 'com.mystables.app',
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      right: 16,
-                      bottom: 16,
-                      child: Container(
-                        width: 48,
-                        height: 48,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: AppColors.bg,
-                          shape: BoxShape.circle,
-                          boxShadow: AppShadow.md,
+                      // Fixed centre pin — the map pans beneath it.
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: 34),
+                          child: _CentrePin(),
                         ),
-                        child: Icon(Icons.my_location,
-                            size: 21, color: AppColors.accent700),
                       ),
-                    ),
-                  ],
+                      // Recenter.
+                      Positioned(
+                        right: 14,
+                        bottom: 14,
+                        child: GestureDetector(
+                          onTap: _recenter,
+                          child: Container(
+                            width: 48,
+                            height: 48,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: AppColors.warmWhite,
+                              shape: BoxShape.circle,
+                              boxShadow: AppShadow.md,
+                            ),
+                            child: Icon(Icons.my_location,
+                                size: 21, color: AppColors.accent700),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(32, 22, 32, 40),
+              padding: const EdgeInsets.fromLTRB(32, 18, 32, 36),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Pin is here'.toUpperCase(),
+                  Text('PIN IS HERE',
                       style: AppText.eyebrow(color: AppColors.accent2700)),
                   const SizedBox(height: 8),
-                  Text('Serc · Al Qudra Rd, Seih Al Salam, Dubai',
-                      style: AppText.body(18, height: 1.4)),
-                  const SizedBox(height: 6),
-                  Text('24.8231° N, 55.2708° E',
-                      style: AppText.body(14, color: AppColors.ink(0.5))),
-                  const SizedBox(height: 20),
+                  Text(
+                    '${_center.latitude.toStringAsFixed(4)}° N, '
+                    '${_center.longitude.toStringAsFixed(4)}° E',
+                    style: AppText.body(16, height: 1.4),
+                  ),
+                  const SizedBox(height: 16),
                   const Hairline(),
                   InkWell(
                     onTap: () => setState(() => _public = !_public),
@@ -139,9 +174,8 @@ class _SetLocationScreenState extends State<SetLocationScreen> {
                             height: 26,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: _public
-                                  ? AppColors.accent
-                                  : Colors.transparent,
+                              color:
+                                  _public ? AppColors.accent : Colors.transparent,
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
                                   color: _public
@@ -167,8 +201,7 @@ class _SetLocationScreenState extends State<SetLocationScreen> {
                                         ? 'Riders, staff and the vet get directions straight to the gate'
                                         : 'Only the area is shown until someone joins the stable',
                                     style: AppText.body(14,
-                                        height: 1.4,
-                                        color: AppColors.ink(0.5))),
+                                        height: 1.4, color: AppColors.ink(0.5))),
                               ],
                             ),
                           ),
@@ -177,25 +210,11 @@ class _SetLocationScreenState extends State<SetLocationScreen> {
                     ),
                   ),
                   const Hairline(),
-                  const SizedBox(height: 22),
-                  Row(
-                    children: [
-                      AppButton(
-                        label: l10n.saveLocation,
-                        block: false,
-                        minHeight: 54,
-                        onPressed: () => Navigator.of(context).maybePop(),
-                      ),
-                      const SizedBox(width: 10),
-                      AppButton(
-                        label: l10n.directions,
-                        variant: AppButtonVariant.secondary,
-                        block: false,
-                        minHeight: 54,
-                        fontSize: 16,
-                        onPressed: () {},
-                      ),
-                    ],
+                  const SizedBox(height: 20),
+                  AppButton(
+                    label: l10n.saveLocation,
+                    minHeight: 54,
+                    onPressed: () => Navigator.of(context).maybePop(),
                   ),
                 ],
               ),
@@ -207,67 +226,32 @@ class _SetLocationScreenState extends State<SetLocationScreen> {
   }
 }
 
-class _Pin extends StatelessWidget {
-  const _Pin();
-
+/// The centre marker: a terracotta teardrop with a home glyph.
+class _CentrePin extends StatelessWidget {
+  const _CentrePin();
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 40,
-      height: 40,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: AppColors.accent,
-        shape: BoxShape.circle,
-        boxShadow: AppShadow.md,
-      ),
-      child: const Icon(Icons.home, size: 20, color: AppColors.bg),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 44,
+          height: 44,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: AppColors.accent,
+            shape: BoxShape.circle,
+            border: Border.all(color: AppColors.bg, width: 3),
+            boxShadow: AppShadow.md,
+          ),
+          child: const Icon(Icons.home_rounded, size: 20, color: AppColors.bg),
+        ),
+        Container(
+          width: 3,
+          height: 14,
+          color: AppColors.accent,
+        ),
+      ],
     );
   }
-}
-
-/// A soft, abstract map: sand ground, a couple of roads and green patches.
-class _MapPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final w = size.width, h = size.height;
-    canvas.drawRect(Offset.zero & size, Paint()..color = const Color(0xFFE6DCC6));
-
-    void road(Offset a, Offset b, Offset c, double width, Color color) {
-      final p = Path()
-        ..moveTo(a.dx, a.dy)
-        ..lineTo(b.dx, b.dy)
-        ..lineTo(c.dx, c.dy);
-      canvas.drawPath(
-          p,
-          Paint()
-            ..color = color
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = width);
-    }
-
-    road(Offset(-20, h * 0.36), Offset(w * 0.5, h * 0.29), Offset(w + 20, h * 0.39),
-        26, const Color(0xFFD5C8AC));
-    road(Offset(w * 0.3, -20), Offset(w * 0.37, h * 0.48), Offset(w * 0.3, h + 20),
-        20, const Color(0xFFD5C8AC));
-    road(Offset(w * 0.7, -20), Offset(w * 0.65, h * 0.45), Offset(w * 0.75, h + 20),
-        14, const Color(0xFFDDD1B7));
-
-    final green = Paint()..color = const Color(0xFFCFD8BD);
-    canvas.drawCircle(Offset(w * 0.82, h * 0.17), 62, green);
-    canvas.drawCircle(Offset(w * 0.13, h * 0.93), 70, green);
-
-    final block = Paint()..color = const Color(0xFFDCCFB2);
-    canvas.drawRRect(
-        RRect.fromRectAndRadius(
-            Rect.fromLTWH(w * 0.42, h * 0.5, 76, 52), const Radius.circular(9)),
-        block);
-    canvas.drawRRect(
-        RRect.fromRectAndRadius(
-            Rect.fromLTWH(w * 0.24, h * 0.56, 48, 40), const Radius.circular(8)),
-        block);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

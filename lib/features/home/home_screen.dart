@@ -998,7 +998,7 @@ class _YouTabState extends State<_YouTab> {
         gap,
         _NavRow(
           title: l10n.tackBox,
-          subtitle: '9 items across 7 groups',
+          subtitle: 'Your kit and setups',
           onTap: () => Navigator.of(context).pushNamed(TackBoxScreen.route),
         ),
         gap,
