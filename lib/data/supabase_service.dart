@@ -1228,6 +1228,23 @@ class SupabaseService {
         'p_vat': vat,
       });
 
+  /// Operator turns the market Shows panel on/off and edits its details.
+  /// Any null field is left unchanged.
+  static Future<void> setShowsPanel({
+    bool? on,
+    String? title,
+    String? venue,
+    String? when,
+    String? status,
+  }) =>
+      _db.rpc('set_shows_panel', params: {
+        'p_on': on,
+        'p_title': title,
+        'p_venue': venue,
+        'p_when': when,
+        'p_status': status,
+      });
+
   // ---- Quote requests (service & transport providers) -----------------
   /// Kinds a shop can be. Products come from Feed…Services shops; Services and
   /// Transport shops instead take quote requests.

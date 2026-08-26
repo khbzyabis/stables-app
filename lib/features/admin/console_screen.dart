@@ -30,7 +30,8 @@ enum _Section {
   disputes,
   payouts,
   fees,
-  announcements
+  announcements,
+  shows
 }
 
 class _ConsoleScreenState extends State<ConsoleScreen> {
@@ -45,6 +46,7 @@ class _ConsoleScreenState extends State<ConsoleScreen> {
         _Section.payouts: l10n.cnPayouts,
         _Section.fees: l10n.cnFees,
         _Section.announcements: l10n.cnAnnouncements,
+        _Section.shows: 'Shows',
       };
   static const _icons = {
     _Section.overview: Icons.grid_view_rounded,
@@ -55,6 +57,7 @@ class _ConsoleScreenState extends State<ConsoleScreen> {
     _Section.payouts: Icons.account_balance_outlined,
     _Section.fees: Icons.percent_outlined,
     _Section.announcements: Icons.campaign_outlined,
+    _Section.shows: Icons.emoji_events_outlined,
   };
 
   @override
@@ -123,6 +126,7 @@ class _ConsoleScreenState extends State<ConsoleScreen> {
             _Section.payouts => const _PayoutsView(),
             _Section.fees => const _FeesView(),
             _Section.announcements => const _AnnouncementsView(),
+            _Section.shows => const _ShowsView(),
           },
         ),
       ],
@@ -1204,6 +1208,133 @@ class _PaymentsSettingsCardState extends State<_PaymentsSettingsCard> {
           ]),
         );
       },
+    );
+  }
+}
+
+// ---- Shows panel -----------------------------------------------------------
+class _ShowsView extends StatefulWidget {
+  const _ShowsView();
+  @override
+  State<_ShowsView> createState() => _ShowsViewState();
+}
+
+class _ShowsViewState extends State<_ShowsView> {
+  final _title = TextEditingController();
+  final _venue = TextEditingController();
+  final _when = TextEditingController();
+  final _status = TextEditingController();
+  bool _on = false;
+  bool _loading = true;
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final s = await SupabaseService.platformSettings();
+      _on = s['shows_on'] == true;
+      _title.text = (s['show_title'] as String?) ?? '';
+      _venue.text = (s['show_venue'] as String?) ?? '';
+      _when.text = (s['show_when'] as String?) ?? '';
+      _status.text = (s['show_status'] as String?) ?? '';
+    } catch (e) {
+      AppErrors.report(e);
+    }
+    if (mounted) setState(() => _loading = false);
+  }
+
+  @override
+  void dispose() {
+    _title.dispose();
+    _venue.dispose();
+    _when.dispose();
+    _status.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    setState(() => _saving = true);
+    try {
+      await SupabaseService.setShowsPanel(
+        on: _on,
+        title: _title.text.trim(),
+        venue: _venue.text.trim(),
+        when: _when.text.trim(),
+        status: _status.text.trim(),
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Shows panel saved.')));
+      }
+    } catch (e) {
+      AppErrors.report(e);
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Couldn't save: $e")));
+      }
+    }
+    if (mounted) setState(() => _saving = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(32, 8, 32, 40),
+      children: [
+        Text('SHOWS PANEL', style: AppText.eyebrow()),
+        const SizedBox(height: 10),
+        Text(
+            'When this is on, riders see a "This weekend" show card at the top '
+            'of the Market with the details and a live status line. Turn it off '
+            'when there is no show.',
+            style: AppText.body(14, height: 1.5, color: AppColors.ink(0.55))),
+        const SizedBox(height: 16),
+        _Card(
+          child: Row(children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Show the panel', style: AppText.heading(18)),
+                  const SizedBox(height: 3),
+                  Text(_on ? 'Visible to riders now' : 'Hidden',
+                      style: AppText.body(13,
+                          color: _on
+                              ? AppColors.accent2700
+                              : AppColors.ink(0.5))),
+                ],
+              ),
+            ),
+            Switch(
+              value: _on,
+              activeThumbColor: AppColors.accent,
+              onChanged: (v) => setState(() => _on = v),
+            ),
+          ]),
+        ),
+        const SizedBox(height: 18),
+        AppField(label: 'Show title', controller: _title),
+        const SizedBox(height: 14),
+        AppField(label: 'Venue', controller: _venue),
+        const SizedBox(height: 14),
+        AppField(label: 'When (e.g. Sat 30 Aug, from 8am)', controller: _when),
+        const SizedBox(height: 14),
+        AppField(
+            label: 'Live status (e.g. Class 2 · halfway)', controller: _status),
+        const SizedBox(height: 24),
+        AppButton(
+          label: _saving ? 'Saving…' : 'Save',
+          onPressed: _saving ? null : _save,
+        ),
+      ],
     );
   }
 }

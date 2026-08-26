@@ -28,6 +28,7 @@ class _MarketHomeScreenState extends State<MarketHomeScreen> {
   Future<_MarketHomeData> _load() async {
     List<Map<String, dynamic>> ann = const [];
     List<Map<String, dynamic>> vendors = const [];
+    Map<String, dynamic> settings = const {};
     try {
       ann = await SupabaseService.announcements();
     } catch (_) {}
@@ -36,7 +37,11 @@ class _MarketHomeScreenState extends State<MarketHomeScreen> {
     } catch (e) {
       AppErrors.report(e);
     }
-    return _MarketHomeData(announcements: ann, vendors: vendors);
+    try {
+      settings = await SupabaseService.platformSettings();
+    } catch (_) {}
+    return _MarketHomeData(
+        announcements: ann, vendors: vendors, settings: settings);
   }
 
   void _openCategory(String category) =>
@@ -91,6 +96,12 @@ class _MarketHomeScreenState extends State<MarketHomeScreen> {
                     }),
                   ],
                 ),
+
+                // The weekend show — only when an operator has turned it on.
+                if (data != null && data.settings['shows_on'] == true) ...[
+                  const SizedBox(height: 22),
+                  _ShowPanel(settings: data.settings),
+                ],
 
                 // Announcements from My Stables
                 if (data != null && data.announcements.isNotEmpty) ...[
@@ -181,9 +192,85 @@ class _MarketHomeScreenState extends State<MarketHomeScreen> {
 }
 
 class _MarketHomeData {
-  const _MarketHomeData({required this.announcements, required this.vendors});
+  const _MarketHomeData(
+      {required this.announcements,
+      required this.vendors,
+      required this.settings});
   final List<Map<String, dynamic>> announcements;
   final List<Map<String, dynamic>> vendors;
+  final Map<String, dynamic> settings;
+}
+
+/// The weekend-show panel: event details plus a live status line. Shown on
+/// the market home only while an operator has the panel switched on.
+class _ShowPanel extends StatelessWidget {
+  const _ShowPanel({required this.settings});
+  final Map<String, dynamic> settings;
+  @override
+  Widget build(BuildContext context) {
+    final title = (settings['show_title'] as String?)?.trim();
+    final venue = (settings['show_venue'] as String?)?.trim();
+    final when = (settings['show_when'] as String?)?.trim();
+    final status = (settings['show_status'] as String?)?.trim();
+    final meta = [venue, when].where((s) => s != null && s.isNotEmpty).join(' · ');
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.accent2700, AppColors.accent2900],
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.emoji_events_outlined,
+                  size: 16, color: AppColors.accent2200),
+              const SizedBox(width: 7),
+              Text('THIS WEEKEND',
+                  style: AppText.body(11.5,
+                      color: AppColors.accent2200, letterSpacing: 1)),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(title?.isNotEmpty == true ? title! : 'Show day',
+              style: AppText.heading(22, color: AppColors.neutral100, height: 1.1)),
+          if (meta.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Text(meta, style: AppText.body(14, color: AppColors.accent2200)),
+          ],
+          if (status != null && status.isNotEmpty) ...[
+            const SizedBox(height: 14),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(999)),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                      width: 7,
+                      height: 7,
+                      decoration: const BoxDecoration(
+                          color: Color(0xFF9BD46B), shape: BoxShape.circle)),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(status,
+                        style: AppText.body(13, color: AppColors.neutral100)),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
 }
 
 class _Label extends StatelessWidget {
