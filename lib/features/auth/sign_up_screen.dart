@@ -49,12 +49,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
     setState(() => _busy = true);
     try {
-      await SupabaseService.signUp(
+      final res = await SupabaseService.signUp(
           email: email,
           password: password,
           name: name,
           accountType: Portal.signupAccountType(Portal.current));
       if (!mounted) return;
+      // Supabase returns an obfuscated success (a user with no identities) when
+      // the email is already registered — surface that instead of pretending a
+      // new account was made.
+      final identities = res.user?.identities;
+      if (res.user != null && (identities == null || identities.isEmpty)) {
+        _toast('That email already has an account. Sign in instead.');
+        return;
+      }
       Navigator.of(context).pushNamed(VerifyScreen.route, arguments: email);
     } catch (e) {
       AppErrors.report(e);
