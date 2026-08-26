@@ -17,8 +17,11 @@ import '../provider_app/provider_app_screen.dart';
 /// "Held vs payable" sits in the header on every page. Held/payable are
 /// simplified for now (the full commission + payout model comes next).
 class SellerDashboardScreen extends StatefulWidget {
-  const SellerDashboardScreen({super.key});
+  const SellerDashboardScreen({super.key, this.vendor});
   static const route = '/seller';
+
+  /// The shop to show. When null, it's read from the route arguments.
+  final Map<String, dynamic>? vendor;
 
   @override
   State<SellerDashboardScreen> createState() => _SellerDashboardScreenState();
@@ -45,7 +48,8 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _vendor ??= (ModalRoute.of(context)?.settings.arguments
+    _vendor ??= widget.vendor ??
+        (ModalRoute.of(context)?.settings.arguments
             as Map<String, dynamic>?) ??
         const {};
   }

@@ -80,7 +80,10 @@ class _ProviderScreenState extends State<ProviderScreen> {
                   const Hairline(),
                 ],
                 const SizedBox(height: 26),
-                AppButton(label: 'Apply to sell', onPressed: _newVendor),
+                // One shop per seller account: only offer to apply when there
+                // isn't one yet.
+                if (vendors.isEmpty)
+                  AppButton(label: 'Apply to sell', onPressed: _newVendor),
               ],
             );
           },

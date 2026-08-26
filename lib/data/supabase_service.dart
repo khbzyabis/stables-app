@@ -754,6 +754,11 @@ class SupabaseService {
     String? location,
     required List<Map<String, dynamic>> docs, // {doc_type,label,storage_path}
   }) async {
+    // One shop per seller account.
+    final existing = await myVendors();
+    if (existing.isNotEmpty) {
+      throw StateError('You already have a shop on this account.');
+    }
     final vendor = await _db.from('vendors').insert({
       'name': tradingName,
       'kind': trades.contains('transport')

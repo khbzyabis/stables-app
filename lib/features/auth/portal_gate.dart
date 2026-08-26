@@ -8,6 +8,7 @@ import '../../widgets/app_button.dart';
 import '../admin/console_screen.dart';
 import '../home/home_screen.dart';
 import '../market/provider_screen.dart';
+import '../market/seller_dashboard_screen.dart';
 import 'create_stable_screen.dart';
 import 'landing_screen.dart';
 import 'sign_in_screen.dart';
@@ -66,8 +67,16 @@ class _PortalGateState extends State<PortalGate> {
     }
     final type = await SupabaseService.myAccountType();
     if (portal == AppPortal.seller) {
-      final ok = type == 'seller';
-      return _GateResult(ok, ok ? const ProviderScreen() : null, type);
+      if (type != 'seller') return _GateResult(false, null, type);
+      // One shop → straight into it; none or (legacy) several → the list.
+      List<Map<String, dynamic>> shops = const [];
+      try {
+        shops = await SupabaseService.myVendors();
+      } catch (_) {}
+      final dest = shops.length == 1
+          ? SellerDashboardScreen(vendor: shops.first)
+          : const ProviderScreen();
+      return _GateResult(true, dest, type);
     }
     // app portal — riders and stable people
     final ok = type == 'rider';
