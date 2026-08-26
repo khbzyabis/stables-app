@@ -267,6 +267,8 @@ class _Circle extends StatelessWidget {
     return Material(
       color: AppColors.warmWhite,
       shape: const CircleBorder(),
+      elevation: 2,
+      shadowColor: const Color(0x33140E06),
       child: InkWell(
         customBorder: const CircleBorder(),
         onTap: onTap,

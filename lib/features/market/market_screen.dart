@@ -109,6 +109,8 @@ class _MarketScreenState extends State<MarketScreen> {
                       child: Material(
                         color: AppColors.warmWhite,
                         shape: const CircleBorder(),
+                        elevation: 2,
+                        shadowColor: const Color(0x33140E06),
                         child: InkWell(
                           customBorder: const CircleBorder(),
                           onTap: () => Navigator.of(context).pop(),
