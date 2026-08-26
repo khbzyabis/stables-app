@@ -221,6 +221,7 @@ class _HorsesTab extends StatefulWidget {
 
 class _HorsesTabState extends State<_HorsesTab> {
   late Future<List<Map<String, dynamic>>> _future = _load();
+  String _filter = 'all'; // all | well | watch
 
   Future<List<Map<String, dynamic>>> _load() async {
     final id = widget.stableId;
@@ -229,6 +230,9 @@ class _HorsesTabState extends State<_HorsesTab> {
   }
 
   void _reload() => setState(() => _future = _load());
+
+  static bool _isWell(Map<String, dynamic> h) =>
+      (h['status'] as String?) != 'watch';
 
   @override
   void didUpdateWidget(covariant _HorsesTab old) {
@@ -269,8 +273,15 @@ class _HorsesTabState extends State<_HorsesTab> {
           );
         }
         final horses = snap.data ?? const [];
+        final wellCount = horses.where(_isWell).length;
+        final watchCount = horses.length - wellCount;
+        final shown = switch (_filter) {
+          'well' => horses.where(_isWell).toList(),
+          'watch' => horses.where((h) => !_isWell(h)).toList(),
+          _ => horses,
+        };
         return ListView(
-          padding: const EdgeInsets.only(top: 22),
+          padding: const EdgeInsets.only(top: 18),
           children: [
             if (horses.isEmpty)
               Padding(
@@ -283,12 +294,49 @@ class _HorsesTabState extends State<_HorsesTab> {
                     color: AppColors.ink(0.6),
                   ),
                 ),
+              )
+            else ...[
+              Text(
+                watchCount > 0
+                    ? '${horses.length} in your yard · $watchCount to watch'
+                    : '${horses.length} in your yard',
+                style: AppText.body(14, color: AppColors.ink(0.6)),
               ),
-            for (final h in horses) ...[
-              _RealHorseRow(horse: h, onReturn: _reload),
-              const SizedBox(height: 10),
+              const SizedBox(height: 16),
+              SizedBox(
+                height: 38,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    _HorseFilterChip(
+                      label: 'All ${horses.length}',
+                      active: _filter == 'all',
+                      onTap: () => setState(() => _filter = 'all'),
+                    ),
+                    const SizedBox(width: 8),
+                    _HorseFilterChip(
+                      label: 'Well $wellCount',
+                      active: _filter == 'well',
+                      onTap: () => setState(() => _filter = 'well'),
+                    ),
+                    if (watchCount > 0) ...[
+                      const SizedBox(width: 8),
+                      _HorseFilterChip(
+                        label: 'Watch $watchCount',
+                        active: _filter == 'watch',
+                        onTap: () => setState(() => _filter = 'watch'),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
             ],
-            const SizedBox(height: 16),
+            for (final h in shown) ...[
+              _RealHorseRow(horse: h, onReturn: _reload),
+              const SizedBox(height: 12),
+            ],
+            const SizedBox(height: 8),
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: _TextAction(
@@ -321,41 +369,110 @@ class _RealHorseRow extends StatelessWidget {
         if ((horse[k] as String?)?.isNotEmpty == true) horse[k] as String,
       if ((horse['box'] as String?)?.isNotEmpty == true) 'Box ${horse['box']}',
     ];
+    // An at-a-glance line from the horse's own note, if any.
+    final note = (horse['note'] as String?)?.trim();
     return AppCard(
       onTap: () async {
         await Navigator.of(context)
             .pushNamed(HorseRecordScreen.route, arguments: horse);
         onReturn();
       },
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       child: Row(
         children: [
-          PhotoPlaceholder(size: 66, url: horse['photo_url'] as String?),
-          const SizedBox(width: 16),
+          PhotoPlaceholder(
+              size: 66,
+              circle: false,
+              radius: 18,
+              url: horse['photo_url'] as String?),
+          const SizedBox(width: 15),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  (horse['name'] as String?) ?? 'Horse',
-                  style: AppText.heading(23, height: 1.1),
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        (horse['name'] as String?) ?? 'Horse',
+                        style: AppText.heading(21, height: 1.1),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    _HorseStatusChip(
+                        label: well ? l10n.statusWell : l10n.statusWatch,
+                        well: well),
+                  ],
                 ),
                 if (bits.isNotEmpty) ...[
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 5),
                   Text(
                     bits.join(' · '),
-                    style: AppText.body(15, color: AppColors.ink(0.6)),
+                    style: AppText.body(13.5, color: AppColors.ink(0.6)),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+                if (note != null && note.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    note,
+                    style: AppText.body(12.5, color: AppColors.accent700),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ],
             ),
           ),
-          const SizedBox(width: 12),
-          AppTag(
-            well ? l10n.statusWell : l10n.statusWatch,
-            tone: well ? TagTone.sage : TagTone.neutral,
-          ),
+          const SizedBox(width: 8),
+          Icon(Icons.chevron_right, color: AppColors.ink(0.4)),
         ],
+      ),
+    );
+  }
+}
+
+/// A small inline Well/Watch chip for the horses list.
+class _HorseStatusChip extends StatelessWidget {
+  const _HorseStatusChip({required this.label, required this.well});
+  final String label;
+  final bool well;
+  @override
+  Widget build(BuildContext context) {
+    final bg = well ? AppColors.accent2200 : const Color(0xFFF4E2C4);
+    final fg = well ? AppColors.accent2700 : const Color(0xFF8A5A12);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+      decoration:
+          BoxDecoration(color: bg, borderRadius: BorderRadius.circular(999)),
+      child: Text(label, style: AppText.body(11, color: fg)),
+    );
+  }
+}
+
+/// Filter chip for the horses list (All / Well / Watch).
+class _HorseFilterChip extends StatelessWidget {
+  const _HorseFilterChip(
+      {required this.label, required this.active, required this.onTap});
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: active ? AppColors.accent : Colors.transparent,
+          borderRadius: BorderRadius.circular(999),
+          border:
+              Border.all(color: active ? AppColors.accent : AppColors.divider),
+        ),
+        child: Text(label,
+            style: AppText.body(13.5,
+                color: active ? AppColors.bg : AppColors.text)),
       ),
     );
   }
