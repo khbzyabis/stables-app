@@ -62,11 +62,25 @@ class _PortalGateState extends State<PortalGate> {
 
   Future<_GateResult> _decide(AppPortal portal) async {
     if (portal == AppPortal.admin) {
-      final ok = await SupabaseService.isAppAdmin();
+      // Fail closed: any error means no admin access.
+      bool ok = false;
+      try {
+        ok = await SupabaseService.isAppAdmin();
+      } catch (_) {}
       return _GateResult(ok, ok ? const ConsoleScreen() : null, 'operator');
     }
-    final type = await SupabaseService.myAccountType();
+    // The rider app is the default consumer door: if we can't determine the
+    // account type (RPC missing, transient error, or no portal row yet), treat
+    // it as a rider rather than locking a real person out. The seller/admin
+    // doors stay strict below.
+    String? type;
+    try {
+      type = await SupabaseService.myAccountType();
+    } catch (_) {
+      type = null;
+    }
     if (portal == AppPortal.seller) {
+      // Fail closed: only an explicit seller account may enter the seller door.
       if (type != 'seller') return _GateResult(false, null, type);
       // One shop → straight into it; none or (legacy) several → the list.
       List<Map<String, dynamic>> shops = const [];
@@ -78,8 +92,9 @@ class _PortalGateState extends State<PortalGate> {
           : const ProviderScreen();
       return _GateResult(true, dest, type);
     }
-    // app portal — riders and stable people
-    final ok = type == 'rider';
+    // app portal — riders and stable people. Bounce only accounts that clearly
+    // belong to another door (seller/operator); everyone else is a rider.
+    final ok = type != 'seller' && type != 'operator';
     if (!ok) return _GateResult(false, null, type);
     // Decide home vs create/join a stable — read directly (no session notifier,
     // which would re-trigger this build and loop forever).
@@ -102,7 +117,7 @@ class _GateResult {
   _GateResult(this.allowed, this.destination, this.accountType);
   final bool allowed;
   final Widget? destination;
-  final String accountType;
+  final String? accountType;
 }
 
 /// Shown when the signed-in account doesn't belong to the door they opened.
