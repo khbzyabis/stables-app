@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show AuthChangeEvent;
@@ -10,6 +11,7 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'app_state.dart';
 import 'data/analytics.dart';
 import 'data/env.dart';
+import 'data/portal.dart';
 import 'data/session.dart';
 import 'data/stable_store.dart';
 import 'data/supabase_service.dart';
@@ -180,6 +182,30 @@ class _MyStablesAppState extends State<MyStablesApp> {
             navigatorKey: _navKey,
             debugShowCheckedModeBanner: false,
             theme: AppTheme.light,
+            // The rider app is mobile-first. On a wide (desktop web) screen,
+            // frame the signed-in app to a phone width so it stays in
+            // proportion; real phones and the marketing / admin / seller
+            // pages render full width.
+            builder: (context, child) {
+              final page = child ?? const SizedBox.shrink();
+              if (!kIsWeb ||
+                  Portal.current != AppPortal.app ||
+                  !SupabaseService.isSignedIn) {
+                return page;
+              }
+              return LayoutBuilder(
+                builder: (context, c) {
+                  if (c.maxWidth <= 620) return page;
+                  return ColoredBox(
+                    color: const Color(0xFF241F19),
+                    child: Center(
+                      child: SizedBox(
+                          width: 460, height: c.maxHeight, child: page),
+                    ),
+                  );
+                },
+              );
+            },
             locale: _localeController.locale,
             supportedLocales: kSupportedLocales,
             localizationsDelegates: const [
