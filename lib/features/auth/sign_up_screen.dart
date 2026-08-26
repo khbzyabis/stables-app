@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/errors.dart';
 
+import '../../data/portal.dart';
 import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
@@ -49,7 +50,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     setState(() => _busy = true);
     try {
       await SupabaseService.signUp(
-          email: email, password: password, name: name);
+          email: email,
+          password: password,
+          name: name,
+          accountType: Portal.signupAccountType(Portal.current));
       if (!mounted) return;
       Navigator.of(context).pushNamed(VerifyScreen.route, arguments: email);
     } catch (e) {
@@ -81,9 +85,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
         children: [
           BackLink(label: l10n.back),
           const SizedBox(height: 28),
-          Text(l10n.yourDetails, style: AppText.heading(42, height: 1)),
+          Text(
+              Portal.current == AppPortal.seller
+                  ? 'Your seller account'
+                  : l10n.yourDetails,
+              style: AppText.heading(42, height: 1)),
           const SizedBox(height: 12),
-          Text(l10n.step1of3,
+          Text(
+              Portal.current == AppPortal.seller
+                  ? 'Create your login, then tell us about your shop.'
+                  : l10n.step1of3,
               style: AppText.body(17, color: AppColors.ink(0.65))),
           const SizedBox(height: 38),
           const StepProgress(total: 3, current: 1),

@@ -1,13 +1,22 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
 import 'data/analytics.dart';
 import 'data/env.dart';
+import 'data/portal.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Clean path URLs (/, /sell, /admin) instead of hash URLs, and pick the
+  // front door from the address the app was opened at.
+  if (kIsWeb) {
+    usePathUrlStrategy();
+    Portal.current = Portal.fromPath(Uri.base.path);
+  }
   await Supabase.initialize(
     url: Env.supabaseUrl,
     anonKey: Env.supabaseAnonKey,

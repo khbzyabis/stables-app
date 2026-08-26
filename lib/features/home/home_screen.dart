@@ -24,9 +24,7 @@ import '../settings/stable_settings_screen.dart';
 import '../shows/shows_screen.dart';
 import '../market/market_screen.dart';
 import '../market/payments_screen.dart';
-import '../market/provider_screen.dart';
 import '../market/my_quotes_screen.dart';
-import '../admin/console_screen.dart';
 import '../people/approvals_screen.dart';
 import '../people/my_stables_screen.dart';
 import '../people/people_screen.dart';
@@ -707,8 +705,6 @@ class _YouTab extends StatefulWidget {
 }
 
 class _YouTabState extends State<_YouTab> {
-  late final Future<bool> _isAdmin = SupabaseService.isAppAdmin();
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppL10n.of(context);
@@ -754,29 +750,6 @@ class _YouTabState extends State<_YouTab> {
           title: 'My quotes',
           subtitle: 'Prices from service and transport providers',
           onTap: () => Navigator.of(context).pushNamed(MyQuotesScreen.route),
-        ),
-        const Hairline(),
-        _NavRow(
-          title: 'Sell on the market',
-          subtitle: 'Run a shop — list products and take orders',
-          onTap: () => Navigator.of(context).pushNamed(ProviderScreen.route),
-        ),
-        FutureBuilder<bool>(
-          future: _isAdmin,
-          builder: (context, snap) {
-            if (snap.data != true) return const SizedBox.shrink();
-            return Column(
-              children: [
-                const Hairline(),
-                _NavRow(
-                  title: 'Operator console',
-                  subtitle: 'Applications, sellers, stables, announcements',
-                  onTap: () =>
-                      Navigator.of(context).pushNamed(ConsoleScreen.route),
-                ),
-              ],
-            );
-          },
         ),
         const Hairline(),
         _NavRow(

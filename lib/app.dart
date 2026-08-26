@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show AuthChangeEvent;
 
 import 'api/api_client.dart';
 import 'api/api_config.dart';
@@ -13,9 +14,9 @@ import 'data/session.dart';
 import 'data/stable_store.dart';
 import 'data/supabase_service.dart';
 import 'features/auth/create_stable_screen.dart';
+import 'features/auth/portal_gate.dart';
 import 'features/auth/sign_in_screen.dart';
 import 'features/auth/sign_up_screen.dart';
-import 'features/auth/splash_screen.dart';
 import 'features/auth/verify_screen.dart';
 import 'features/home/home_screen.dart';
 import 'features/horses/add_horse_screen.dart';
@@ -96,6 +97,7 @@ class MyStablesApp extends StatefulWidget {
 class _MyStablesAppState extends State<MyStablesApp> {
   final _localeController = LocaleController();
   final _session = AppSession();
+  final _navKey = GlobalKey<NavigatorState>();
   // Talk to the real API when one is configured (dart-define API_BASE_URL);
   // otherwise run offline with local sample data.
   final _stableStore = StableStore(
@@ -118,6 +120,13 @@ class _MyStablesAppState extends State<MyStablesApp> {
       } else {
         _session.clear();
         Analytics.reset();
+      }
+      // On a real sign-in/sign-out, send the user back through the portal gate
+      // so the right door (rider / seller / operator) is re-evaluated.
+      final e = state.event;
+      if (e == AuthChangeEvent.signedIn || e == AuthChangeEvent.signedOut) {
+        _navKey.currentState?.pushNamedAndRemoveUntil(
+            PortalGate.route, (r) => false);
       }
     });
     // On first launch, honour the device language if it is one we support.
@@ -167,6 +176,7 @@ class _MyStablesAppState extends State<MyStablesApp> {
           builder: (context, _) {
             return MaterialApp(
             title: 'My Stables',
+            navigatorKey: _navKey,
             debugShowCheckedModeBanner: false,
             theme: AppTheme.light,
             locale: _localeController.locale,
@@ -179,11 +189,18 @@ class _MyStablesAppState extends State<MyStablesApp> {
             ],
               navigatorObservers:
                   Env.analyticsEnabled ? [PosthogObserver()] : const [],
-              initialRoute: SupabaseService.isSignedIn
-                  ? HomeScreen.route
-                  : SplashScreen.route,
+              initialRoute: PortalGate.route,
+              // The seller (/sell) and operator (/admin) doors resolve to the
+              // same gate; it reads Portal.current (set from the URL at boot).
+              onGenerateRoute: (settings) {
+                if (settings.name == '/sell' || settings.name == '/admin') {
+                  return MaterialPageRoute(
+                      builder: (_) => const PortalGate(), settings: settings);
+                }
+                return null;
+              },
               routes: {
-                SplashScreen.route: (_) => const SplashScreen(),
+                PortalGate.route: (_) => const PortalGate(),
                 SignInScreen.route: (_) => const SignInScreen(),
                 SignUpScreen.route: (_) => const SignUpScreen(),
                 VerifyScreen.route: (_) => const VerifyScreen(),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/errors.dart';
 
-import '../../data/session.dart';
+import '../../data/portal.dart';
 import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
@@ -9,7 +9,6 @@ import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/app_field.dart';
 import '../../widgets/app_screen.dart';
-import '../home/home_screen.dart';
 import 'sign_up_screen.dart';
 import 'create_stable_screen.dart';
 
@@ -47,21 +46,11 @@ class _SignInScreenState extends State<SignInScreen> {
       _toast('Enter your email and password.');
       return;
     }
-    final session = SessionScope.of(context);
-    final nav = Navigator.of(context);
     setState(() => _busy = true);
     try {
       await SupabaseService.signIn(email: email, password: password);
-      await session.refresh();
-      if (!mounted) return;
-      // Have a stable, or waiting to be approved for one → Home (which shows
-      // the waiting panel). Otherwise send them to create/join one.
-      nav.pushNamedAndRemoveUntil(
-        (session.hasStable || session.hasPending)
-            ? HomeScreen.route
-            : CreateStableScreen.route,
-        (r) => false,
-      );
+      // The portal gate takes over from here (via the auth listener in app.dart):
+      // it checks this account belongs to this door and lands them accordingly.
     } catch (e) {
       AppErrors.report(e);
       _toast(_friendly(e));
@@ -90,15 +79,21 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppL10n.of(context);
+    final portal = Portal.current;
+    final heading = switch (portal) {
+      AppPortal.seller => 'Seller sign-in',
+      AppPortal.admin => 'Operator sign-in',
+      AppPortal.app => l10n.welcomeBack,
+    };
     return AppScreen(
       scrollable: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.welcomeBack, style: AppText.heading(42, height: 1)),
+          Text(heading, style: AppText.heading(42, height: 1)),
           const SizedBox(height: 12),
           Text(
-            l10n.signInSubtitle,
+            portal == AppPortal.app ? l10n.signInSubtitle : Portal.tagline(portal),
             style: AppText.body(17, color: AppColors.ink(0.65)),
           ),
           const SizedBox(height: 48),
@@ -150,14 +145,19 @@ class _SignInScreenState extends State<SignInScreen> {
               onPressed: _socialSoon,
             ),
           ],
-          const SizedBox(height: 40),
-          _LinkRich(
-            prefix: l10n.newHere,
-            emphasis: l10n.createAnAccount,
-            onTap: () =>
-                Navigator.of(context).pushNamed(SignUpScreen.route),
-          ),
-          if (_showInviteOption) ...[
+          if (Portal.allowsSignup(portal)) ...[
+            const SizedBox(height: 40),
+            _LinkRich(
+              prefix: l10n.newHere,
+              emphasis: portal == AppPortal.seller
+                  ? 'Apply to sell'
+                  : l10n.createAnAccount,
+              onTap: () =>
+                  Navigator.of(context).pushNamed(SignUpScreen.route),
+            ),
+          ],
+          // The invite code (joining a stable) only belongs on the rider app.
+          if (_showInviteOption && portal == AppPortal.app) ...[
             const SizedBox(height: 10),
             _LinkText(
               l10n.haveInviteCode,

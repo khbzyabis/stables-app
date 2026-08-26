@@ -36,11 +36,20 @@ class SupabaseService {
     required String email,
     required String password,
     required String name,
+    String accountType = 'rider',
   }) async {
-    final res = await _db.auth
-        .signUp(email: email, password: password, data: {'name': name});
-    Analytics.capture('signed_up');
+    final res = await _db.auth.signUp(
+        email: email,
+        password: password,
+        data: {'name': name, 'account_type': accountType});
+    Analytics.capture('signed_up', {'account_type': accountType});
     return res;
+  }
+
+  /// The signed-in person's account type: rider / seller / operator.
+  static Future<String> myAccountType() async {
+    final res = await _db.rpc('my_account_type');
+    return (res as String?) ?? 'rider';
   }
 
   static Future<AuthResponse> signIn({
