@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../data/supabase_service.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
+import '../../widgets/app_icons.dart';
 import '../../widgets/bottom_tab_bar.dart';
 import '../../widgets/photo_placeholder.dart';
 import '../horses/add_horse_screen.dart';
@@ -78,7 +79,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
               tiles: [
                 _StatTile(
                   tone: _Tone.terra,
-                  icon: Icons.pets_outlined,
+                  iconBuilder: (c, s) => AppTabIcon.horses(color: c, size: s),
                   label: 'Horses',
                   value: '${d.horses.length}',
                   meta: watchCount > 0
@@ -324,15 +325,17 @@ class _StatRow extends StatelessWidget {
 class _StatTile extends StatelessWidget {
   const _StatTile({
     required this.tone,
-    required this.icon,
     required this.label,
     required this.value,
     required this.meta,
     required this.onTap,
+    this.icon,
+    this.iconBuilder,
     this.valueSize = 32,
-  });
+  }) : assert(icon != null || iconBuilder != null);
   final _Tone tone;
-  final IconData icon;
+  final IconData? icon;
+  final Widget Function(Color color, double size)? iconBuilder;
   final String label;
   final String value;
   final String meta;
@@ -365,7 +368,10 @@ class _StatTile extends StatelessWidget {
                       color: _toneBg(tone),
                       borderRadius: BorderRadius.circular(9),
                     ),
-                    child: Icon(icon, size: 17, color: _toneFg(tone)),
+                    alignment: Alignment.center,
+                    child: icon != null
+                        ? Icon(icon, size: 17, color: _toneFg(tone))
+                        : iconBuilder!(_toneFg(tone), 17),
                   ),
                   const SizedBox(width: 9),
                   Text(label,

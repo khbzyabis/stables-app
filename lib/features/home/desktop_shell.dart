@@ -49,9 +49,9 @@ class DesktopShell extends StatelessWidget {
           ),
           Expanded(
             child: Align(
-              alignment: Alignment.topLeft,
+              alignment: Alignment.topCenter,
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1040),
+                constraints: const BoxConstraints(maxWidth: 1240),
                 child: child,
               ),
             ),
