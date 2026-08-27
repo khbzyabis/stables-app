@@ -179,24 +179,31 @@ class _HomeScreenState extends State<HomeScreen> {
                         (session.activeStableId == null && session.hasPending)
                         ? _PendingPanel(session: session)
                         : switch (_tab) {
-                            AppTab.home => _HomeHubTab(
-                              hasStable:
-                                  session.hasStable || session.hasPending,
-                              onGoTab: _setTab,
+                            AppTab.home => _ReadColumn(
+                              maxWidth: 820,
+                              child: _HomeHubTab(
+                                hasStable:
+                                    session.hasStable || session.hasPending,
+                                onGoTab: _setTab,
+                              ),
                             ),
                             AppTab.horses => _HorsesTab(
                               stableId: session.activeStableId,
                             ),
-                            AppTab.board => _BoardTab(
-                              stableId: session.activeStableId,
+                            AppTab.board => _ReadColumn(
+                              child: _BoardTab(
+                                stableId: session.activeStableId,
+                              ),
                             ),
-                            AppTab.stable => _StableTab(
-                              stableId: session.activeStableId,
-                              role: session.activeStable?['role'] as String?,
-                              city: session.activeStable?['city'] as String?,
+                            AppTab.stable => _ReadColumn(
+                              child: _StableTab(
+                                stableId: session.activeStableId,
+                                role: session.activeStable?['role'] as String?,
+                                city: session.activeStable?['city'] as String?,
+                              ),
                             ),
                             AppTab.market => const MarketHomeScreen(),
-                            AppTab.you => const _YouTab(),
+                            AppTab.you => const _ReadColumn(child: _YouTab()),
                           },
                   ),
                 ),
@@ -233,6 +240,66 @@ class _Avatar extends StatelessWidget {
       child: Text(
         initial,
         style: AppText.heading(17, color: AppColors.accent2900),
+      ),
+    );
+  }
+}
+
+/// Lays a set of cards out in a responsive grid: a single column on phones,
+/// and as many columns as fit (each at least [min] wide) on a wide desktop —
+/// so card-based tabs fill the desktop content area instead of running as one
+/// tall column. Mobile is unaffected (it always resolves to one column).
+class _CardGrid extends StatelessWidget {
+  const _CardGrid({required this.children, this.min = 340});
+  final List<Widget> children;
+  final double min;
+
+  static const double gap = 14;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, c) {
+        final cols = (c.maxWidth / min).floor().clamp(1, 3);
+        if (cols <= 1) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (var i = 0; i < children.length; i++) ...[
+                if (i > 0) SizedBox(height: gap),
+                children[i],
+              ],
+            ],
+          );
+        }
+        final cellW = (c.maxWidth - gap * (cols - 1)) / cols;
+        return Wrap(
+          spacing: gap,
+          runSpacing: gap,
+          children: [
+            for (final ch in children) SizedBox(width: cellW, child: ch),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Keeps a text-heavy tab (board, you, the stable) to a comfortable reading
+/// width on desktop while staying full-width on phones, left-aligned so the
+/// content edge doesn't jump when switching tabs.
+class _ReadColumn extends StatelessWidget {
+  const _ReadColumn({required this.child, this.maxWidth = 640});
+  final Widget child;
+  final double maxWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: AlignmentDirectional.topStart,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxWidth),
+        child: child,
       ),
     );
   }
@@ -359,11 +426,14 @@ class _HorsesTabState extends State<_HorsesTab> {
               ),
               const SizedBox(height: 16),
             ],
-            for (final h in shown) ...[
-              _RealHorseRow(horse: h, onReturn: _reload),
-              const SizedBox(height: 12),
-            ],
-            const SizedBox(height: 8),
+            _CardGrid(
+              min: 360,
+              children: [
+                for (final h in shown)
+                  _RealHorseRow(horse: h, onReturn: _reload),
+              ],
+            ),
+            const SizedBox(height: 20),
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: _TextAction(

@@ -120,22 +120,27 @@ class _MarketHomeScreenState extends State<MarketHomeScreen> {
 
                 // Shop by category
                 _Label('Shop by category'),
-                GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  childAspectRatio: 2.9,
-                  children: [
-                    for (var i = 0; i < categories.length; i++)
-                      _CategoryTile(
-                        label: categories[i],
-                        icon: _categoryIcon(categories[i]),
-                        terra: i.isEven,
-                        onTap: () => _openCategory(categories[i]),
-                      ),
-                  ],
+                LayoutBuilder(
+                  builder: (context, c) {
+                    final cols = (c.maxWidth / 240).floor().clamp(2, 4);
+                    return GridView.count(
+                      crossAxisCount: cols,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
+                      childAspectRatio: 2.9,
+                      children: [
+                        for (var i = 0; i < categories.length; i++)
+                          _CategoryTile(
+                            label: categories[i],
+                            icon: _categoryIcon(categories[i]),
+                            terra: i.isEven,
+                            onTap: () => _openCategory(categories[i]),
+                          ),
+                      ],
+                    );
+                  },
                 ),
 
                 // Shops
