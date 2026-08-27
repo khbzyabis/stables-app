@@ -11,6 +11,7 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'app_state.dart';
 import 'data/analytics.dart';
 import 'data/env.dart';
+import 'data/nav.dart';
 import 'data/portal.dart';
 import 'data/session.dart';
 import 'data/stable_store.dart';
@@ -20,6 +21,7 @@ import 'features/auth/portal_gate.dart';
 import 'features/auth/sign_in_screen.dart';
 import 'features/auth/sign_up_screen.dart';
 import 'features/auth/verify_screen.dart';
+import 'features/home/desktop_shell.dart';
 import 'features/home/home_screen.dart';
 import 'features/home/notifications_screen.dart';
 import 'features/horses/add_horse_screen.dart';
@@ -199,11 +201,22 @@ class _MyStablesAppState extends State<MyStablesApp> {
               }
               return LayoutBuilder(
                 builder: (context, c) {
-                  if (c.maxWidth <= 620) return page;
-                  // Present the mobile-first app as a clean, floating device
-                  // panel on the same near-white ground as the marketing site,
-                  // so the signed-in experience feels like the same polished
-                  // product on desktop instead of stretching edge to edge.
+                  if (c.maxWidth < 900) return page;
+                  // Rider app: a real desktop layout — persistent sidebar and a
+                  // centred content column — so it reads as a web app, not a
+                  // stretched phone.
+                  if (Portal.current == AppPortal.app) {
+                    return DesktopShell(
+                      onSelect: (tab) {
+                        homeTab.value = tab;
+                        _navKey.currentState?.popUntil((r) => r.isFirst);
+                      },
+                      onProfile: () => _navKey.currentState
+                          ?.pushNamed(ProfileScreen.route),
+                      child: page,
+                    );
+                  }
+                  // Seller app: framed to a phone width as a clean device panel.
                   final h = c.maxHeight - 48;
                   return ColoredBox(
                     color: const Color(0xFFFBF8F3),

@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../app_state.dart';
+import '../../data/nav.dart';
 import '../../data/session.dart';
 import '../../data/supabase_service.dart';
 import '../auth/create_stable_screen.dart';
@@ -49,15 +51,34 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  AppTab _tab = AppTab.home;
+  AppTab _tab = homeTab.value;
 
   @override
   void initState() {
     super.initState();
+    // Keep in step with the desktop sidebar, which drives the same notifier.
+    homeTab.addListener(_syncTab);
     // Load the person's stables the first time home opens.
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => SessionScope.of(context).refresh(),
     );
+  }
+
+  @override
+  void dispose() {
+    homeTab.removeListener(_syncTab);
+    super.dispose();
+  }
+
+  void _syncTab() {
+    if (mounted && _tab != homeTab.value) {
+      setState(() => _tab = homeTab.value);
+    }
+  }
+
+  void _setTab(AppTab t) {
+    homeTab.value = t; // notifies; _syncTab calls setState
+    if (_tab != t) setState(() => _tab = t);
   }
 
   String _titleFor(AppL10n l10n) => switch (_tab) {
@@ -161,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             AppTab.home => _HomeHubTab(
                               hasStable:
                                   session.hasStable || session.hasPending,
-                              onGoTab: (t) => setState(() => _tab = t),
+                              onGoTab: _setTab,
                             ),
                             AppTab.horses => _HorsesTab(
                               stableId: session.activeStableId,
@@ -179,10 +200,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                   ),
                 ),
-                BottomTabBar(
-                  current: _tab,
-                  onChanged: (t) => setState(() => _tab = t),
-                ),
+                // The desktop shell provides a persistent sidebar for nav, so
+                // the floating bottom bar is only shown on phone-width screens.
+                if (!(kIsWeb && MediaQuery.of(context).size.width >= 900))
+                  BottomTabBar(
+                    current: _tab,
+                    onChanged: _setTab,
+                  ),
               ],
             );
           },
