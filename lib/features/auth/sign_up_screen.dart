@@ -10,7 +10,7 @@ import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/app_field.dart';
-import '../../widgets/app_screen.dart';
+import 'web_auth_scaffold.dart';
 import '../../widgets/step_progress.dart';
 import 'back_link.dart';
 import 'verify_screen.dart';
@@ -88,8 +88,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppL10n.of(context);
-    return AppScreen(
-      scrollable: true,
+    return WebAuthScaffold(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

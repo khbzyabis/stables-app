@@ -10,7 +10,7 @@ import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/app_field.dart';
-import '../../widgets/app_screen.dart';
+import 'web_auth_scaffold.dart';
 import 'sign_up_screen.dart';
 import 'create_stable_screen.dart';
 
@@ -132,8 +132,7 @@ class _SignInScreenState extends State<SignInScreen> {
       AppPortal.admin => 'Operator sign-in',
       AppPortal.app => l10n.welcomeBack,
     };
-    return AppScreen(
-      scrollable: true,
+    return WebAuthScaffold(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
