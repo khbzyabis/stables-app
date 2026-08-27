@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../data/session.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
+import '../../widgets/app_tag.dart';
 import '../auth/create_stable_screen.dart';
 
 /// A quick stable switcher — works the same on phone and web. Lists the
@@ -129,12 +130,27 @@ class _StableRow extends StatelessWidget {
   final bool active;
   final VoidCallback onTap;
 
+  static String _prettyRole(String role) =>
+      role.isEmpty ? role : role[0].toUpperCase() + role.substring(1);
+
+  static TagTone _tone(String role) {
+    switch (role.toLowerCase()) {
+      case 'owner':
+      case 'manager':
+      case 'admin':
+        return TagTone.accent;
+      case 'groom':
+      case 'vet':
+      case 'rider':
+      case 'trainer':
+        return TagTone.sage;
+      default:
+        return TagTone.neutral;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final sub = [
-      if (city.isNotEmpty) city,
-      if (role.isNotEmpty) role,
-    ].join(' · ');
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
       child: Material(
@@ -176,10 +192,23 @@ class _StableRow extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: AppText.heading(17, height: 1.1)),
-                      if (sub.isNotEmpty)
-                        Text(sub,
-                            style:
-                                AppText.body(13, color: AppColors.ink(0.55))),
+                      const SizedBox(height: 5),
+                      Row(
+                        children: [
+                          if (role.isNotEmpty) ...[
+                            AppTag(_prettyRole(role), tone: _tone(role)),
+                            const SizedBox(width: 8),
+                          ],
+                          if (city.isNotEmpty)
+                            Flexible(
+                              child: Text(city,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppText.body(13,
+                                      color: AppColors.ink(0.55))),
+                            ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
