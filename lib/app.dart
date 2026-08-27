@@ -183,15 +183,15 @@ class _MyStablesAppState extends State<MyStablesApp> {
             navigatorKey: _navKey,
             debugShowCheckedModeBanner: false,
             theme: AppTheme.light,
-            // The rider app is mobile-first. On a wide (desktop web) screen,
-            // frame the signed-in app to a phone width so it stays in
-            // proportion; real phones and the marketing / admin / seller
-            // pages render full width.
+            // The rider and seller apps are mobile-first. On a wide (desktop
+            // web) screen, frame them to a phone width so every screen — the
+            // sign-in / sign-up pages included — stays in proportion instead
+            // of stretching. The marketing page is separate (home.html) and
+            // the operator console is a real desktop dashboard, so only the
+            // admin portal renders full width.
             builder: (context, child) {
               final page = child ?? const SizedBox.shrink();
-              if (!kIsWeb ||
-                  Portal.current != AppPortal.app ||
-                  !SupabaseService.isSignedIn) {
+              if (!kIsWeb || Portal.current == AppPortal.admin) {
                 return page;
               }
               return LayoutBuilder(
