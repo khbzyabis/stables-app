@@ -223,15 +223,13 @@ class _MyStablesAppState extends State<MyStablesApp> {
               // The seller (/sell) and operator (/admin) doors resolve to the
               // same gate; it reads Portal.current (set from the URL at boot).
               onGenerateRoute: (settings) {
-                if (settings.name == '/sell' ||
-                    settings.name == '/admin' ||
-                    settings.name == '/app') {
+                final name = settings.name;
+                // The three front doors resolve to the gate.
+                if (name == '/sell' || name == '/admin' || name == '/app') {
                   return MaterialPageRoute(
                       builder: (_) => const PortalGate(), settings: settings);
                 }
-                return null;
-              },
-              routes: {
+                final routes = <String, WidgetBuilder>{
                 PortalGate.route: (_) => const PortalGate(),
                 SignInScreen.route: (_) => const SignInScreen(),
                 SignUpScreen.route: (_) => const SignUpScreen(),
@@ -309,6 +307,32 @@ class _MyStablesAppState extends State<MyStablesApp> {
                 MyStablesScreen.route: (_) => const MyStablesScreen(),
                 ApprovalsScreen.route: (_) => const ApprovalsScreen(),
                 InviteScreen.route: (_) => const InviteScreen(),
+                };
+                final builder = routes[name];
+                if (builder == null) {
+                  // Unknown route → the gate decides where to send them.
+                  return MaterialPageRoute(
+                      builder: (_) => const PortalGate(), settings: settings);
+                }
+                // Auth guard: only these screens are reachable signed out.
+                // Everything else redirects to sign-in — the data is already
+                // protected by row-level security, this stops the screens from
+                // even rendering for a signed-out URL.
+                const publicRoutes = {
+                  PortalGate.route,
+                  SignInScreen.route,
+                  SignUpScreen.route,
+                  VerifyScreen.route,
+                  LegalScreen.route,
+                };
+                if (!publicRoutes.contains(name) &&
+                    !SupabaseService.isSignedIn) {
+                  return MaterialPageRoute(
+                    builder: (_) => const SignInScreen(),
+                    settings: const RouteSettings(name: SignInScreen.route),
+                  );
+                }
+                return MaterialPageRoute(builder: builder, settings: settings);
               },
             );
           },
