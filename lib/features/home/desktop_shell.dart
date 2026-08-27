@@ -10,7 +10,6 @@ import '../../widgets/bottom_tab_bar.dart';
 import '../people/people_screen.dart';
 import '../schedule/schedule_screen.dart';
 import '../tasks/groom_day_screen.dart';
-import 'stable_switcher.dart';
 
 /// The desktop chrome for the signed-in rider app. On a wide (laptop) browser
 /// the app is presented as a real web app — a persistent left sidebar for
@@ -28,6 +27,7 @@ class DesktopShell extends StatelessWidget {
     required this.onSelect,
     required this.onProfile,
     required this.onOpenRoute,
+    required this.onStables,
   });
 
   /// The current Navigator output (the active page) shown in the content area.
@@ -42,6 +42,9 @@ class DesktopShell extends StatelessWidget {
   /// Push a named route (for the secondary "Manage" links).
   final void Function(String route) onOpenRoute;
 
+  /// Open the stable switcher (routed through the app navigator).
+  final VoidCallback onStables;
+
   @override
   Widget build(BuildContext context) {
     final session = SessionScope.of(context);
@@ -55,6 +58,7 @@ class DesktopShell extends StatelessWidget {
             onSelect: onSelect,
             onProfile: onProfile,
             onOpenRoute: onOpenRoute,
+            onStables: onStables,
           ),
           Expanded(
             child: Align(
@@ -103,12 +107,14 @@ class _Sidebar extends StatelessWidget {
     required this.onSelect,
     required this.onProfile,
     required this.onOpenRoute,
+    required this.onStables,
   });
 
   final AppSession session;
   final void Function(AppTab) onSelect;
   final VoidCallback onProfile;
   final void Function(String route) onOpenRoute;
+  final VoidCallback onStables;
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +162,7 @@ class _Sidebar extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(12),
-                      onTap: () => showStableSwitcher(context),
+                      onTap: onStables,
                       child: Container(
                         padding: const EdgeInsets.fromLTRB(12, 9, 10, 9),
                         decoration: BoxDecoration(

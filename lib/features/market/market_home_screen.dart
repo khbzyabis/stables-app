@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../../data/basket.dart';
@@ -56,8 +57,9 @@ class _MarketHomeScreenState extends State<MarketHomeScreen> {
         .where((c) => c != 'Services')
         .toList();
 
+    final wide = kIsWeb && MediaQuery.of(context).size.width >= 900;
     return Scaffold(
-      backgroundColor: AppColors.bg,
+      backgroundColor: wide ? AppColors.panel : AppColors.bg,
       body: SafeArea(
         bottom: false,
         child: FutureBuilder<_MarketHomeData>(

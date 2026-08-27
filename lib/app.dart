@@ -23,6 +23,7 @@ import 'features/auth/sign_up_screen.dart';
 import 'features/auth/verify_screen.dart';
 import 'features/home/desktop_shell.dart';
 import 'features/home/home_screen.dart';
+import 'features/home/stable_switcher.dart';
 import 'features/home/notifications_screen.dart';
 import 'features/horses/add_horse_screen.dart';
 import 'features/horses/add_tack_item_screen.dart';
@@ -221,6 +222,10 @@ class _MyStablesAppState extends State<MyStablesApp> {
                       onProfile: () => _navKey.currentState
                           ?.pushNamed(ProfileScreen.route),
                       onOpenRoute: (r) => _navKey.currentState?.pushNamed(r),
+                      onStables: () {
+                        final ctx = _navKey.currentState?.overlay?.context;
+                        if (ctx != null) showStableSwitcher(ctx);
+                      },
                       child: page,
                     );
                   }
