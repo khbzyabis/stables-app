@@ -26,6 +26,9 @@ class _AssignTaskScreenState extends State<AssignTaskScreen> {
   final _note = TextEditingController();
   String? _who;
   bool _busy = false;
+
+  /// The roles you can aim a task at — matched back to members by their role.
+  static const _roleLabels = ['Grooms', 'Riders', 'Vets', 'Managers'];
   late final Future<List<String>> _peopleFuture = _loadPeople();
 
   Future<List<String>> _loadPeople() async {
@@ -136,6 +139,19 @@ class _AssignTaskScreenState extends State<AssignTaskScreen> {
                   onPick: (v) => setState(() => _who = v),
                 );
               },
+            ),
+            const SizedBox(height: 22),
+            Text('OR A WHOLE ROLE', style: AppText.eyebrow()),
+            const SizedBox(height: 12),
+            Text(
+              'Everyone in that role gets it in their bell.',
+              style: AppText.body(13, color: AppColors.ink(0.5)),
+            ),
+            const SizedBox(height: 10),
+            _Chips(
+              labels: _roleLabels,
+              selected: _who,
+              onPick: (v) => setState(() => _who = v),
             ),
             const SizedBox(height: 30),
             AppField(

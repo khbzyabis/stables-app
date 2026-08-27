@@ -387,11 +387,42 @@ class SupabaseService {
     return (openTasks: open, notices: noticeCount);
   }
 
-  /// Open tasks assigned to the signed-in person — what the bell surfaces.
-  /// Matches the task's assignee label against your name or email.
+  /// A friendly plural label for a stable role — used both when assigning a
+  /// task to a whole role and when matching such tasks back to a person.
+  static const roleLabels = <String, String>{
+    'groom': 'Grooms',
+    'rider': 'Riders',
+    'vet': 'Vets',
+    'manager': 'Managers',
+    'owner': 'Owners',
+    'viewer': 'Viewers',
+  };
+
+  /// The signed-in person's role in a stable (owner/manager/groom/…), or null
+  /// if they aren't a member.
+  static Future<String?> myRole(String stableId) async {
+    final uid = currentUser?.id;
+    if (uid == null) return null;
+    try {
+      final rows = await _db
+          .from('memberships')
+          .select('role')
+          .eq('stable_id', stableId)
+          .eq('user_id', uid)
+          .limit(1);
+      if (rows.isNotEmpty) return rows.first['role'] as String?;
+    } catch (_) {}
+    return null;
+  }
+
+  /// Open tasks the signed-in person should see — what the bell surfaces.
+  /// Matches a task's assignee against your name, your email, or the role you
+  /// hold in the stable (so a task aimed at "Grooms" reaches every groom).
   static Future<List<Map<String, dynamic>>> myOpenTasks(String stableId) async {
     final me = displayName.trim().toLowerCase();
     final email = (currentUser?.email ?? '').trim().toLowerCase();
+    final role = (await myRole(stableId))?.toLowerCase();
+    final roleLabel = role == null ? null : roleLabels[role]?.toLowerCase();
     List<Map<String, dynamic>> all;
     try {
       all = await tasks(stableId);
@@ -402,7 +433,11 @@ class SupabaseService {
       if (t['done'] == true) return false;
       final a = (t['assignee'] as String?)?.trim().toLowerCase() ?? '';
       if (a.isEmpty) return false;
-      return a == me || (email.isNotEmpty && a == email);
+      if (a == me) return true;
+      if (email.isNotEmpty && a == email) return true;
+      if (roleLabel != null && a == roleLabel) return true;
+      if (role != null && a == role) return true; // a bare role name was used
+      return false;
     }).toList();
   }
 
