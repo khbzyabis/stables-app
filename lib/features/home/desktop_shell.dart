@@ -7,6 +7,7 @@ import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_icons.dart';
 import '../../widgets/bottom_tab_bar.dart';
+import 'stable_switcher.dart';
 
 /// The desktop chrome for the signed-in rider app. On a wide (laptop) browser
 /// the app is presented as a real web app — a persistent left sidebar for
@@ -23,7 +24,6 @@ class DesktopShell extends StatelessWidget {
     required this.child,
     required this.onSelect,
     required this.onProfile,
-    required this.onStables,
   });
 
   /// The current Navigator output (the active page) shown in the content area.
@@ -34,9 +34,6 @@ class DesktopShell extends StatelessWidget {
 
   /// Open the profile / account screen.
   final VoidCallback onProfile;
-
-  /// Open "My stables" to switch between or create stables.
-  final VoidCallback onStables;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +47,6 @@ class DesktopShell extends StatelessWidget {
             session: session,
             onSelect: onSelect,
             onProfile: onProfile,
-            onStables: onStables,
           ),
           Expanded(
             child: Align(
@@ -98,13 +94,11 @@ class _Sidebar extends StatelessWidget {
     required this.session,
     required this.onSelect,
     required this.onProfile,
-    required this.onStables,
   });
 
   final AppSession session;
   final void Function(AppTab) onSelect;
   final VoidCallback onProfile;
-  final VoidCallback onStables;
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +146,7 @@ class _Sidebar extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(12),
-                      onTap: onStables,
+                      onTap: () => showStableSwitcher(context),
                       child: Container(
                         padding: const EdgeInsets.fromLTRB(12, 9, 10, 9),
                         decoration: BoxDecoration(

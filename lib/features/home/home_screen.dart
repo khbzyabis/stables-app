@@ -31,6 +31,7 @@ import '../market/market_screen.dart';
 import '../market/market_home_screen.dart';
 import 'home_dashboard.dart';
 import 'notifications_screen.dart';
+import 'stable_switcher.dart';
 import '../market/payments_screen.dart';
 import '../market/my_quotes_screen.dart';
 import '../people/approvals_screen.dart';
@@ -121,10 +122,27 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              l10n.stableAndDay(session.activeStableName, day),
-                              style: AppText.eyebrow(
-                                color: AppColors.accent700,
+                            GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () => showStableSwitcher(context),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      l10n.stableAndDay(
+                                          session.activeStableName, day),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: AppText.eyebrow(
+                                        color: AppColors.accent700,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 3),
+                                  Icon(Icons.unfold_more_rounded,
+                                      size: 15, color: AppColors.accent700),
+                                ],
                               ),
                             ),
                             const SizedBox(height: 10),
