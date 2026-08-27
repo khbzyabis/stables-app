@@ -23,6 +23,7 @@ class DesktopShell extends StatelessWidget {
     required this.child,
     required this.onSelect,
     required this.onProfile,
+    required this.onStables,
   });
 
   /// The current Navigator output (the active page) shown in the content area.
@@ -33,6 +34,9 @@ class DesktopShell extends StatelessWidget {
 
   /// Open the profile / account screen.
   final VoidCallback onProfile;
+
+  /// Open "My stables" to switch between or create stables.
+  final VoidCallback onStables;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +50,7 @@ class DesktopShell extends StatelessWidget {
             session: session,
             onSelect: onSelect,
             onProfile: onProfile,
+            onStables: onStables,
           ),
           Expanded(
             child: Align(
@@ -93,11 +98,13 @@ class _Sidebar extends StatelessWidget {
     required this.session,
     required this.onSelect,
     required this.onProfile,
+    required this.onStables,
   });
 
   final AppSession session;
   final void Function(AppTab) onSelect;
   final VoidCallback onProfile;
+  final VoidCallback onStables;
 
   @override
   Widget build(BuildContext context) {
@@ -139,12 +146,48 @@ class _Sidebar extends StatelessWidget {
                           style: AppText.heading(20, height: 1)),
                     ],
                   ),
-                  const SizedBox(height: 14),
-                  Text(
-                    session.activeStableName.isEmpty
-                        ? 'Your stable'
-                        : session.activeStableName,
-                    style: AppText.eyebrow(color: AppColors.accent700),
+                  const SizedBox(height: 12),
+                  Material(
+                    color: AppColors.bg,
+                    borderRadius: BorderRadius.circular(12),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: onStables,
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(12, 9, 10, 9),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.divider),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('STABLE',
+                                      style: AppText.body(10,
+                                          weight: FontWeight.w700,
+                                          letterSpacing: 0.8,
+                                          color: AppColors.ink(0.45))),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    session.activeStableName.isEmpty
+                                        ? 'Your stable'
+                                        : session.activeStableName,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: AppText.heading(15, height: 1.1),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Icon(Icons.unfold_more_rounded,
+                                size: 19, color: AppColors.ink(0.5)),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

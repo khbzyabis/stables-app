@@ -213,6 +213,8 @@ class _MyStablesAppState extends State<MyStablesApp> {
                       },
                       onProfile: () => _navKey.currentState
                           ?.pushNamed(ProfileScreen.route),
+                      onStables: () => _navKey.currentState
+                          ?.pushNamed(MyStablesScreen.route),
                       child: page,
                     );
                   }
