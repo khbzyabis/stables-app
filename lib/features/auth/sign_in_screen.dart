@@ -41,6 +41,51 @@ class _SignInScreenState extends State<SignInScreen> {
     super.dispose();
   }
 
+  Future<void> _forgotPassword() async {
+    final ctrl = TextEditingController(text: _email.text.trim());
+    final send = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: AppColors.bg,
+        title: Text('Reset your password', style: AppText.heading(20)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Enter your email and we\'ll send a reset link.',
+                style: AppText.body(15, color: AppColors.ink(0.65))),
+            const SizedBox(height: 16),
+            AppField(
+                label: 'Email',
+                controller: ctrl,
+                keyboardType: TextInputType.emailAddress),
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Send link')),
+        ],
+      ),
+    );
+    if (send != true) return;
+    final email = ctrl.text.trim();
+    if (email.isEmpty) {
+      _toast('Enter your email first.');
+      return;
+    }
+    try {
+      await SupabaseService.sendPasswordReset(email);
+      _toast('Check $email for a reset link.');
+    } catch (e) {
+      AppErrors.report(e);
+      _toast('Could not send the reset link. Try again.');
+    }
+  }
+
   Future<void> _signIn() async {
     final email = _email.text.trim();
     final password = _password.text;
@@ -119,7 +164,7 @@ class _SignInScreenState extends State<SignInScreen> {
           const SizedBox(height: 20),
           Align(
             alignment: AlignmentDirectional.centerStart,
-            child: _LinkText(l10n.forgotPassword, onTap: () {}),
+            child: _LinkText(l10n.forgotPassword, onTap: _forgotPassword),
           ),
           const SizedBox(height: 40),
           AppButton(

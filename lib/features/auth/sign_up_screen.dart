@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../../data/errors.dart';
+import '../settings/legal_screen.dart';
 
 import '../../data/portal.dart';
 import '../../data/supabase_service.dart';
@@ -150,14 +152,23 @@ class _TermsNotice extends StatelessWidget {
   Widget build(BuildContext context) {
     final link = AppText.body(13, height: 1.6, color: AppColors.accent700);
     final base = AppText.body(13, height: 1.6, color: AppColors.ink(0.65));
+    void open(String which) => Navigator.of(context)
+        .pushNamed(LegalScreen.route, arguments: which);
     return Text.rich(
       TextSpan(
         style: base,
         children: [
           TextSpan(text: l10n.termsPrefix),
-          TextSpan(text: l10n.termsOfUse, style: link),
+          TextSpan(
+              text: l10n.termsOfUse,
+              style: link,
+              recognizer: TapGestureRecognizer()..onTap = () => open('terms')),
           TextSpan(text: l10n.termsAnd),
-          TextSpan(text: l10n.privacyNotice, style: link),
+          TextSpan(
+              text: l10n.privacyNotice,
+              style: link,
+              recognizer: TapGestureRecognizer()
+                ..onTap = () => open('privacy')),
           const TextSpan(text: '.'),
         ],
       ),

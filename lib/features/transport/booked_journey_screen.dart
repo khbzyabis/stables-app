@@ -12,6 +12,12 @@ import '../auth/back_link.dart';
 /// Screen 58 — The booked journey. Lands on the stable's calendar with loading
 /// time, gate code, driver, vehicle, insured value and cost. Passports and
 /// vaccination cards go to the carrier automatically; health notes do not.
+void _notReady(BuildContext context) {
+  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text(
+          'The driver\'s details appear here once they accept the journey.')));
+}
+
 class BookedJourneyScreen extends StatelessWidget {
   const BookedJourneyScreen({super.key});
   static const route = '/transport/booked';
@@ -83,7 +89,7 @@ class BookedJourneyScreen extends StatelessWidget {
                     label: l10n.callDriver,
                     minHeight: 54,
                     fontSize: 16,
-                    onPressed: () {},
+                    onPressed: () => _notReady(context),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -93,7 +99,7 @@ class BookedJourneyScreen extends StatelessWidget {
                   block: false,
                   minHeight: 54,
                   fontSize: 16,
-                  onPressed: () {},
+                  onPressed: () => _notReady(context),
                 ),
               ],
             ),

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../../data/errors.dart';
+import '../../data/session.dart';
+import '../../data/supabase_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
@@ -25,10 +28,48 @@ class _SetLocationScreenState extends State<SetLocationScreen> {
   final _map = MapController();
   LatLng _center = _default;
   bool _public = false;
+  bool _saving = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Load the stable's saved pin, if any.
+    final s = SessionScope.of(context).activeStable;
+    final lat = (s?['lat'] as num?)?.toDouble();
+    final lng = (s?['lng'] as num?)?.toDouble();
+    if (lat != null && lng != null && _center == _default) {
+      _center = LatLng(lat, lng);
+      _public = s?['location_public'] == true;
+    }
+  }
 
   void _recenter() {
-    _map.move(_default, 13);
-    setState(() => _center = _default);
+    _map.move(_center, 13);
+  }
+
+  Future<void> _save() async {
+    final session = SessionScope.of(context);
+    final nav = Navigator.of(context);
+    final id = session.activeStableId;
+    if (id == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Create a stable first.')));
+      return;
+    }
+    setState(() => _saving = true);
+    try {
+      await SupabaseService.setStableLocation(
+          id, _center.latitude, _center.longitude, _public);
+      await session.refresh();
+      if (mounted) nav.maybePop();
+    } catch (e) {
+      AppErrors.report(e);
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Couldn't save: $e")));
+        setState(() => _saving = false);
+      }
+    }
   }
 
   @override
@@ -212,9 +253,9 @@ class _SetLocationScreenState extends State<SetLocationScreen> {
                   const Hairline(),
                   const SizedBox(height: 20),
                   AppButton(
-                    label: l10n.saveLocation,
+                    label: _saving ? 'Saving…' : l10n.saveLocation,
                     minHeight: 54,
-                    onPressed: () => Navigator.of(context).maybePop(),
+                    onPressed: _saving ? null : _save,
                   ),
                 ],
               ),

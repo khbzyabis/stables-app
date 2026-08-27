@@ -65,6 +65,19 @@ class SupabaseService {
   static Future<void> resendConfirmation(String email) =>
       _db.auth.resend(type: OtpType.signup, email: email);
 
+  /// Send a password-reset email. Supabase mails a recovery link.
+  static Future<void> sendPasswordReset(String email) =>
+      _db.auth.resetPasswordForEmail(email.trim());
+
+  /// Save a stable's map location.
+  static Future<void> setStableLocation(
+          String stableId, double lat, double lng, bool showExact) =>
+      _db.from('stables').update({
+        'lat': lat,
+        'lng': lng,
+        'location_public': showExact,
+      }).eq('id', stableId);
+
   static Future<void> signOut() => _db.auth.signOut();
 
   // ---- Stables ---------------------------------------------------------

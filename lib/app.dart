@@ -42,6 +42,7 @@ import 'features/settings/contacts_screen.dart';
 import 'features/settings/help_screen.dart';
 import 'features/settings/language_screen.dart';
 import 'features/settings/profile_screen.dart';
+import 'features/settings/legal_screen.dart';
 import 'features/settings/report_problem_screen.dart';
 import 'features/settings/set_location_screen.dart';
 import 'features/settings/stable_language_screen.dart';
@@ -257,6 +258,7 @@ class _MyStablesAppState extends State<MyStablesApp> {
                 ContactsScreen.route: (_) => const ContactsScreen(),
                 StableSettingsScreen.route: (_) => const StableSettingsScreen(),
                 ProfileScreen.route: (_) => const ProfileScreen(),
+                LegalScreen.route: (_) => const LegalScreen(),
                 LanguageScreen.route: (_) => const LanguageScreen(),
                 StableLanguageScreen.route: (_) => const StableLanguageScreen(),
                 HelpScreen.route: (_) => const HelpScreen(),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/comms_data.dart';
 import '../../l10n/app_localizations.dart';
@@ -21,6 +22,15 @@ class HelpScreen extends StatefulWidget {
 
 class _HelpScreenState extends State<HelpScreen> {
   int? _open;
+
+  Future<void> _emailSupport(BuildContext context) async {
+    final uri = Uri.parse(
+        'mailto:support@mystables.ae?subject=Help%20with%20My%20Stables');
+    if (!await launchUrl(uri) && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Email us at support@mystables.ae')));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,11 +67,11 @@ class _HelpScreenState extends State<HelpScreen> {
             ),
             const SizedBox(height: 12),
             AppButton(
-              label: 'Ask Ahmad at Serc instead',
+              label: 'Email support',
               variant: AppButtonVariant.secondary,
               minHeight: 52,
               fontSize: 16,
-              onPressed: () {},
+              onPressed: () => _emailSupport(context),
             ),
             const SizedBox(height: 20),
             Text(

@@ -2117,3 +2117,18 @@ create policy platform_shows_select on public.platform_shows
 drop policy if exists platform_shows_write on public.platform_shows;
 create policy platform_shows_write on public.platform_shows
   for all using (public.is_app_admin()) with check (public.is_app_admin());
+
+-- ####### supabase_setup_26_stable_location.sql #######
+
+-- ============================================================
+-- My Stables — part 26: stable map location
+-- Run ONCE in Supabase (SQL Editor). Idempotent, safe to re-run.
+--
+-- Stores the pin a stable drops on the map, and whether the exact spot is
+-- shown to everyone or only the area.
+-- ============================================================
+
+alter table public.stables
+  add column if not exists lat             double precision,
+  add column if not exists lng             double precision,
+  add column if not exists location_public boolean not null default false;
