@@ -27,6 +27,7 @@ import '../settings/stable_settings_screen.dart';
 import '../shows/shows_screen.dart';
 import '../market/market_screen.dart';
 import '../market/market_home_screen.dart';
+import 'notifications_screen.dart';
 import '../market/payments_screen.dart';
 import '../market/my_quotes_screen.dart';
 import '../people/approvals_screen.dart';
@@ -130,9 +131,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(width: 12),
                       if (_tab == AppTab.home) ...[
-                        _HeaderCircle(
-                          icon: Icons.notifications_none_rounded,
-                          onTap: () => setState(() => _tab = AppTab.board),
+                        _BellButton(
+                          stableId: session.activeStableId,
+                          onTap: () => Navigator.of(context)
+                              .pushNamed(NotificationsScreen.route),
                         ),
                         const SizedBox(width: 10),
                       ],
@@ -1270,27 +1272,82 @@ class _StatusLineState extends State<_StatusLine> {
   }
 }
 
-class _HeaderCircle extends StatelessWidget {
-  const _HeaderCircle({required this.icon, required this.onTap});
-  final IconData icon;
+/// The header bell — opens "For you" (tasks assigned to you) and shows a dot
+/// when you have any open.
+class _BellButton extends StatefulWidget {
+  const _BellButton({required this.stableId, required this.onTap});
+  final String? stableId;
   final VoidCallback onTap;
+  @override
+  State<_BellButton> createState() => _BellButtonState();
+}
+
+class _BellButtonState extends State<_BellButton> {
+  int _count = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  @override
+  void didUpdateWidget(covariant _BellButton old) {
+    super.didUpdateWidget(old);
+    if (old.stableId != widget.stableId) _load();
+  }
+
+  Future<void> _load() async {
+    final id = widget.stableId;
+    if (id == null) {
+      if (mounted) setState(() => _count = 0);
+      return;
+    }
+    final mine = await SupabaseService.myOpenTasks(id);
+    if (mounted) setState(() => _count = mine.length);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 46,
-        height: 46,
-        decoration: const BoxDecoration(
-          color: _warmWhite,
-          shape: BoxShape.circle,
-        ),
-        alignment: Alignment.center,
-        child: Icon(icon, size: 22, color: AppColors.text),
+      onTap: () async {
+        widget.onTap();
+        // Refresh the dot when returning from the notifications screen.
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+        _load();
+      },
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            width: 46,
+            height: 46,
+            decoration:
+                const BoxDecoration(color: _warmWhite, shape: BoxShape.circle),
+            alignment: Alignment.center,
+            child: const Icon(Icons.notifications_none_rounded,
+                size: 22, color: AppColors.text),
+          ),
+          if (_count > 0)
+            Positioned(
+              top: 9,
+              right: 10,
+              child: Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: AppColors.accent,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: _warmWhite, width: 1.5),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
 }
+
 
 class _HomeHubTab extends StatelessWidget {
   const _HomeHubTab({required this.hasStable, required this.onGoTab});

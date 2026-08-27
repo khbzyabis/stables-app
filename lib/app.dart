@@ -21,6 +21,7 @@ import 'features/auth/sign_in_screen.dart';
 import 'features/auth/sign_up_screen.dart';
 import 'features/auth/verify_screen.dart';
 import 'features/home/home_screen.dart';
+import 'features/home/notifications_screen.dart';
 import 'features/horses/add_horse_screen.dart';
 import 'features/horses/add_tack_item_screen.dart';
 import 'features/horses/documents_screen.dart';
@@ -234,6 +235,7 @@ class _MyStablesAppState extends State<MyStablesApp> {
                 VerifyScreen.route: (_) => const VerifyScreen(),
                 CreateStableScreen.route: (_) => const CreateStableScreen(),
                 HomeScreen.route: (_) => const HomeScreen(),
+                NotificationsScreen.route: (_) => const NotificationsScreen(),
                 AddHorseScreen.route: (_) => const AddHorseScreen(),
                 HorseProfileScreen.route: (_) => const HorseProfileScreen(),
                 HorseRecordScreen.route: (_) => const HorseRecordScreen(),

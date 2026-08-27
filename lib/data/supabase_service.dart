@@ -374,6 +374,25 @@ class SupabaseService {
     return (openTasks: open, notices: noticeCount);
   }
 
+  /// Open tasks assigned to the signed-in person — what the bell surfaces.
+  /// Matches the task's assignee label against your name or email.
+  static Future<List<Map<String, dynamic>>> myOpenTasks(String stableId) async {
+    final me = displayName.trim().toLowerCase();
+    final email = (currentUser?.email ?? '').trim().toLowerCase();
+    List<Map<String, dynamic>> all;
+    try {
+      all = await tasks(stableId);
+    } catch (_) {
+      return const [];
+    }
+    return all.where((t) {
+      if (t['done'] == true) return false;
+      final a = (t['assignee'] as String?)?.trim().toLowerCase() ?? '';
+      if (a.isEmpty) return false;
+      return a == me || (email.isNotEmpty && a == email);
+    }).toList();
+  }
+
   static Future<Map<String, dynamic>> addTask({
     required String stableId,
     required String title,
