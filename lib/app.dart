@@ -90,6 +90,7 @@ import 'features/transport/request_transport_screen.dart';
 import 'features/transport/transport_quotes_screen.dart';
 import 'l10n/app_localizations.dart';
 import 'theme/app_theme.dart';
+import 'theme/tokens.dart';
 
 class MyStablesApp extends StatefulWidget {
   const MyStablesApp({super.key});
@@ -199,11 +200,25 @@ class _MyStablesAppState extends State<MyStablesApp> {
               return LayoutBuilder(
                 builder: (context, c) {
                   if (c.maxWidth <= 620) return page;
+                  // Present the mobile-first app as a clean, floating device
+                  // panel on the same near-white ground as the marketing site,
+                  // so the signed-in experience feels like the same polished
+                  // product on desktop instead of stretching edge to edge.
+                  final h = c.maxHeight - 48;
                   return ColoredBox(
-                    color: const Color(0xFF241F19),
+                    color: const Color(0xFFFBF8F3),
                     child: Center(
-                      child: SizedBox(
-                          width: 460, height: c.maxHeight, child: page),
+                      child: Container(
+                        width: 460,
+                        height: h > 480 ? h : c.maxHeight,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(color: AppColors.divider),
+                          boxShadow: AppShadow.lg,
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: page,
+                      ),
                     ),
                   );
                 },
