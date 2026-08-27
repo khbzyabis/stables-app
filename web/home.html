@@ -1,0 +1,358 @@
+<title>My Stables Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gabarito:wght@500;600;700&family=Figtree:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --page:#fbf8f3;         /* crisp near-white, faintly warm */
+    --panel:#ffffff;
+    --ink:#1a1613;
+    --muted:#6b6358;
+    --faint:#948a7c;
+    --line:#ece3d6;
+    --line-2:#f2ebe0;
+    --terra:#c6703a;
+    --terra-700:#8c491a;
+    --sage-700:#56633f;
+    /* app screenshot tokens (the real product palette) */
+    --app-bg:#f5ead8;
+    --app-card:#fffdf8;
+    --app-ink:#201e1d;
+    --app-nav:#201e1d;
+    --app-line:#e4d7bf;
+    --app-terra-tint:#f3ddc9;
+    --app-sage-tint:#e1eecc;
+    --f-head:'Gabarito',system-ui,sans-serif;
+    --f-body:'Figtree',system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --page:#17130f; --panel:#201a14; --ink:#f2e9db; --muted:#b3a58f; --faint:#8f8577;
+      --line:#332a1f; --line-2:#2a2118; --terra:#e08b4f; --terra-700:#eaa86f; --sage-700:#c2d3a2;
+    }
+  }
+  :root[data-theme="dark"]{
+    --page:#17130f; --panel:#201a14; --ink:#f2e9db; --muted:#b3a58f; --faint:#8f8577;
+    --line:#332a1f; --line-2:#2a2118; --terra:#e08b4f; --terra-700:#eaa86f; --sage-700:#c2d3a2;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--page);color:var(--ink);font-family:var(--f-body);line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 28px}
+  @media (max-width:560px){ .wrap{padding:0 18px} }
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3{font-family:var(--f-head);letter-spacing:-0.02em;text-wrap:balance}
+  .eyebrow{font-weight:600;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--terra-700)}
+
+  .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-body);font-weight:600;font-size:15px;
+    padding:11px 18px;border-radius:10px;border:1px solid transparent;cursor:pointer;transition:background .15s,border-color .15s}
+  .btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .btn.primary{background:var(--terra);color:#fff}
+  .btn.primary:hover{background:var(--terra-700)}
+  .btn.ghost{border-color:var(--line);color:var(--ink);background:var(--panel)}
+  .btn.ghost:hover{border-color:var(--muted)}
+  .btn:focus-visible{outline:2px solid var(--terra);outline-offset:2px}
+
+  /* Nav */
+  header{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--page) 88%,transparent);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  header .row{display:flex;align-items:center;gap:18px;height:64px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--f-head);font-weight:700;font-size:18px}
+  .mark{width:30px;height:30px;border-radius:8px;background:var(--terra);display:grid;place-items:center}
+  .mark svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+  header nav{display:flex;gap:22px;margin-left:14px}
+  header nav a{font-size:14.5px;color:var(--muted);font-weight:500}
+  header nav a:hover{color:var(--ink)}
+  .grow{flex:1}
+  @media (max-width:800px){ header nav{display:none} }
+
+  /* Hero */
+  .hero{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;padding:64px 0 40px}
+  @media (max-width:900px){ .hero{grid-template-columns:1fr;gap:36px;padding:44px 0 20px} }
+  .hero h1{font-size:clamp(34px,4.6vw,52px);font-weight:700;line-height:1.05;margin:16px 0 0}
+  .hero .lede{font-size:18px;color:var(--muted);max-width:33em;margin-top:18px;line-height:1.6}
+  .hero .cta{display:flex;flex-wrap:wrap;gap:11px;margin-top:26px}
+  .hero .note{margin-top:14px;font-size:13px;color:var(--faint)}
+  .shot{display:flex;justify-content:center}
+
+  /* Trust */
+  .trust{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--panel)}
+  .trust .in{display:flex;flex-wrap:wrap;gap:12px 30px;justify-content:space-between;align-items:center;padding:16px 0}
+  .trust .t{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--muted);font-weight:500}
+  .trust .t svg{width:16px;height:16px;fill:none;stroke:var(--sage-700);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+  section{padding:70px 0}
+  .lead h2{font-size:clamp(26px,3.4vw,36px);font-weight:700;line-height:1.1;margin-top:10px;max-width:16ch}
+  .lead p{margin-top:12px;color:var(--muted);font-size:16.5px;max-width:44ch}
+
+  /* Feature row */
+  .feat{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center}
+  .feat.rev .copy{order:2}
+  @media (max-width:900px){ .feat{grid-template-columns:1fr;gap:30px} .feat.rev .copy{order:0} }
+  .feat h3{font-size:24px;font-weight:600;margin-top:10px}
+  .feat .copy p{margin-top:12px;color:var(--muted);font-size:16px;line-height:1.6;max-width:40ch}
+  .flist{margin-top:18px;display:flex;flex-direction:column;gap:11px}
+  .flist div{display:flex;gap:10px;align-items:flex-start;font-size:15px}
+  .flist svg{width:18px;height:18px;margin-top:2px;flex:none;fill:none;stroke:var(--terra-700);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+  /* Doors */
+  .doors{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+    border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-top:34px}
+  @media (max-width:800px){ .doors{grid-template-columns:1fr} }
+  .door{background:var(--panel);padding:26px}
+  .door .k{display:flex;align-items:center;gap:10px}
+  .door .k .di{width:34px;height:34px;border-radius:9px;background:var(--page);display:grid;place-items:center}
+  .door .k .di svg{width:19px;height:19px;fill:none;stroke:var(--terra-700);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .door h3{font-size:18px;font-weight:600}
+  .door p{margin-top:9px;font-size:14.5px;color:var(--muted);line-height:1.55}
+  .door a{margin-top:16px;display:inline-flex;gap:7px;align-items:center;font-weight:600;font-size:14.5px;color:var(--terra-700)}
+  .door a svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+  /* CTA */
+  .cta-band{border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:44px;
+    display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between}
+  .cta-band h2{font-size:clamp(24px,3vw,32px);font-weight:700}
+  .cta-band p{margin-top:8px;color:var(--muted);font-size:16px}
+
+  footer{border-top:1px solid var(--line);padding:34px 0}
+  .foot{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+  .foot .sm{font-size:13px;color:var(--faint)}
+  .foot a.sm:hover{color:var(--ink)}
+
+  /* ============ APP SCREENSHOT (a real phone frame) ============ */
+  .phone{width:298px;background:var(--app-bg);border-radius:38px;padding:22px 0 0;position:relative;
+    box-shadow:0 1px 0 rgba(255,255,255,.6) inset,
+      0 40px 80px -24px rgba(40,25,10,.34),
+      0 12px 28px -12px rgba(40,25,10,.20),
+      0 0 0 8px #17130f, 0 0 0 9px rgba(0,0,0,.25);
+    overflow:hidden;font-family:var(--f-body);color:var(--app-ink)}
+  .phone::before{content:"";position:absolute;top:11px;left:50%;transform:translateX(-50%);
+    width:78px;height:6px;border-radius:99px;background:rgba(30,20,10,.16)}
+  @media (max-width:420px){ .phone{width:264px} }
+  .phone .ph{padding:6px 18px 0}
+  .phone .eb{font-weight:600;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--terra-700)}
+  .phone h4{font-family:var(--f-head);font-weight:600;font-size:23px;margin-top:5px;color:var(--app-ink)}
+  .phone .st{color:#6f675c;font-size:11px;margin-top:5px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:14px 18px 0}
+  .tile{background:var(--app-card);border:1px solid var(--app-line);border-radius:15px;padding:12px}
+  .tile .ti{width:34px;height:34px;border-radius:10px;display:grid;place-items:center}
+  .tile .ti svg{width:18px;height:18px;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .ti.t{background:var(--app-terra-tint)} .ti.t svg{stroke:var(--terra-700)}
+  .ti.s{background:var(--app-sage-tint)} .ti.s svg{stroke:var(--sage-700)}
+  .tile .tt{font-family:var(--f-head);font-weight:600;font-size:13.5px;margin-top:20px}
+  .tile .tc{color:#8a8072;font-size:10.5px;margin-top:2px}
+  .rowc{margin:12px 18px 0;background:var(--app-card);border:1px solid var(--app-line);border-radius:14px;
+    padding:11px 13px;display:flex;align-items:center;gap:11px}
+  .rowc .ri{width:30px;height:30px;border-radius:9px;background:var(--app-sage-tint);display:grid;place-items:center}
+  .rowc .ri svg{width:16px;height:16px;fill:none;stroke:var(--sage-700);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .rowc .rt{font-family:var(--f-head);font-weight:600;font-size:13px}
+  .rowc .rs{color:#8a8072;font-size:10px;margin-top:1px}
+  .navbar{margin:16px 14px 14px;background:var(--app-nav);border-radius:20px;display:flex;padding:6px}
+  .navbar button{flex:1;border:0;background:none;color:#948b7d;display:flex;flex-direction:column;align-items:center;
+    gap:5px;padding:9px 0 8px;font-family:var(--f-body);font-weight:600;font-size:8.5px;border-radius:14px}
+  .navbar button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .navbar button.on{background:linear-gradient(180deg,#cf7a41,#c6703a);color:#fff}
+  .navbar button.on svg{stroke:#fff}
+
+  /* Small list phone (schedule) */
+  .lrow{margin:11px 18px 0;background:var(--app-card);border:1px solid var(--app-line);border-radius:14px;padding:12px 13px;display:flex;gap:12px;align-items:center}
+  .lrow .time{font-family:var(--f-head);font-weight:600;font-size:13px;color:var(--app-ink);width:42px}
+  .lrow .bar{width:3px;align-self:stretch;border-radius:2px;background:var(--terra)}
+  .lrow.s .bar{background:var(--sage-700)}
+  .lrow .lt{font-family:var(--f-head);font-weight:600;font-size:13px}
+  .lrow .ls{color:#8a8072;font-size:10.5px;margin-top:2px}
+</style>
+
+<header>
+  <div class="wrap row">
+    <div class="brand"><span class="mark"><svg viewBox="0 0 24 24"><path d="M7 20v-3.2M17 20v-3.2M7 16.8a7 7 0 1 1 10 0"/></svg></span>My Stables</div>
+    <nav>
+      <a href="#run">For yards</a>
+      <a href="#sell">For sellers</a>
+      <a href="#doors">Sign up</a>
+    </nav>
+    <span class="grow"></span>
+    <a class="btn ghost" href="/app">Sign in</a>
+    <a class="btn primary" href="/app">Open the app <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="wrap">
+  <div class="hero">
+    <div>
+      <span class="eyebrow">Stable management · UAE</span>
+      <h1>The operating system for your yard.</h1>
+      <p class="lede">Horse care, your team and the equestrian market — one app for riders and stables, and a marketplace for the shops, farriers, vets and transport who supply them.</p>
+      <div class="cta">
+        <a class="btn primary" href="/app">Open the app <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="btn ghost" href="#sell">Sell on My Stables</a>
+      </div>
+      <p class="note">Free to start · Arabic &amp; English · Built for UAE yards</p>
+    </div>
+    <div class="shot">
+      <!-- App screenshot: rider home -->
+      <div class="phone" role="img" aria-label="My Stables app home screen">
+        <div class="ph">
+          <div class="eb">Serc · Tuesday</div>
+          <h4>Hello, Ahmad</h4>
+          <div class="st">3 tasks today · 2 new notices</div>
+        </div>
+        <div class="grid2">
+          <div class="tile"><div class="ti t"><svg viewBox="0 0 24 24"><path d="M7 20v-2.6M17 20v-2.6M7 17a6 6 0 1 1 10 0"/></svg></div><div class="tt">My horses</div><div class="tc">6 in your yard</div></div>
+          <div class="tile"><div class="ti s"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></div><div class="tt">Schedule</div><div class="tc">Today&rsquo;s plan</div></div>
+          <div class="tile"><div class="ti s"><svg viewBox="0 0 24 24"><path d="M9 11l2.5 2.5L16 8"/><rect x="3.5" y="4" width="17" height="17" rx="3"/></svg></div><div class="tt">Tasks</div><div class="tc">3 to do</div></div>
+          <div class="tile"><div class="ti t"><svg viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg></div><div class="tt">Market</div><div class="tc">Feed, tack &amp; vets</div></div>
+        </div>
+        <div class="rowc"><span class="ri"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 6a3 3 0 0 1 0 6"/></svg></span><span><div class="rt">The stable</div><div class="rs">People, roles &amp; settings</div></span></div>
+        <div class="navbar">
+          <button class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>Home</button>
+          <button><svg viewBox="0 0 24 24"><path d="M7 20v-2.6M17 20v-2.6M7 17a6 6 0 1 1 10 0"/></svg>Horses</button>
+          <button><svg viewBox="0 0 24 24"><path d="M4 5h16v10H8l-4 4z"/></svg>Board</button>
+          <button><svg viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg>Market</button>
+          <button><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>You</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TRUST -->
+<div class="trust">
+  <div class="wrap">
+    <div class="in">
+      <div class="t"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Built for UAE yards</div>
+      <div class="t"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Arabic &amp; RTL</div>
+      <div class="t"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> VAT-ready receipts</div>
+      <div class="t"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Money held safe until delivery</div>
+    </div>
+  </div>
+</div>
+
+<!-- RUN THE YARD -->
+<section id="run">
+  <div class="wrap">
+    <div class="feat">
+      <div class="copy">
+        <span class="eyebrow">For riders &amp; yards</span>
+        <h3>Run the whole yard from your phone.</h3>
+        <p>Every horse, every person, every day — in order, and shared with your team.</p>
+        <div class="flist">
+          <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Horse records: health, feed, tack and documents</div>
+          <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> A shared schedule and tasks, assigned and ticked off</div>
+          <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> A yard board for notices, shows and updates</div>
+        </div>
+        <div class="cta" style="margin-top:24px"><a class="btn ghost" href="/app">Open the app <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      </div>
+      <div class="shot">
+        <!-- Schedule screenshot -->
+        <div class="phone" role="img" aria-label="Schedule screen">
+          <div class="ph"><div class="eb">Serc · Tuesday</div><h4>Schedule</h4><div class="st">Today &middot; 4 sessions</div></div>
+          <div class="lrow"><div class="time">07:00</div><div class="bar"></div><div><div class="lt">Morning feeds</div><div class="ls">Rasil · all 14</div></div></div>
+          <div class="lrow s"><div class="time">08:45</div><div class="bar"></div><div><div class="lt">Flatwork · Kiki</div><div class="ls">Toni · 45 min</div></div></div>
+          <div class="lrow"><div class="time">10:00</div><div class="bar"></div><div><div class="lt">Farrier · Comme Ci</div><div class="ls">Gulf Farriers</div></div></div>
+          <div class="lrow s"><div class="time">14:00</div><div class="bar"></div><div><div class="lt">Walker · Nour</div><div class="ls">two rounds</div></div></div>
+          <div class="navbar">
+            <button><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>Home</button>
+            <button class="on"><svg viewBox="0 0 24 24"><path d="M7 20v-2.6M17 20v-2.6M7 17a6 6 0 1 1 10 0"/></svg>Horses</button>
+            <button><svg viewBox="0 0 24 24"><path d="M4 5h16v10H8l-4 4z"/></svg>Board</button>
+            <button><svg viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg>Market</button>
+            <button><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>You</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SELL -->
+<section id="sell" style="background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="feat rev">
+      <div class="copy">
+        <span class="eyebrow">For sellers &amp; providers</span>
+        <h3>Reach every yard. Get paid on time.</h3>
+        <p>List your shop or service, take orders and requests, and settle on a clear schedule.</p>
+        <div class="flist">
+          <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> A storefront in front of every stable in the UAE</div>
+          <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Orders and quote requests in one dashboard</div>
+          <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg> Payouts after delivery — with VAT receipts</div>
+        </div>
+        <div class="cta" style="margin-top:24px"><a class="btn primary" href="/sell">Start selling <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      </div>
+      <div class="shot">
+        <!-- Seller dashboard card (desktop-style panel) -->
+        <div style="width:360px;max-width:100%;background:var(--app-bg);border:1px solid var(--app-line);border-radius:20px;padding:18px;box-shadow:0 40px 80px -24px rgba(40,25,10,.30), 0 12px 28px -14px rgba(40,25,10,.18)">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div style="font-family:var(--f-head);font-weight:700;font-size:17px;color:var(--app-ink)">Al Sahra Feed</div>
+            <span style="background:var(--app-sage-tint);color:var(--sage-700);font-weight:600;font-size:11px;padding:4px 9px;border-radius:999px">Live</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px">
+            <div style="background:var(--app-card);border:1px solid var(--app-line);border-radius:12px;padding:12px"><div style="font-family:var(--f-head);font-weight:700;font-size:20px;color:var(--app-ink)">AED 4.2k</div><div style="font-size:10.5px;color:#8a8072;margin-top:2px">This month</div></div>
+            <div style="background:var(--app-card);border:1px solid var(--app-line);border-radius:12px;padding:12px"><div style="font-family:var(--f-head);font-weight:700;font-size:20px;color:var(--app-ink)">12</div><div style="font-size:10.5px;color:#8a8072;margin-top:2px">Orders</div></div>
+            <div style="background:var(--app-card);border:1px solid var(--app-line);border-radius:12px;padding:12px"><div style="font-family:var(--f-head);font-weight:700;font-size:20px;color:var(--app-ink)">3</div><div style="font-size:10.5px;color:#8a8072;margin-top:2px">To pack</div></div>
+          </div>
+          <div style="margin-top:12px;background:var(--app-card);border:1px solid var(--app-line);border-radius:12px;padding:12px 13px;display:flex;align-items:center;gap:11px">
+            <span style="width:32px;height:32px;border-radius:9px;background:var(--app-terra-tint);display:grid;place-items:center"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#8c491a" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg></span>
+            <div style="flex:1"><div style="font-family:var(--f-head);font-weight:600;font-size:13px;color:var(--app-ink)">Order #1042 · Serc</div><div style="font-size:10.5px;color:#8a8072">2× Alfalfa bale · AED 180</div></div>
+            <span style="background:#f4e2c4;color:#8a5a12;font-weight:600;font-size:10.5px;padding:4px 9px;border-radius:999px">New</span>
+          </div>
+          <div style="margin-top:9px;background:var(--app-card);border:1px solid var(--app-line);border-radius:12px;padding:12px 13px;display:flex;align-items:center;gap:11px">
+            <span style="width:32px;height:32px;border-radius:9px;background:var(--app-sage-tint);display:grid;place-items:center"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#56633f" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <div style="flex:1"><div style="font-family:var(--f-head);font-weight:600;font-size:13px;color:var(--app-ink)">Order #1039 · Green Acres</div><div style="font-size:10.5px;color:#8a8072">Fulfilled · payout in 12 days</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOORS -->
+<section id="doors">
+  <div class="wrap">
+    <div class="lead">
+      <span class="eyebrow">Get started</span>
+      <h2>One platform, three ways in.</h2>
+      <p>Pick where you belong and we take you straight to the right place.</p>
+    </div>
+    <div class="doors">
+      <div class="door">
+        <div class="k"><span class="di"><svg viewBox="0 0 24 24"><path d="M7 20v-2.6M17 20v-2.6M7 17a6 6 0 1 1 10 0"/></svg></span><h3>Riders &amp; yards</h3></div>
+        <p>Manage horses, your team and the day — and order supplies without leaving the yard.</p>
+        <a href="/app">Open the app <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+      <div class="door">
+        <div class="k"><span class="di"><svg viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg></span><h3>Sellers &amp; providers</h3></div>
+        <p>Open a storefront, take orders and quote requests, and get paid on a clear schedule.</p>
+        <a href="/sell">Start selling <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+      <div class="door">
+        <div class="k"><span class="di"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v16"/></svg></span><h3>Operators</h3></div>
+        <p>Run the platform — approvals, fees, payouts, disputes and shows — from one console.</p>
+        <a href="/admin">Operator sign-in <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="cta-band">
+      <div>
+        <h2>Bring your yard together.</h2>
+        <p>Free to start. Set up your stable in minutes.</p>
+      </div>
+      <div class="cta"><a class="btn primary" href="/app">Open the app <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn ghost" href="#sell">Sell on My Stables</a></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <div class="brand" style="font-size:16px"><span class="mark" style="width:26px;height:26px;border-radius:7px"><svg viewBox="0 0 24 24"><path d="M7 20v-3.2M17 20v-3.2M7 16.8a7 7 0 1 1 10 0"/></svg></span>My Stables</div>
+    <span class="sm">© 2026 My Stables · UAE</span>
+    <a class="sm" href="/admin">Operator sign-in</a>
+  </div>
+</footer>

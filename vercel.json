@@ -5,6 +5,7 @@
   "buildCommand": "_flutter/bin/flutter config --enable-web && _flutter/bin/flutter build web --release",
   "outputDirectory": "build/web",
   "rewrites": [
+    { "source": "/", "destination": "/home.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

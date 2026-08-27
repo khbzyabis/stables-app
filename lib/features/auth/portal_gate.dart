@@ -10,7 +10,6 @@ import '../home/home_screen.dart';
 import '../market/provider_screen.dart';
 import '../market/seller_dashboard_screen.dart';
 import 'create_stable_screen.dart';
-import 'landing_screen.dart';
 import 'sign_in_screen.dart';
 
 /// The single entry point for every front door. It reads which portal the URL
@@ -35,11 +34,9 @@ class _PortalGateState extends State<PortalGate> {
   Widget build(BuildContext context) {
     final portal = Portal.current;
     if (!SupabaseService.isSignedIn) {
-      // The root shows the public welcome/chooser; the seller and operator
-      // doors go straight to their own sign-in (people arrive there on purpose).
-      return portal == AppPortal.app
-          ? const LandingScreen()
-          : const SignInScreen();
+      // The public marketing homepage is served statically at the site root
+      // (web/home.html); every door here goes straight to its sign-in.
+      return const SignInScreen();
     }
     _future ??= _decide(portal);
     return FutureBuilder<_GateResult>(

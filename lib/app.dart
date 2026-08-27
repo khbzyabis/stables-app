@@ -222,7 +222,9 @@ class _MyStablesAppState extends State<MyStablesApp> {
               // The seller (/sell) and operator (/admin) doors resolve to the
               // same gate; it reads Portal.current (set from the URL at boot).
               onGenerateRoute: (settings) {
-                if (settings.name == '/sell' || settings.name == '/admin') {
+                if (settings.name == '/sell' ||
+                    settings.name == '/admin' ||
+                    settings.name == '/app') {
                   return MaterialPageRoute(
                       builder: (_) => const PortalGate(), settings: settings);
                 }
