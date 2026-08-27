@@ -102,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final wide = kIsWeb && MediaQuery.of(context).size.width >= 900;
 
     return Scaffold(
-      backgroundColor: AppColors.bg,
+      backgroundColor: wide ? AppColors.panel : AppColors.bg,
       body: SafeArea(
         bottom: false,
         child: AnimatedBuilder(

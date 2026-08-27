@@ -7,6 +7,9 @@ import '../../theme/app_theme.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_icons.dart';
 import '../../widgets/bottom_tab_bar.dart';
+import '../people/people_screen.dart';
+import '../schedule/schedule_screen.dart';
+import '../tasks/groom_day_screen.dart';
 import 'stable_switcher.dart';
 
 /// The desktop chrome for the signed-in rider app. On a wide (laptop) browser
@@ -24,6 +27,7 @@ class DesktopShell extends StatelessWidget {
     required this.child,
     required this.onSelect,
     required this.onProfile,
+    required this.onOpenRoute,
   });
 
   /// The current Navigator output (the active page) shown in the content area.
@@ -35,11 +39,14 @@ class DesktopShell extends StatelessWidget {
   /// Open the profile / account screen.
   final VoidCallback onProfile;
 
+  /// Push a named route (for the secondary "Manage" links).
+  final void Function(String route) onOpenRoute;
+
   @override
   Widget build(BuildContext context) {
     final session = SessionScope.of(context);
     return ColoredBox(
-      color: AppColors.bg,
+      color: AppColors.panel,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -47,6 +54,7 @@ class DesktopShell extends StatelessWidget {
             session: session,
             onSelect: onSelect,
             onProfile: onProfile,
+            onOpenRoute: onOpenRoute,
           ),
           Expanded(
             child: Align(
@@ -94,11 +102,13 @@ class _Sidebar extends StatelessWidget {
     required this.session,
     required this.onSelect,
     required this.onProfile,
+    required this.onOpenRoute,
   });
 
   final AppSession session;
   final void Function(AppTab) onSelect;
   final VoidCallback onProfile;
+  final void Function(String route) onOpenRoute;
 
   @override
   Widget build(BuildContext context) {
@@ -226,6 +236,33 @@ class _Sidebar extends StatelessWidget {
                         iconBuilder: (c, s) => AppTabIcon.me(color: c, size: s),
                         active: current == AppTab.you,
                         onTap: () => onSelect(AppTab.you),
+                      ),
+                      const SizedBox(height: 14),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(14, 4, 0, 8),
+                        child: Text('MANAGE',
+                            style: AppText.body(10.5,
+                                weight: FontWeight.w700,
+                                letterSpacing: 0.9,
+                                color: AppColors.ink(0.4))),
+                      ),
+                      _NavItem(
+                        label: 'Schedule',
+                        icon: Icons.calendar_month_outlined,
+                        active: false,
+                        onTap: () => onOpenRoute(ScheduleScreen.route),
+                      ),
+                      _NavItem(
+                        label: 'Tasks',
+                        icon: Icons.task_alt,
+                        active: false,
+                        onTap: () => onOpenRoute(GroomDayScreen.route),
+                      ),
+                      _NavItem(
+                        label: 'People',
+                        icon: Icons.groups_outlined,
+                        active: false,
+                        onTap: () => onOpenRoute(PeopleScreen.route),
                       ),
                     ],
                   );

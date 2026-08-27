@@ -129,11 +129,18 @@ class _MyStablesAppState extends State<MyStablesApp> {
         Analytics.reset();
       }
       // On a real sign-in/sign-out, send the user back through the portal gate
-      // so the right door (rider / seller / operator) is re-evaluated.
+      // so the right door (rider / seller / operator) is re-evaluated. Land on
+      // the portal PATH (/app, /sell, /admin) rather than "/", so the browser
+      // URL never becomes "/" — which the host serves as the marketing page,
+      // making a reload escape the app.
       final e = state.event;
       if (e == AuthChangeEvent.signedIn || e == AuthChangeEvent.signedOut) {
-        _navKey.currentState?.pushNamedAndRemoveUntil(
-            PortalGate.route, (r) => false);
+        final target = switch (Portal.current) {
+          AppPortal.seller => '/sell',
+          AppPortal.admin => '/admin',
+          AppPortal.app => '/app',
+        };
+        _navKey.currentState?.pushNamedAndRemoveUntil(target, (r) => false);
       }
     });
     // On first launch, honour the device language if it is one we support.
@@ -213,6 +220,7 @@ class _MyStablesAppState extends State<MyStablesApp> {
                       },
                       onProfile: () => _navKey.currentState
                           ?.pushNamed(ProfileScreen.route),
+                      onOpenRoute: (r) => _navKey.currentState?.pushNamed(r),
                       child: page,
                     );
                   }

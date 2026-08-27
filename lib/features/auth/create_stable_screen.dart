@@ -107,8 +107,16 @@ class _CreateStableScreenState extends State<CreateStableScreen> {
     } catch (e) {
       AppErrors.report(e);
       if (mounted) {
+        final s = e.toString().toLowerCase();
+        final taken = s.contains('stables_name_unique') ||
+            s.contains('duplicate key') ||
+            s.contains('23505');
         messenger.showSnackBar(
-          SnackBar(content: Text('Could not create the stable: $e')),
+          SnackBar(
+            content: Text(taken
+                ? '“$name” is already taken. Stable names are unique — try another.'
+                : 'Could not create the stable: $e'),
+          ),
         );
       }
     } finally {
