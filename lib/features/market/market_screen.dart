@@ -53,6 +53,18 @@ class _MarketScreenState extends State<MarketScreen> {
   late String _cat = widget.initialCategory ?? 'Feed';
   late Future<List<Map<String, dynamic>>> _future = _load();
   bool _readArg = false;
+  String _query = '';
+
+  List<Map<String, dynamic>> _filter(List<Map<String, dynamic>> items) {
+    final q = _query.trim().toLowerCase();
+    if (q.isEmpty) return items;
+    return items.where((i) {
+      final name = (i['name'] as String?)?.toLowerCase() ?? '';
+      final vendor = (i['vendor_name'] as String?)?.toLowerCase() ?? '';
+      final about = (i['about'] as String?)?.toLowerCase() ?? '';
+      return name.contains(q) || vendor.contains(q) || about.contains(q);
+    }).toList();
+  }
 
   @override
   void didChangeDependencies() {
@@ -156,7 +168,33 @@ class _MarketScreenState extends State<MarketScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 22),
+                  const SizedBox(height: 18),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: AppColors.warmWhite,
+                      borderRadius: BorderRadius.circular(AppRadius.pill),
+                      border: Border.all(color: AppColors.divider),
+                    ),
+                    child: Row(children: [
+                      Icon(Icons.search, size: 19, color: AppColors.ink(0.4)),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: TextField(
+                          onChanged: (v) => setState(() => _query = v),
+                          cursorColor: AppColors.accent,
+                          style: AppText.body(15),
+                          decoration: InputDecoration.collapsed(
+                            hintText: 'Search feed, tack, sellers…',
+                            hintStyle:
+                                AppText.body(15, color: AppColors.ink(0.4)),
+                          ),
+                        ),
+                      ),
+                    ]),
+                  ),
+                  const SizedBox(height: 14),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
@@ -180,7 +218,7 @@ class _MarketScreenState extends State<MarketScreen> {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (snap.hasError) AppErrors.report(snap.error!);
-                  final items = snap.data ?? const [];
+                  final items = _filter(snap.data ?? const []);
                   return ListView(
                     padding: const EdgeInsets.fromLTRB(32, 22, 32, 0),
                     children: [

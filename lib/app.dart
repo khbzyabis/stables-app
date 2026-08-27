@@ -36,7 +36,6 @@ import 'features/horses/setups_screen.dart';
 import 'features/horses/tack_box_screen.dart';
 import 'features/horses/training_screen.dart';
 import 'features/board/board_screen.dart';
-import 'features/board/noticeboard_screen.dart';
 import 'features/board/post_notice_screen.dart';
 import 'features/settings/contacts_screen.dart';
 import 'features/settings/help_screen.dart';
@@ -86,7 +85,6 @@ import 'features/people/people_screen.dart';
 import 'features/people/roles_screen.dart';
 import 'features/tasks/assign_task_screen.dart';
 import 'features/tasks/groom_day_screen.dart';
-import 'features/tasks/task_progress_screen.dart';
 import 'features/transport/booked_journey_screen.dart';
 import 'features/transport/request_transport_screen.dart';
 import 'features/transport/transport_quotes_screen.dart';
@@ -250,7 +248,6 @@ class _MyStablesAppState extends State<MyStablesApp> {
                 DocumentsScreen.route: (_) => const DocumentsScreen(),
                 ProgressScreen.route: (_) => const ProgressScreen(),
                 EditHorseScreen.route: (_) => const EditHorseScreen(),
-                NoticeboardScreen.route: (_) => const NoticeboardScreen(),
                 PostNoticeScreen.route: (_) => const PostNoticeScreen(),
                 BoardScreen.route: (_) => const BoardScreen(),
                 ContactsScreen.route: (_) => const ContactsScreen(),
@@ -277,7 +274,6 @@ class _MyStablesAppState extends State<MyStablesApp> {
                 AddActivityScreen.route: (_) => const AddActivityScreen(),
                 GroomDayScreen.route: (_) => const GroomDayScreen(),
                 AssignTaskScreen.route: (_) => const AssignTaskScreen(),
-                TaskProgressScreen.route: (_) => const TaskProgressScreen(),
                 MarketScreen.route: (_) => const MarketScreen(),
                 ShopScreen.route: (_) => const ShopScreen(),
                 ShowDetailScreen.route: (_) => const ShowDetailScreen(),
