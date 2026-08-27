@@ -29,6 +29,7 @@ import '../settings/stable_settings_screen.dart';
 import '../shows/shows_screen.dart';
 import '../market/market_screen.dart';
 import '../market/market_home_screen.dart';
+import 'home_dashboard.dart';
 import 'notifications_screen.dart';
 import '../market/payments_screen.dart';
 import '../market/my_quotes_screen.dart';
@@ -97,6 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final day = DateFormat.EEEE(Localizations.localeOf(context).toString())
         .format(DateTime.now());
     final initial = SupabaseService.displayName.characters.first.toUpperCase();
+    final wide = kIsWeb && MediaQuery.of(context).size.width >= 900;
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -179,14 +181,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         (session.activeStableId == null && session.hasPending)
                         ? _PendingPanel(session: session)
                         : switch (_tab) {
-                            AppTab.home => _ReadColumn(
-                              maxWidth: 820,
-                              child: _HomeHubTab(
-                                hasStable:
-                                    session.hasStable || session.hasPending,
-                                onGoTab: _setTab,
-                              ),
-                            ),
+                            AppTab.home => wide
+                                ? HomeDashboard(
+                                    stableId: session.activeStableId,
+                                    onGoTab: _setTab,
+                                  )
+                                : _HomeHubTab(
+                                    hasStable: session.hasStable ||
+                                        session.hasPending,
+                                    onGoTab: _setTab,
+                                  ),
                             AppTab.horses => _HorsesTab(
                               stableId: session.activeStableId,
                             ),
@@ -289,16 +293,15 @@ class _CardGrid extends StatelessWidget {
 /// width on desktop while staying full-width on phones, left-aligned so the
 /// content edge doesn't jump when switching tabs.
 class _ReadColumn extends StatelessWidget {
-  const _ReadColumn({required this.child, this.maxWidth = 640});
+  const _ReadColumn({required this.child});
   final Widget child;
-  final double maxWidth;
 
   @override
   Widget build(BuildContext context) {
     return Align(
       alignment: AlignmentDirectional.topStart,
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: maxWidth),
+        constraints: const BoxConstraints(maxWidth: 640),
         child: child,
       ),
     );
