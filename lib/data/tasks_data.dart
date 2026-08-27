@@ -5,10 +5,10 @@ abstract final class TasksData {
   static const groomDay = <StableTask>[
     StableTask(id: 'd1', title: 'Morning feeds, all 14', meta: 'Ahmad · daily', time: '06:30'),
     StableTask(id: 'd2', title: 'Turn out the front paddock six', meta: 'Ahmad · daily', time: '07:15'),
-    StableTask(id: 'd3', title: 'Tack up Kiki for flatwork', meta: 'Ahmad · setup saved', time: '08:45', note: 'Cavesson, not the grackle'),
+    StableTask(id: 'd3', title: 'Tack up Joy for flatwork', meta: 'Ahmad · setup saved', time: '08:45', note: 'Cavesson, not the grackle'),
     StableTask(id: 'd4', title: "Poultice Comme Ci's left fore", meta: 'Layal · until Friday', time: '10:00', note: 'Cold hose first, ten minutes'),
     StableTask(id: 'd5', title: 'Muck out boxes 1 to 7', meta: 'Layal · daily', time: '11:00'),
-    StableTask(id: 'd6', title: 'Walker: Kiki and Nour, two rounds', meta: 'Ahmad · today only', time: '14:00'),
+    StableTask(id: 'd6', title: 'Walker: Joy and Nour, two rounds', meta: 'Ahmad · today only', time: '14:00'),
     StableTask(id: 'd7', title: 'Evening feeds and rugs', meta: 'Ahmad · daily', time: '17:30'),
   ];
 

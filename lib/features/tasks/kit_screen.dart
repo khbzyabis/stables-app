@@ -45,7 +45,7 @@ class _KitScreenState extends State<KitScreen> {
             Text('Tuesday 17:00 · Riding'.toUpperCase(),
                 style: AppText.eyebrow(color: AppColors.accent700)),
             const SizedBox(height: 10),
-            Text('Kiki, for Ahmad', style: AppText.heading(40, height: 1.05)),
+            Text('Joy, for Ahmad', style: AppText.heading(40, height: 1.05)),
             const SizedBox(height: 8),
             Text('Box 7 · tack box on the right',
                 style: AppText.body(17, color: AppColors.ink(0.6))),

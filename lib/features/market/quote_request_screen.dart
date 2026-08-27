@@ -22,7 +22,7 @@ class QuoteRequestScreen extends StatefulWidget {
 
 class _QuoteRequestScreenState extends State<QuoteRequestScreen> {
   int _kind = 0;
-  final _horses = TextEditingController(text: 'Kiki, Comme Ci');
+  final _horses = TextEditingController(text: 'Joy, Comme Ci');
   final _when = TextEditingController(text: 'This Thursday or Friday');
   final Set<int> _asked = {0, 1};
 

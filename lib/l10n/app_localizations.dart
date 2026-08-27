@@ -1746,7 +1746,7 @@ abstract class AppL10n {
   /// No description provided for @setupChangedTitle.
   ///
   /// In en, this message translates to:
-  /// **'Kiki\'s flatwork kit was not the default'**
+  /// **'Joy\'s flatwork kit was not the default'**
   String get setupChangedTitle;
 
   /// No description provided for @setupChangedBody.

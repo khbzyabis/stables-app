@@ -26,7 +26,7 @@ class RequestTransportScreen extends StatefulWidget {
 
 class _RequestTransportScreenState extends State<RequestTransportScreen> {
   int _why = 0;
-  final Set<String> _horses = {'Kiki'};
+  final Set<String> _horses = {'Joy'};
   final Set<int> _needs = {0, 2};
   final _from = TextEditingController();
   final _to = TextEditingController();

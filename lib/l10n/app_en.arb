@@ -300,7 +300,7 @@
   "setupsIntro": "Pick an activity and the usual kit for it fills in.",
   "setupDirtyNote": "You have changed this from the default. Make it the new default, or undo.",
   "saveToTackBox": "Save to tack box",
-  "setupChangedTitle": "Kiki's flatwork kit was not the default",
+  "setupChangedTitle": "Joy's flatwork kit was not the default",
   "setupChangedBody": "Toni changed two things during the session. Keep the default, or make his version the new one.",
   "makeFlatworkDefault": "Make this the flatwork default",
   "keepOldDefault": "Keep the old default",

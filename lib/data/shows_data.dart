@@ -59,7 +59,7 @@ class PaidDelivery {
 
 abstract final class ShowsData {
   static const candHorses = <CandHorse>[
-    CandHorse('Kiki', 'Farrier Thursday', 'Well', true),
+    CandHorse('Joy', 'Farrier Thursday', 'Well', true),
     CandHorse('Comme Ci', 'Box rest · day 3 of 10', 'Watch', false),
     CandHorse('Abby', 'Schooled yesterday · 40 min', 'Well', true),
   ];
@@ -76,7 +76,7 @@ abstract final class ShowsData {
   ];
 
   static const showLinks = <ShowLink>[
-    ShowLink('Start lists and results', 'Kiki is 14th to go on Saturday'),
+    ShowLink('Start lists and results', 'Joy is 14th to go on Saturday'),
     ShowLink('Shops and services', 'Feed, tack, farriers, vets, physios'),
     ShowLink('Your entries', 'Two entered, one waiting on payment'),
   ];
@@ -97,7 +97,7 @@ abstract final class ShowsData {
   ];
 
   static const entryHorses = <EntryHorse>[
-    EntryHorse('Kiki', 'Kiki jumped 1.10 m last month. Vaccinations are current.'),
+    EntryHorse('Joy', 'Joy jumped 1.10 m last month. Vaccinations are current.'),
     EntryHorse('Comme Ci',
         'Comme Ci came off box rest three days ago. Ask the vet before you enter him.'),
     EntryHorse('Abby',
@@ -108,7 +108,7 @@ abstract final class ShowsData {
     StartEntry(11, 'Noura Al Falasi', 'Bandit', '10:11'),
     StartEntry(12, 'Omar Sayegh', 'Vela', '10:14'),
     StartEntry(13, 'Layal', 'Abby', '10:22', stable: true),
-    StartEntry(14, 'Ahmad', 'Kiki', '10:25', me: true),
+    StartEntry(14, 'Ahmad', 'Joy', '10:25', me: true),
     StartEntry(15, 'Sara Haddad', 'Nimbus', '10:28'),
     StartEntry(16, 'Fatima Darwish', 'Zephyr', '10:31'),
     StartEntry(17, 'Khalid Bin Zayed', 'Onyx', '10:34'),

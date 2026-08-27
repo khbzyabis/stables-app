@@ -16,7 +16,7 @@ abstract final class ScheduleData {
   static const events = <int, List<ScheduleEvent>>{
     17: [
       ScheduleEvent(time: '06:30', duration: '45 min', title: 'Morning feeds', meta: 'Rasil · all 14 horses', kind: EventKind.feed),
-      ScheduleEvent(time: '17:00', duration: '1 hr', title: 'Flatwork with Kiki', meta: 'Toni · outdoor arena', kind: EventKind.riding),
+      ScheduleEvent(time: '17:00', duration: '1 hr', title: 'Flatwork with Joy', meta: 'Toni · outdoor arena', kind: EventKind.riding),
     ],
     18: [
       ScheduleEvent(time: '06:30', duration: '45 min', title: 'Morning feeds', meta: 'Rasil · all 14 horses', kind: EventKind.feed),
@@ -25,7 +25,7 @@ abstract final class ScheduleData {
     ],
     19: [
       ScheduleEvent(time: '06:30', duration: '45 min', title: 'Morning feeds', meta: 'Rasil · all 14 horses', kind: EventKind.feed),
-      ScheduleEvent(time: '14:00', duration: '30 min', title: 'Walker · Kiki and Nour', meta: 'Rasil · two rounds', kind: EventKind.walker),
+      ScheduleEvent(time: '14:00', duration: '30 min', title: 'Walker · Joy and Nour', meta: 'Rasil · two rounds', kind: EventKind.walker),
     ],
     20: [
       ScheduleEvent(time: '08:00', duration: '2 hr', title: 'Vet visit · vaccinations', meta: 'Six horses · Dr Farah', kind: EventKind.vet),

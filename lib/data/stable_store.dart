@@ -82,7 +82,7 @@ class StableStore extends ChangeNotifier {
   static List<Horse> _seed() => [
         Horse(
           id: 'kiki',
-          name: 'Kiki',
+          name: 'Joy',
           statusLine: 'Farrier due Thursday',
           status: HorseStatus.well,
           age: '9 years',

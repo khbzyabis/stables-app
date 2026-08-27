@@ -47,7 +47,7 @@ abstract final class TransportData {
   ];
 
   static const journeyFacts = <ItemFact>[
-    ItemFact('Horses', 'Kiki and Abby · travelling together'),
+    ItemFact('Horses', 'Joy and Abby · travelling together'),
     ItemFact('Driver', 'Saeed · +971 50 771 4402'),
     ItemFact('Vehicle', 'Two-horse lorry · air ride, CCTV'),
     ItemFact('Insured to', 'AED 250,000 per horse'),

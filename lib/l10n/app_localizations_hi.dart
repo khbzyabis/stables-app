@@ -874,7 +874,7 @@ class AppL10nHi extends AppL10n {
   String get saveToTackBox => 'Save to tack box';
 
   @override
-  String get setupChangedTitle => 'Kiki\'s flatwork kit was not the default';
+  String get setupChangedTitle => 'Joy\'s flatwork kit was not the default';
 
   @override
   String get setupChangedBody =>

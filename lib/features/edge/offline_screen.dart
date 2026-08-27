@@ -26,7 +26,7 @@ class _OfflineScreenState extends State<OfflineScreen> {
   static const _tasks = <_OffTask>[
     _OffTask('o1', 'Morning feed, all 14 horses', 'Saved on this phone', '06:30'),
     _OffTask('o2', 'Turn out the front six', 'Saved on this phone', '07:15'),
-    _OffTask('o3', 'Tack up Kiki for flatwork', 'Saved on this phone', '08:45'),
+    _OffTask('o3', 'Tack up Joy for flatwork', 'Saved on this phone', '08:45'),
     _OffTask('o4', 'Poultice Comme Ci, left fore', 'Sam · by Friday', '10:00'),
     _OffTask('o5', 'Sweep the yard', 'Ahmad · daily', '12:00'),
     _OffTask('o6', 'Evening feed', 'Ahmad · daily', '17:00'),

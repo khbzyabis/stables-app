@@ -43,7 +43,7 @@ abstract final class PeopleData {
   static const roles = ['Admin', 'Manager', 'Trainer', 'Groom', 'Owner', 'Rider'];
 
   static const members = <Member>[
-    Member(name: 'Ahmad', initial: 'A', meta: 'You · Kiki, Comme Ci and Abby', role: 'Admin'),
+    Member(name: 'Ahmad', initial: 'A', meta: 'You · Joy, Comme Ci and Abby', role: 'Admin'),
     Member(name: 'Layal', initial: 'L', meta: 'Runs the stable with you · rides Ghazal', role: 'Admin'),
     Member(name: 'Toni', initial: 'T', meta: 'Four horses assigned', role: 'Trainer'),
     Member(name: 'Rasil', initial: 'R', meta: 'Feeds and turnout', role: 'Groom'),

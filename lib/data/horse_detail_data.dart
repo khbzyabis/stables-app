@@ -4,7 +4,7 @@ import '../theme/tokens.dart';
 
 /// Static content for the horse-record screens — tack box, setups, health,
 /// training, feed chart, documents and progress. Ported from the design
-/// handoff (Kiki's record). One place so a screen and its data stay together.
+/// handoff (Joy's record). One place so a screen and its data stay together.
 
 /// A group of tack items (Bridles, Nosebands, …).
 class TackGroup {
@@ -121,7 +121,7 @@ abstract final class HorseDetailData {
       TackItem('Web reins with stops', 'Jumping'),
     ]),
     TackGroup('Saddles and girths', [
-      TackItem('Dressage saddle 17.5"', 'Brown · Kiki'),
+      TackItem('Dressage saddle 17.5"', 'Brown · Joy'),
       TackItem('Jump saddle 17"', 'Brown'),
       TackItem('Elastic girth 125cm', ''),
     ]),

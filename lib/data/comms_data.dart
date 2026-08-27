@@ -114,7 +114,7 @@ abstract final class CommsData {
           'Clinic on Saturday the 29th, four places left. Reply here to take one.',
       acks: 4,
       replies: [
-        NoticeReply('Ahmad', 'One for me and Kiki.'),
+        NoticeReply('Ahmad', 'One for me and Joy.'),
         NoticeReply('Layal', 'Me too please.'),
       ],
     ),
