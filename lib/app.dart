@@ -358,7 +358,18 @@ class _MyStablesAppState extends State<MyStablesApp> {
                     settings: const RouteSettings(name: SignInScreen.route),
                   );
                 }
-                return MaterialPageRoute(builder: builder, settings: settings);
+                // In the rider desktop shell, cap pushed detail pages (which
+                // are mobile-designed) to a focused centred column instead of
+                // letting them stretch. Home manages its own dashboard width;
+                // auth pages have their own web layout.
+                final capInShell = Portal.current == AppPortal.app &&
+                    SupabaseService.isSignedIn &&
+                    name != HomeScreen.route &&
+                    !publicRoutes.contains(name);
+                final wrapped = capInShell
+                    ? (BuildContext ctx) => DesktopCap(child: builder(ctx))
+                    : builder;
+                return MaterialPageRoute(builder: wrapped, settings: settings);
               },
             );
           },

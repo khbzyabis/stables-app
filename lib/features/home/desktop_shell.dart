@@ -62,6 +62,32 @@ class DesktopShell extends StatelessWidget {
   }
 }
 
+/// Caps a mobile-designed detail page (a horse record, the schedule, an order)
+/// to a comfortable centred width on a wide desktop, so pushed pages inside the
+/// desktop shell read as a focused column instead of stretching. On phones and
+/// narrow viewports it passes the child through untouched.
+class DesktopCap extends StatelessWidget {
+  const DesktopCap({super.key, required this.child, this.maxWidth = 780});
+  final Widget child;
+  final double maxWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, c) {
+        if (c.maxWidth <= maxWidth) return child;
+        return Align(
+          alignment: Alignment.topCenter,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: maxWidth),
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+}
+
 class _Sidebar extends StatelessWidget {
   const _Sidebar({
     required this.session,

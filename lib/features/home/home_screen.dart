@@ -194,10 +194,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             AppTab.horses => _HorsesTab(
                               stableId: session.activeStableId,
                             ),
-                            AppTab.board => _ReadColumn(
-                              child: _BoardTab(
-                                stableId: session.activeStableId,
-                              ),
+                            AppTab.board => _BoardTab(
+                              stableId: session.activeStableId,
                             ),
                             AppTab.stable => _ReadColumn(
                               child: _StableTab(
@@ -651,16 +649,19 @@ class _BoardTabState extends State<_BoardTab> {
                   ),
                 ),
               ),
-            for (final n in notices) ...[
-              _Notice(
-                author: (n['author_name'] as String?) ?? 'Someone',
-                when: _relativeTime(n['created_at'] as String?),
-                pinned: n['pinned'] == true,
-                title: n['title'] as String?,
-                body: (n['body'] as String?) ?? '',
-              ),
-              const SizedBox(height: 12),
-            ],
+            _CardGrid(
+              min: 340,
+              children: [
+                for (final n in notices)
+                  _Notice(
+                    author: (n['author_name'] as String?) ?? 'Someone',
+                    when: _relativeTime(n['created_at'] as String?),
+                    pinned: n['pinned'] == true,
+                    title: n['title'] as String?,
+                    body: (n['body'] as String?) ?? '',
+                  ),
+              ],
+            ),
             const SizedBox(height: 16),
             Align(
               alignment: AlignmentDirectional.centerStart,
