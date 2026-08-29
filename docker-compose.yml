@@ -1,0 +1,22 @@
+# Local dev: `docker compose up` builds the Flutter image (first time only) and
+# serves the app on http://localhost:3000. Your checked-out code is mounted in,
+# so `git pull` + a restart shows the latest.
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      # Live source: edits/pulls on the host are seen inside the container.
+      - .:/app
+      # Keep pub packages and build cache in named volumes (fast, not on host).
+      - pubcache:/root/.pub-cache
+      - builddir:/app/build
+    stdin_open: true   # allows pressing r / R for hot reload / restart
+    tty: true
+
+volumes:
+  pubcache:
+  builddir:

@@ -103,6 +103,38 @@ git pull
 
 then press `r` in the running `flutter run` terminal.
 
+## Alternative: run it in Docker (no Flutter on your Mac)
+
+Keeps Flutter/Dart and all build deps inside a container. You only need Docker
+Desktop, plus git to get the code.
+
+1. Install **Docker Desktop for Mac**: https://www.docker.com/products/docker-desktop/
+   (open it once so the engine is running).
+2. Get the code (needs git — from `xcode-select --install`, and gh or a token to
+   authenticate the private repo):
+   ```sh
+   gh repo clone khbzyabis/stables-app
+   cd stables-app
+   git checkout claude/read-this-h7d4dr
+   ```
+3. Start it (first build takes a few minutes while it downloads Flutter):
+   ```sh
+   docker compose up
+   ```
+4. Open **http://localhost:3000**.
+
+Loop after Claude pushes a change:
+```sh
+git pull
+docker compose restart      # reloads with the new code
+```
+Only re-run `docker compose up --build` when `pubspec.yaml` changes. Stop with
+Ctrl-C (or `docker compose down`).
+
+Note: live hot-reload file-watching across the Docker mount on macOS can be
+hit-or-miss; `docker compose restart` after a pull is the reliable way to see
+changes.
+
 ## Pushing your own changes
 
 ```sh
